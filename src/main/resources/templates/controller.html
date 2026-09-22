@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Player Controller</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<h2>Math Game Controller</h2>
+<button onclick="submitScore()">Submit Test Score</button>
+
+<script>
+    var stompClient = null;
+    function connect() {
+        var socket = new SockJS('/game-websocket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {});
+    }
+
+    function submitScore() {
+        var playerAction = {
+            playerId: "p1",
+            playerName: "Player One",
+            taskType: "Addition",
+            answer: 10,
+            score: 100
+        };
+        stompClient.send("/app/submit-score", {}, JSON.stringify(playerAction));
+    }
+    connect();
+</script>
+</body>
+</html>
