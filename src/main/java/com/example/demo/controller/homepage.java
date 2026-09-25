@@ -1,103 +1,143 @@
 package com.example.demo.controller;
 
-import com.example.demo.DemoApplication;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import org.springframework.stereotype.Component;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
+/**
+ * Homepage - Browser-based UI Launcher
+ * JavaFX FXML ကို လုံးဝ မသုံးတော့ဘူး။
+ * ခလုတ်တိုင်းက Browser မှာ HTML page ကို ဖွင့်ပေးတယ်။
+ */
 @Component
 public class homepage {
 
-    @FXML
-    private Label coinLabel;
-
-    private String userEmail;
+    private static final String BASE_URL = "http://localhost:8081";
+    private String userEmail = "Player";
     private int coins = 0;
 
-    @FXML
-    public void initialize() {
-        coins = 0;
-        updateCoinLabel();
-    }
-
+    // =========================================================
+    // User Info
+    // =========================================================
     public void setUserEmail(String email) {
         this.userEmail = email;
-        System.out.println("Logged in user = " + userEmail);
+        System.out.println("👤 Logged in: " + userEmail);
     }
 
     public String getUserEmail() {
         return userEmail;
     }
 
-    @FXML
-    private void openPlay() {
-        showMessage("PLAY", "Create Room / Join Room");
+    public void setCoins(int coins) {
+        this.coins = coins;
     }
 
-    @FXML
-    private void openInventory() {
-        showMessage("INVENTORY", "Inventory page will open here.");
+    // =========================================================
+    // Helper Methods - Encode & Browser Open
+    // =========================================================
+
+    /**
+     * URL Encode - Exception မရှိဘဲ စာသားကို encode လုပ်ပေးတယ်
+     */
+    private String encode(String text) {
+        if (text == null) return "";
+        return URLEncoder.encode(text, StandardCharsets.UTF_8);
     }
 
-    @FXML
-    private void openShop() {
-        showMessage("SHOP", "Shop page will open here.");
-    }
-
-    @FXML
-    private void openMyAccount() {
-        String email = (userEmail == null) ? "Unknown" : userEmail;
-        showMessage("MY ACCOUNT", "Email: " + email);
-    }
-
-    @FXML
-    private void openSetting() {
+    /**
+     * Browser ဖွင့်ရန် Helper Method
+     */
+    private void openBrowser(String path) {
         try {
-            FXMLLoader loader = DemoApplication.createFXMLLoader("/fxml/setting.fxml");
-            Parent root = loader.load();
+            String url = BASE_URL + path;
+            String os = System.getProperty("os.name").toLowerCase();
+            Runtime rt = Runtime.getRuntime();
 
-            Stage stage = new Stage();
-            stage.setTitle("Settings");
-            stage.setScene(new Scene(root));
-            stage.show();
+            if (os.contains("win")) {
+                rt.exec(new String[]{"rundll32", "url.dll,FileProtocolHandler", url});
+            } else if (os.contains("mac")) {
+                rt.exec(new String[]{"open", url});
+            } else {
+                rt.exec(new String[]{"xdg-open", url});
+            }
+
+            System.out.println("🌐 Opened: " + url);
+
         } catch (Exception e) {
+            System.err.println("❌ Browser ဖွင့်လို့မရပါ: " + e.getMessage());
             e.printStackTrace();
-            showMessage("ERROR", "Cannot open Settings page.");
         }
     }
 
-    @FXML
-    private void openFriends() {
-        try {
-            FXMLLoader loader = DemoApplication.createFXMLLoader("/fxml/friend.fxml");
-            Parent root = loader.load();
+    // =========================================================
+    // Button Actions
+    // =========================================================
 
-            Stage stage = new Stage();
-            stage.setTitle("MyGaming - Friends");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            showMessage("ERROR", "Cannot open Friends page.");
-        }
+    /**
+     * PLAY - Game Room ဖန်တီးပြီး game.html ကို ဖွင့်
+     */
+    public void openPlay() {
+        String roomCode = "ROOM" + (int)(Math.random() * 9000 + 1000);
+        String path = "/game.html?room=" + roomCode + "&user=" + encode(userEmail);
+
+        System.out.println("🎮 Room created: " + roomCode);
+        System.out.println("📢 Share link: " + BASE_URL + "/game.html?room=" + roomCode);
+
+        openBrowser(path);
     }
 
-    private void updateCoinLabel() {
-        if (coinLabel != null) {
-            coinLabel.setText(String.valueOf(coins));
-        }
+    /**
+     * INVENTORY - inventory.html ကို ဖွင့်
+     */
+    public void openInventory() {
+        String roomCode = "ROOM" + (int)(Math.random() * 9000 + 1000);
+        String path = "/inventory.html?room=" + roomCode +
+                "&user=" + encode(userEmail) +
+                "&coins=" + coins;
+
+        openBrowser(path);
     }
 
-    private void showMessage(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    /**
+     * SHOP - shop.html ကို ဖွင့်
+     */
+    public void openShop() {
+        String path = "/shop.html?user=" + encode(userEmail) +
+                "&coins=" + coins;
+        openBrowser(path);
+    }
+
+    /**
+     * MY ACCOUNT - account.html ကို ဖွင့်
+     */
+    public void openMyAccount() {
+        String path = "/account.html?user=" + encode(userEmail) +
+                "&coins=" + coins;
+        openBrowser(path);
+    }
+
+    /**
+     * SETTING - setting.html ကို ဖွင့်
+     */
+    public void openSetting() {
+        String path = "/setting.html?user=" + encode(userEmail);
+        openBrowser(path);
+    }
+
+    /**
+     * FRIENDS - friends.html ကို ဖွင့်
+     */
+    public void openFriends() {
+        String path = "/friends.html?user=" + encode(userEmail);
+        openBrowser(path);
+    }
+
+    /**
+     * HOMEPAGE - homepage.html ကို ဖွင့်
+     */
+    public void openHomepage() {
+        String path = "/homepage.html?user=" + encode(userEmail) +
+                "&coins=" + coins;
+        openBrowser(path);
     }
 }

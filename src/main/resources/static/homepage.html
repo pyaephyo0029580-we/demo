@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Online Game - Home Page</title>
+    <link rel="stylesheet" href="homepage.css">
+</head>
+<body class="home-game-body">
+
+<div class="home-game-container">
+
+    <!-- TOP BAR -->
+    <div class="home-top-bar">
+        <span class="player-icon">🟢</span>
+        <span class="player-name" id="playerName">XXXXXXXXXX</span>
+
+        <div class="top-bar-spacer"></div>
+
+        <span class="coin-icon">●</span>
+        <span class="coin-text" id="coinLabel">0</span>
+
+        <button class="friends-button" onclick="openFriends()">FRIENDS</button>
+    </div>
+
+    <!-- LEFT MENU PANEL -->
+    <div class="home-left-panel">
+        <h1 class="home-title-label">AMONG US</h1>
+
+        <div class="home-menu-buttons">
+            <button class="home-menu-button" onclick="openPlay()">PLAY</button>
+            <button class="home-menu-button" onclick="openInventory()">INVENTORY</button>
+            <button class="home-menu-button" onclick="openShop()">SHOP</button>
+            <button class="home-menu-button" onclick="openMyAccount()">MY ACCOUNT</button>
+            <button class="home-menu-button" onclick="openSetting()">SETTING</button>
+        </div>
+
+        <div class="home-version-label">v18a (build num: 7240)</div>
+    </div>
+
+    <!-- RIGHT CONTENT PANEL (GIF Area) -->
+    <div class="home-right-panel">
+        <div class="character-gif-area">
+            <span class="placeholder-label">Character GIF Area</span>
+
+            <!-- GIF ထည့်ချင်ရင် ဒီနေရာမှာ ထည့်ပါ -->
+            <!-- <img src="Image/character.gif" class="character-gif" alt="Character"> -->
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ===== URL Parameters မှ User info ယူ =====
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get('user') || 'Player';
+    const coins = params.get('coins') || '0';
+
+    document.getElementById('playerName').innerText = username;
+    document.getElementById('coinLabel').innerText = coins;
+
+    // ===== Button Actions =====
+    function openPlay() {
+    const roomCode = 'ROOM' + Math.floor(1000 + Math.random() * 9000);
+    const url = `game.html?room=${roomCode}&user=${encodeURIComponent(username)}`;
+
+    if (confirm(`Room: ${roomCode}\n\nဒီ Room ထဲ ဝင်ဆော့မှာလား?\n\n(သူငယ်ချင်းတွေကို ဒီ Link ပို့ပါ)\n${window.location.origin}/game.html?room=${roomCode}`)) {
+    window.location.href = url;
+    }
+    }
+
+    function openInventory() {
+    const roomCode = 'ROOM' + Math.floor(1000 + Math.random() * 9000);
+    window.location.href = `inventory.html?room=${roomCode}&user=${encodeURIComponent(username)}`;
+    }
+
+    function openShop() {
+    alert('🛒 SHOP\n\nShop page will open here.\n\n(Coming soon...)');
+    }
+
+    function openMyAccount() {
+    alert(`👤 MY ACCOUNT\n\nName: ${username}\nCoins: ${coins}\n\n(Coming soon...)`);
+    }
+
+    function openSetting() {
+    alert('⚙️ SETTINGS\n\nSettings page will open here.\n\n(Coming soon...)');
+    }
+
+    function openFriends() {
+    alert('👥 FRIENDS\n\nFriends list will open here.\n\n(Coming soon...)');
+    }
+</script>
+
+</body>
+</html>
