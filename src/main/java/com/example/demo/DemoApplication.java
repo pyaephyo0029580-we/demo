@@ -1,6 +1,5 @@
 package com.example.demo;
 
-<<<<<<< HEAD
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -9,18 +8,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-=======
->>>>>>> 742f10c517c66467ec306bb270fbeeb695f3e416
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.awt.Desktop;
-import java.net.URI;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
-<<<<<<< HEAD
 public class DemoApplication extends Application {
 
     private static ConfigurableApplicationContext springContext;
@@ -32,7 +25,7 @@ public class DemoApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // JavaFX UI - FXML မလိုဘဲ ကိုယ်တိုင် ဆောက်မယ်
+        // JavaFX UI - FXML မလိုဘဲ ကိုယ်တိုင် ဆောက်မည်
         Label title = new Label("AMONG US");
         title.setStyle("-fx-text-fill: #8ce0dc; -fx-font-size: 42px; -fx-font-weight: bold;");
 
@@ -97,11 +90,5 @@ public class DemoApplication extends Application {
 
     public static void main(String[] args) {
         launch(args);
-=======
-public class DemoApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
->>>>>>> 742f10c517c66467ec306bb270fbeeb695f3e416
     }
 }
