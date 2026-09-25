@@ -1,5 +1,6 @@
 package com.example.demo;
 
+<<<<<<< HEAD
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -10,14 +11,16 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+=======
+>>>>>>> 742f10c517c66467ec306bb270fbeeb695f3e416
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import java.awt.Desktop;
 import java.net.URI;
 
 @SpringBootApplication
+<<<<<<< HEAD
 public class DemoApplication extends Application {
 
     private static ConfigurableApplicationContext springContext;
@@ -94,5 +97,11 @@ public class DemoApplication extends Application {
 
     public static void main(String[] args) {
         launch(args);
+=======
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+>>>>>>> 742f10c517c66467ec306bb270fbeeb695f3e416
     }
 }
