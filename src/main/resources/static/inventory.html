@@ -13,9 +13,7 @@
     <button class="inv-back-btn" onclick="goBack()">✕</button>
     <span class="inv-nav-tab active" onclick="showTab('colors', this)">🎨 COLORS</span>
     <span class="inv-nav-tab" onclick="showTab('hats', this)">🎩 HAT</span>
-    <span class="inv-nav-tab" onclick="showTab('skin', this)">👕 SKIN</span>
-    <span class="inv-nav-tab" onclick="showTab('visor', this)">🥽 VISOR</span>
-    <span class="inv-nav-tab" onclick="showTab('pet', this)">🐾 PET</span>
+    <!-- SKIN နဲ့ PET Tab များကို ဖယ်ရှားလိုက်ပါပြီ -->
 </div>
 
 <!-- ===== MAIN CONTENT ===== -->
@@ -30,7 +28,7 @@
     <div class="inv-right">
         <div class="inv-char-pane">
             <img id="characterImg"
-                 src="Image/kaonashi-removebg-preview.png"
+                 src="Image/Jellypop-Photoroom.png"
                  class="inv-character"
                  alt="Character">
             <img id="hatImg" class="inv-hat" style="display:none;" alt="Hat">
@@ -61,20 +59,17 @@
 
     const HATS = [
         ["No Hat", null, 0],
-        ["Bird", "Image/Hats/Bird.png", -20],
-        ["Frederick", "Image/Hats/Frederick.png", -20],
-        ["Hatty", "Image/Hats/Hatty.png", -20],
-        ["Headsług", "Image/Hats/Headsług.png", -20],
-        ["Inugami", "Image/Hats/Inugami.png", -20],
-        ["Kid", "Image/Hats/Kid.png", -20],
-        ["Lilac", "Image/Hats/Lilac.png", -20],
-        ["Lufi", "Image/Hats/Lufi.png", -20]
+        ["Hat 1", "Image/Hat1-removebg-preview.png", 0],
+        ["Hat 2", "Image/Hat2-removebg-preview.png", 0],
+        ["Hat 3", "Image/Hat3-removebg-preview.png", 0],
+        ["Hat 4", "Image/Hat4-removebg-preview.png", 0]
+        ["Lufi", "Image/Lufi.png",0],
     ];
 
     let currentColor = "Red";
     let currentColorHex = "#C51111";
     let currentHat = "No Hat";
-    let originalImageSrc = "Image/kaonashi-removebg-preview.png";
+    let originalImageSrc = "Image/Jellypop-Photoroom.png";
 
     // ============================================
     // Tab Switching
@@ -151,6 +146,7 @@
 
         temp.onerror = () => {
             console.error('❌ ပုံ load မဖြစ်ပါ:', originalImageSrc);
+            img.src = originalImageSrc;
         };
     }
 
@@ -183,14 +179,17 @@
         document.getElementById('tabContent').innerHTML = html;
     }
 
+    // ဒီနေရာမှာ pickHat function က နှစ်ခါ ထပ်နေတာကို ရှင်းလင်းလိုက်ပါပြီ
     function pickHat(name, path, offset) {
         currentHat = name;
         document.getElementById('itemName').innerText = name.toUpperCase();
         const hatImg = document.getElementById('hatImg');
+
         if (path) {
             hatImg.src = path;
             hatImg.style.display = 'block';
-            hatImg.style.transform = 'translateY(' + offset + 'px)';
+            // CSS ရဲ့ translateX(-50%) နဲ့ ပေါင်းရေးထားပါတယ်
+            hatImg.style.transform = 'translateX(-50%) translateY(' + offset + 'px)';
         } else {
             hatImg.style.display = 'none';
         }
@@ -217,10 +216,8 @@
     // ============================================
     window.onload = function() {
         renderColors();
-        // Default color ကို apply လုပ်
         setTimeout(() => applyColor(currentColorHex), 100);
     };
 </script>
-
 </body>
 </html>
