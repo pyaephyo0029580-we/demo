@@ -1,0 +1,906 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Among Us - Friends</title>
+
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        min-height: 100vh;
+        color: white;
+
+        background:
+            radial-gradient(circle at 50% 0%, #243b52, #080d13 65%);
+    }
+
+    /* MAIN */
+    .page {
+        width: 1000px;
+        max-width: 94%;
+        margin: 35px auto;
+        padding: 25px;
+
+        background: rgba(10, 17, 25, 0.96);
+
+        border: 3px solid #273b4e;
+        border-radius: 25px;
+
+        box-shadow: 0 20px 60px rgba(0,0,0,.7);
+    }
+
+    /* HEADER */
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        margin-bottom: 25px;
+    }
+
+    .title-area {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .title-area h1 {
+        font-size: 36px;
+        letter-spacing: 3px;
+    }
+
+    .title-area p {
+        color: #8da1b5;
+        margin-top: 5px;
+    }
+
+    /* CREWMATE */
+    .crewmate {
+        position: relative;
+
+        width: 55px;
+        height: 65px;
+
+        border-radius: 22px 22px 13px 13px;
+
+        border-bottom: 7px solid rgba(0,0,0,.35);
+    }
+
+    .crewmate::before {
+        content: "";
+
+        position: absolute;
+
+        width: 14px;
+        height: 20px;
+
+        left: 7px;
+        bottom: -8px;
+
+        background: inherit;
+
+        border-radius: 0 0 7px 7px;
+    }
+
+    .crewmate::after {
+        content: "";
+
+        position: absolute;
+
+        width: 14px;
+        height: 20px;
+
+        right: 7px;
+        bottom: -8px;
+
+        background: inherit;
+
+        border-radius: 0 0 7px 7px;
+    }
+
+    .visor {
+        position: absolute;
+
+        width: 38px;
+        height: 21px;
+
+        right: -7px;
+        top: 13px;
+
+        background: #9ed9ed;
+
+        border: 4px solid #416a78;
+
+        border-radius: 12px;
+
+        box-shadow:
+            inset 8px 3px rgba(255,255,255,.5);
+    }
+
+    .red {
+        background: #e53935;
+    }
+
+    .blue {
+        background: #1976d2;
+    }
+
+    .green {
+        background: #43a047;
+    }
+
+    .yellow {
+        background: #fbc02d;
+    }
+
+    .purple {
+        background: #8e44ad;
+    }
+
+    .orange {
+        background: #fb8c00;
+    }
+
+    /* ADD BUTTON */
+    .add-btn {
+        padding: 14px 22px;
+
+        border: none;
+        border-radius: 12px;
+
+        background: #19c765;
+        color: white;
+
+        font-size: 15px;
+        font-weight: bold;
+
+        cursor: pointer;
+
+        transition: .2s;
+    }
+
+    .add-btn:hover {
+        background: #23e878;
+        transform: scale(1.04);
+    }
+
+    /* SEARCH */
+    .search {
+        display: flex;
+        margin-bottom: 25px;
+    }
+
+    .search input {
+        flex: 1;
+
+        padding: 16px;
+
+        background: #152333;
+
+        border: 2px solid #30475e;
+        border-radius: 12px 0 0 12px;
+
+        outline: none;
+
+        color: white;
+
+        font-size: 16px;
+    }
+
+    .search input:focus {
+        border-color: #2f8cff;
+    }
+
+    .search button {
+        width: 65px;
+
+        border: none;
+        border-radius: 0 12px 12px 0;
+
+        background: #2674c7;
+        color: white;
+
+        font-size: 20px;
+
+        cursor: pointer;
+    }
+
+    /* SECTION */
+    .section {
+        margin-top: 20px;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        margin-bottom: 12px;
+    }
+
+    .section-title h2 {
+        font-size: 17px;
+        letter-spacing: 2px;
+    }
+
+    .count {
+        background: #e53935;
+
+        padding: 4px 9px;
+
+        border-radius: 20px;
+
+        font-size: 12px;
+    }
+
+    /* CARD */
+    .card {
+        display: flex;
+        align-items: center;
+
+        padding: 14px;
+
+        margin-bottom: 10px;
+
+        background: #172638;
+
+        border: 2px solid #263d54;
+
+        border-radius: 15px;
+
+        transition: .2s;
+    }
+
+    .card:hover {
+        border-color: #4b82b9;
+        transform: translateX(4px);
+    }
+
+    .user-info {
+        flex: 1;
+        margin-left: 15px;
+    }
+
+    .user-info h3 {
+        font-size: 17px;
+        margin-bottom: 6px;
+    }
+
+    .user-info p {
+        font-size: 13px;
+        color: #9bb0c3;
+    }
+
+    /* ONLINE */
+    .online {
+        color: #42d477 !important;
+    }
+
+    .online-dot {
+        display: inline-block;
+
+        width: 8px;
+        height: 8px;
+
+        margin-right: 5px;
+
+        border-radius: 50%;
+
+        background: #42d477;
+    }
+
+    /* OFFLINE */
+    .offline {
+        color: #8997a5 !important;
+    }
+
+    .offline-dot {
+        display: inline-block;
+
+        width: 8px;
+        height: 8px;
+
+        margin-right: 5px;
+
+        border-radius: 50%;
+
+        background: #8997a5;
+    }
+
+    /* BUTTONS */
+    .invite {
+        padding: 11px 20px;
+
+        border: none;
+        border-radius: 9px;
+
+        background: #19bd62;
+        color: white;
+
+        font-weight: bold;
+
+        cursor: pointer;
+    }
+
+    .invite:hover {
+        background: #25df78;
+    }
+
+    .offline-btn {
+        background: #435365;
+        color: #a8b5c1;
+        cursor: not-allowed;
+    }
+
+    /* REQUEST */
+    .request-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .request-buttons button {
+        width: 42px;
+        height: 42px;
+
+        border: none;
+        border-radius: 9px;
+
+        color: white;
+
+        font-size: 20px;
+
+        cursor: pointer;
+    }
+
+    .accept {
+        background: #19bd62;
+    }
+
+    .reject {
+        background: #e53935;
+    }
+
+    .accept:hover {
+        background: #25df78;
+    }
+
+    .reject:hover {
+        background: #ff5555;
+    }
+
+    /* BACK */
+    .bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        margin-top: 25px;
+        padding-top: 20px;
+
+        border-top: 1px solid #293b4d;
+    }
+
+    .back {
+        padding: 11px 20px;
+
+        background: #172638;
+
+        border: 2px solid #3b536b;
+
+        border-radius: 10px;
+
+        color: white;
+
+        cursor: pointer;
+    }
+
+    .back:hover {
+        background: #263b51;
+    }
+
+    .footer-text {
+        color: #71869b;
+        font-size: 13px;
+    }
+
+    /* MOBILE */
+    @media(max-width: 650px) {
+
+        .header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+        }
+
+        .add-btn {
+            width: 100%;
+        }
+
+        .title-area h1 {
+            font-size: 27px;
+        }
+
+        .crewmate {
+            width: 45px;
+            height: 55px;
+        }
+
+        .invite {
+            padding: 9px 12px;
+            font-size: 11px;
+        }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+
+    <div class="title-area">
+
+      <div class="crewmate red">
+        <div class="visor"></div>
+      </div>
+
+      <div>
+        <h1>FRIENDS</h1>
+        <p>Find your crewmates!</p>
+      </div>
+
+    </div>
+
+    <button class="add-btn" onclick="addFriend()">
+      ＋ ADD FRIEND
+    </button>
+
+  </div>
+
+
+  <!-- SEARCH -->
+  <div class="search">
+
+    <input
+            type="text"
+            id="searchInput"
+            placeholder="Search username..."
+            onkeyup="searchFriend()"
+    >
+
+    <button onclick="searchFriend()">
+      🔍
+    </button>
+
+  </div>
+
+
+  <!-- FRIEND REQUESTS -->
+  <div class="section">
+
+    <div class="section-title">
+
+      <h2>FRIEND REQUESTS</h2>
+
+      <span class="count" id="requestCount">
+                2
+            </span>
+
+    </div>
+
+
+    <!-- REQUEST 1 -->
+    <div class="card request-card">
+
+      <div class="crewmate purple">
+        <div class="visor"></div>
+      </div>
+
+      <div class="user-info">
+
+        <h3>ShadowPlayer</h3>
+
+        <p>
+          Wants to be your friend
+        </p>
+
+      </div>
+
+      <div class="request-buttons">
+
+        <button
+                class="accept"
+                onclick="acceptRequest(this)">
+          ✓
+        </button>
+
+        <button
+                class="reject"
+                onclick="rejectRequest(this)">
+          ✕
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- REQUEST 2 -->
+    <div class="card request-card">
+
+      <div class="crewmate orange">
+        <div class="visor"></div>
+      </div>
+
+      <div class="user-info">
+
+        <h3>OrangeGuy</h3>
+
+        <p>
+          Wants to be your friend
+        </p>
+
+      </div>
+
+      <div class="request-buttons">
+
+        <button
+                class="accept"
+                onclick="acceptRequest(this)">
+          ✓
+        </button>
+
+        <button
+                class="reject"
+                onclick="rejectRequest(this)">
+          ✕
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- MY FRIENDS -->
+  <div class="section">
+
+    <div class="section-title">
+
+      <h2>MY FRIENDS</h2>
+
+      <span
+              class="count"
+              id="friendCount">
+                4
+            </span>
+
+    </div>
+
+
+    <div id="friendList">
+
+      <!-- RED -->
+      <div class="card friend-card">
+
+        <div class="crewmate red">
+          <div class="visor"></div>
+        </div>
+
+        <div class="user-info">
+
+          <h3>RedPlayer</h3>
+
+          <p class="online">
+            <span class="online-dot"></span>
+            Online
+          </p>
+
+        </div>
+
+        <button
+                class="invite"
+                onclick="invitePlayer('RedPlayer')">
+          INVITE
+        </button>
+
+      </div>
+
+
+      <!-- BLUE -->
+      <div class="card friend-card">
+
+        <div class="crewmate blue">
+          <div class="visor"></div>
+        </div>
+
+        <div class="user-info">
+
+          <h3>BluePlayer</h3>
+
+          <p class="online">
+            <span class="online-dot"></span>
+            Online
+          </p>
+
+        </div>
+
+        <button
+                class="invite"
+                onclick="invitePlayer('BluePlayer')">
+          INVITE
+        </button>
+
+      </div>
+
+
+      <!-- GREEN -->
+      <div class="card friend-card">
+
+        <div class="crewmate green">
+          <div class="visor"></div>
+        </div>
+
+        <div class="user-info">
+
+          <h3>GreenPlayer</h3>
+
+          <p class="offline">
+            <span class="offline-dot"></span>
+            Offline
+          </p>
+
+        </div>
+
+        <button class="invite offline-btn">
+          OFFLINE
+        </button>
+
+      </div>
+
+
+      <!-- YELLOW -->
+      <div class="card friend-card">
+
+        <div class="crewmate yellow">
+          <div class="visor"></div>
+        </div>
+
+        <div class="user-info">
+
+          <h3>YellowPlayer</h3>
+
+          <p class="online">
+            <span class="online-dot"></span>
+            Online
+          </p>
+
+        </div>
+
+        <button
+                class="invite"
+                onclick="invitePlayer('YellowPlayer')">
+          INVITE
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- BOTTOM -->
+  <div class="bottom">
+
+    <button class="back" onclick="goBack()">
+      ← BACK
+    </button>
+
+    <span class="footer-text">
+            Among Us Friend System
+        </span>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  // ==============================
+  // GET USER FROM HOMEPAGE
+  // ==============================
+
+  const params =
+      new URLSearchParams(window.location.search);
+
+  const currentUser =
+      params.get("user") || "Player";
+
+
+  // ==============================
+  // ADD FRIEND
+  // ==============================
+
+  function addFriend() {
+
+      const name =
+          prompt(
+              "Enter your friend's username:"
+          );
+
+      if (
+          name &&
+          name.trim() !== ""
+      ) {
+
+          alert(
+              "📨 Friend request sent to " +
+              name.trim() +
+              "!"
+          );
+
+      }
+
+  }
+
+
+  // ==============================
+  // SEARCH FRIEND
+  // ==============================
+
+  function searchFriend() {
+
+      const keyword =
+          document
+              .getElementById("searchInput")
+              .value
+              .toLowerCase();
+
+      const friends =
+          document
+              .querySelectorAll(".friend-card");
+
+      friends.forEach(function(friend) {
+
+          const username =
+              friend
+                  .querySelector("h3")
+                  .innerText
+                  .toLowerCase();
+
+          if (
+              username.includes(keyword)
+          ) {
+
+              friend.style.display =
+                  "flex";
+
+          } else {
+
+              friend.style.display =
+                  "none";
+
+          }
+
+      });
+
+  }
+
+
+  // ==============================
+  // INVITE PLAYER
+  // ==============================
+
+  function invitePlayer(name) {
+
+      alert(
+          "🎮 Game invitation sent!\n\n" +
+          "Player: " + name + "\n" +
+          "From: " + currentUser
+      );
+
+  }
+
+
+  // ==============================
+  // ACCEPT REQUEST
+  // ==============================
+
+  function acceptRequest(button) {
+
+      const card =
+          button.closest(".request-card");
+
+      const name =
+          card
+              .querySelector("h3")
+              .innerText;
+
+      card.remove();
+
+      updateRequestCount();
+
+      alert(
+          "✅ " +
+          name +
+          " is now your friend!"
+      );
+
+  }
+
+
+  // ==============================
+  // REJECT REQUEST
+  // ==============================
+
+  function rejectRequest(button) {
+
+      const card =
+          button.closest(".request-card");
+
+      const name =
+          card
+              .querySelector("h3")
+              .innerText;
+
+      card.remove();
+
+      updateRequestCount();
+
+      alert(
+          "❌ Request from " +
+          name +
+          " rejected."
+      );
+
+  }
+
+
+  // ==============================
+  // REQUEST COUNT
+  // ==============================
+
+  function updateRequestCount() {
+
+      const requests =
+          document
+              .querySelectorAll(".request-card");
+
+      document
+          .getElementById("requestCount")
+          .innerText =
+          requests.length;
+
+  }
+
+
+  // ==============================
+  // BACK
+  // ==============================
+
+  function goBack() {
+
+      window.location.href =
+          `homepage.html?user=${encodeURIComponent(currentUser)}`;
+
+  }
+
+</script>
+
+</body>
+</html>
+
