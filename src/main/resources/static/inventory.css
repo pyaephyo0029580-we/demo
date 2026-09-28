@@ -306,4 +306,23 @@ body.inventory-body {
         width: 65px;
         height: 65px;
     }
+.inv-char-pane {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.inv-character {
+    width: 180px;
+    height: auto;
+}
+
+.inv-hat {
+    position: absolute;
+    top: 22%;        /* ခေါင်းပေါ်တည့်တည့်ကျစေရန် */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;    /* ဦးထုပ်အရွယ်အစား ကြီးချင်/သေးချင်ရင် ဒီမှာ px ချိန်ပါ */
+    height: auto;
 }
