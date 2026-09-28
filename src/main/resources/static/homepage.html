@@ -19,8 +19,10 @@
 
         <span class="coin-icon">●</span>
         <span class="coin-text" id="coinLabel">0</span>
+        <button type="button" class="friends-button" onclick="openFriends()">
+            FRIENDS
+        </button>
 
-        <button class="friends-button" onclick="openFriends()">FRIENDS</button>
     </div>
 
     <!-- LEFT MENU PANEL -->
@@ -85,10 +87,10 @@
     function openSetting() {
     alert('⚙️ SETTINGS\n\nSettings page will open here.\n\n(Coming soon...)');
     }
-
     function openFriends() {
-    alert('👥 FRIENDS\n\nFriends list will open here.\n\n(Coming soon...)');
-    }
+    window.location.href = "friends.html";
+}
+
 </script>
 
 </body>
