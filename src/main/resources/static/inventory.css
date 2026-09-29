@@ -307,22 +307,31 @@ body.inventory-body {
         height: 65px;
     }
 .inv-char-pane {
-    position: relative;
+    position: relative; /* အရေးကြီးဆုံးပါ */
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    height: 100%;
 }
 
 .inv-character {
-    width: 180px;
+    width: 100%; /* ဘောင်အရွယ်အစားပေါ်မူတည်ပြီး ဇာတ်ကောင် ပြောင်းမယ် */
+    max-width: 300px; /* အများဆုံး ၃၀၀ ပစ်ဆယ်ပဲ ကြီးမယ် */
     height: auto;
+    z-index: 1;
 }
 
 .inv-hat {
     position: absolute;
-    top: 22%;        /* ခေါင်းပေါ်တည့်တည့်ကျစေရန် */
+    /* ဇာတ်ကောင်ရဲ့ ခေါင်းထိပ်ကို ရောက်အောင် % နဲ့ ချိန်ပါ */
+    top: 5%; /* 0% က အနည်းဆုံး၊ 20% က ပိုနိမ့် */
     left: 50%;
-    transform: translateX(-50%);
-    width: 140px;    /* ဦးထုပ်အရွယ်အစား ကြီးချင်/သေးချင်ရင် ဒီမှာ px ချိန်ပါ */
+    transform: translateX(-50%); /* အလယ်ကျစေရန် */
+    z-index: 10; /* ဇာတ်ကောင်ရဲ့ အပေါ်မှာ ရှိရမယ် */
+
+    /* ဦးထုပ် အရွယ်အစားကို ဇာတ်ကောင်ရဲ့ % နဲ့ ချိန်ပါ */
+    width: 40%; /* ဇာတ်ကောင် ဘယ်လောက်ပဲကြီးကြီး ဦးထုပ်က သူ့ရဲ့ ၄၀% ပဲ ရှိမယ် */
     height: auto;
+    pointer-events: none;
 }
