@@ -11,9 +11,7 @@ public class User {
     private Long id;
 
     private String username;
-
     private String email;
-
     private String password;
 
     @Column("verification_code")
@@ -21,24 +19,17 @@ public class User {
 
     private boolean verified;
 
-    // Friend Code
     @Column("friend_code")
     private String friendCode;
 
-
-    // Empty constructor
     public User() {
     }
 
-
-    // Constructor with email
     public User(String email) {
         this.email = email;
         this.verified = false;
     }
 
-
-    // ID
     public Long getId() {
         return id;
     }
@@ -47,8 +38,6 @@ public class User {
         this.id = id;
     }
 
-
-    // USERNAME
     public String getUsername() {
         return username;
     }
@@ -57,8 +46,6 @@ public class User {
         this.username = username;
     }
 
-
-    // EMAIL
     public String getEmail() {
         return email;
     }
@@ -67,8 +54,6 @@ public class User {
         this.email = email;
     }
 
-
-    // PASSWORD
     public String getPassword() {
         return password;
     }
@@ -77,8 +62,6 @@ public class User {
         this.password = password;
     }
 
-
-    // VERIFICATION CODE
     public String getVerificationCode() {
         return verificationCode;
     }
@@ -87,8 +70,6 @@ public class User {
         this.verificationCode = verificationCode;
     }
 
-
-    // VERIFIED
     public boolean isVerified() {
         return verified;
     }
@@ -97,8 +78,6 @@ public class User {
         this.verified = verified;
     }
 
-
-    // FRIEND CODE
     public String getFriendCode() {
         return friendCode;
     }

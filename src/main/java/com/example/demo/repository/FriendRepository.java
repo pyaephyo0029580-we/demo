@@ -8,12 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface FriendRepository
-        extends CrudRepository<Friend, Long> {
+public interface FriendRepository extends CrudRepository<Friend, Long> {
 
-    List<Friend> findByRequesterIdAndStatus(
+    Optional<Friend> findByRequesterIdAndReceiverId(
             Long requesterId,
-            String status
+            Long receiverId
     );
 
     List<Friend> findByReceiverIdAndStatus(
@@ -21,8 +20,8 @@ public interface FriendRepository
             String status
     );
 
-    Optional<Friend> findByRequesterIdAndReceiverId(
+    List<Friend> findByRequesterIdAndStatus(
             Long requesterId,
-            Long receiverId
+            String status
     );
 }
