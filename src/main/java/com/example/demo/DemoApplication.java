@@ -36,7 +36,7 @@ public class DemoApplication extends Application {
         openBrowser.setStyle("-fx-background-color: #2a7d78; -fx-text-fill: white; " +
                 "-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 12px 30px; " +
                 "-fx-cursor: hand;");
-        openBrowser.setOnAction(e -> openInBrowser("http://localhost:8081/homepage.html"));
+        openBrowser.setOnAction(e -> openInBrowser("http://localhost:8081/login.html"));
 
         Button exitBtn = new Button("✕ Exit");
         exitBtn.setStyle("-fx-background-color: #ff5555; -fx-text-fill: white; " +

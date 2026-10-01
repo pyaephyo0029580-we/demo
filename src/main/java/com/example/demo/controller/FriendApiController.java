@@ -9,488 +9,926 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/friends")
 public class FriendApiController {
 
-    private final UserRepository userRepository;
     private final FriendRepository friendRepository;
+    private final UserRepository userRepository;
 
-    private final SecureRandom random = new SecureRandom();
+    private final SecureRandom random =
+            new SecureRandom();
+
 
     public FriendApiController(
-            UserRepository userRepository,
-            FriendRepository friendRepository
+            FriendRepository friendRepository,
+            UserRepository userRepository
     ) {
-        this.userRepository = userRepository;
-        this.friendRepository = friendRepository;
+
+        this.friendRepository =
+                friendRepository;
+
+        this.userRepository =
+                userRepository;
     }
 
-    // ==========================================
-    // GET CURRENT USER
-    // ==========================================
+
+    // =====================================================
+    // CURRENT PLAYER
+    // =====================================================
 
     @GetMapping("/me")
-    public ResponseEntity<?> getMyPlayer(
+    public ResponseEntity<?> getMe(
             @RequestParam String username
     ) {
 
         Optional<User> optionalUser =
-                userRepository.findByUsername(username);
-
-        if (optionalUser.isEmpty()) {
-            return ResponseEntity
-                    .status(404)
-                    .body(Map.of(
-                            "success", false,
-                            "message", "User not found."
-                    ));
-        }
-
-        User user = optionalUser.get();
-
-        // Friend code မရှိသေးရင် generate
-        if (user.getFriendCode() == null ||
-                user.getFriendCode().isBlank()) {
-
-            user.setFriendCode(generateFriendCode());
-
-            user = userRepository.save(user);
-        }
-
-        Map<String, Object> result = new HashMap<>();
-
-        result.put("success", true);
-        result.put("id", user.getId());
-        result.put("username", user.getUsername());
-        result.put("email", user.getEmail());
-        result.put("friendCode", user.getFriendCode());
-
-        return ResponseEntity.ok(result);
-    }
-
-    // ==========================================
-    // SEARCH PLAYER
-    // ==========================================
-
-    @GetMapping("/search")
-    public ResponseEntity<?> searchPlayer(
-            @RequestParam String playerId
-    ) {
-
-        if (playerId == null || playerId.isBlank()) {
-            return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "success", false,
-                            "message", "Enter Player ID."
-                    )
-            );
-        }
-
-        int hashPosition = playerId.lastIndexOf("#");
-
-        if (hashPosition <= 0 ||
-                hashPosition == playerId.length() - 1) {
-
-            return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "success", false,
-                            "message",
-                            "Use Player ID like Marsuki#123456"
-                    )
-            );
-        }
-
-        String username =
-                playerId.substring(0, hashPosition).trim();
-
-        String friendCode =
-                playerId.substring(hashPosition + 1).trim();
-
-        if (!friendCode.matches("\\d{6}")) {
-            return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "success", false,
-                            "message",
-                            "Friend code must be 6 digits."
-                    )
-            );
-        }
-
-        Optional<User> optionalUser =
-                userRepository.findByUsernameAndFriendCode(
-                        username,
-                        friendCode
+                userRepository.findByUsername(
+                        username
                 );
 
+
         if (optionalUser.isEmpty()) {
-            return ResponseEntity
-                    .status(404)
-                    .body(Map.of(
-                            "success", false,
-                            "message", "Player not found."
-                    ));
+
+            return error(
+                    "User not found."
+            );
         }
 
-        User user = optionalUser.get();Map<String, Object> result = new HashMap<>();
 
-        result.put("success", true);
-        result.put("id", user.getId());
-        result.put("username", user.getUsername());
-        result.put("friendCode", user.getFriendCode());
+        User user =
+                ensureFriendCode(
+                        optionalUser.get()
+                );
 
-        return ResponseEntity.ok(result);
+
+        Map<String, Object> response =
+                userData(user);
+
+
+        response.put(
+                "success",
+                true
+        );
+
+
+        return ResponseEntity.ok(
+                response
+        );
     }
 
-    // ==========================================
+
+    // =====================================================
+    // SEARCH
+    //
+    // Supports:
+    // Boon
+    // 823132
+    // Boon#823132
+    // =====================================================
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(
+            @RequestParam String query,
+            @RequestParam String username
+    ) {
+
+        Optional<User> currentOptional =
+                userRepository.findByUsername(
+                        username
+                );
+
+
+        if (currentOptional.isEmpty()) {
+
+            return error(
+                    "Current user not found."
+            );
+        }
+
+
+        String search =
+                query.trim();
+
+
+        if (search.isEmpty()) {
+
+            return error(
+                    "Please enter a player."
+            );
+        }
+
+
+        Optional<User> targetOptional =
+                findTargetUser(
+                        search
+                );
+
+
+        if (targetOptional.isEmpty()) {
+
+            return error(
+                    "Player not found."
+            );
+        }
+
+
+        User current =
+                currentOptional.get();
+
+
+        User target =
+                ensureFriendCode(
+                        targetOptional.get()
+                );
+
+
+        if (current.getId()
+                .equals(target.getId())) {
+
+            return error(
+                    "You cannot add yourself."
+            );
+        }
+
+
+        Map<String, Object> response =
+                userData(target);
+
+
+        response.put(
+                "success",
+                true
+        );
+
+
+        return ResponseEntity.ok(
+                response
+        );
+    }
+
+
+    // =====================================================
     // SEND FRIEND REQUEST
-    // ==========================================
+    // =====================================================
 
     @PostMapping("/request")
     public ResponseEntity<?> sendRequest(
-            @RequestParam Long requesterId,
-            @RequestParam Long receiverId
+            @RequestBody Map<String, String> request
     ) {
 
-        if (requesterId.equals(receiverId)) {
-            return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "success", false,
-                            "message", "You cannot add yourself."
-                    )
+        String username =
+                request.getOrDefault(
+                        "username",
+                        ""
+                ).trim();String targetValue =
+                request.getOrDefault(
+                        "target",
+                        ""
+                ).trim();
+
+
+        if (username.isEmpty()
+                || targetValue.isEmpty()) {
+
+            return error(
+                    "Username and target are required."
             );
         }
 
-        if (!userRepository.existsById(requesterId) ||
-                !userRepository.existsById(receiverId)) {
 
-            return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "success", false,
-                            "message", "User not found."
-                    )
+        Optional<User> requesterOptional =
+                userRepository.findByUsername(
+                        username
+                );
+
+
+        if (requesterOptional.isEmpty()) {
+
+            return error(
+                    "Current user not found."
             );
         }
+
+
+        Optional<User> receiverOptional =
+                findTargetUser(
+                        targetValue
+                );
+
+
+        if (receiverOptional.isEmpty()) {
+
+            return error(
+                    "Player not found."
+            );
+        }
+
+
+        User requester =
+                ensureFriendCode(
+                        requesterOptional.get()
+                );
+
+
+        User receiver =
+                ensureFriendCode(
+                        receiverOptional.get()
+                );
+
+
+        if (requester.getId()
+                .equals(receiver.getId())) {
+
+            return error(
+                    "You cannot add yourself."
+            );
+        }
+
 
         Optional<Friend> forward =
-                friendRepository.findByRequesterIdAndReceiverId(
-                        requesterId,
-                        receiverId
-                );
+                friendRepository
+                        .findByRequesterIdAndReceiverId(
+                                requester.getId(),
+                                receiver.getId()
+                        );
+
+
+        Optional<Friend> reverse =
+                friendRepository
+                        .findByRequesterIdAndReceiverId(
+                                receiver.getId(),
+                                requester.getId()
+                        );
+
 
         if (forward.isPresent()) {
 
-            Friend existing = forward.get();
+            String status =
+                    forward.get()
+                            .getStatus();
 
-            if ("ACCEPTED".equalsIgnoreCase(existing.getStatus())) {
-                return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "success", false,
-                                "message", "Already friends."
-                        )
+
+            if ("PENDING".equalsIgnoreCase(status)) {
+
+                return error(
+                        "Friend request already sent."
                 );
             }
 
-            if ("PENDING".equalsIgnoreCase(existing.getStatus())) {
-                return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "success", false,
-                                "message",
-                                "Friend request already sent."
-                        )
+
+            if ("ACCEPTED".equalsIgnoreCase(status)) {
+
+                return error(
+                        "This player is already your friend."
                 );
             }
         }
 
-        Optional<Friend> reverse =
-                friendRepository.findByRequesterIdAndReceiverId(
-                        receiverId,
-                        requesterId
-                );
 
         if (reverse.isPresent()) {
 
-            Friend existing = reverse.get();
+            String status =
+                    reverse.get()
+                            .getStatus();
 
-            if ("ACCEPTED".equalsIgnoreCase(existing.getStatus())) {
-                return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "success", false,
-                                "message", "Already friends."
-                        )
+
+            if ("PENDING".equalsIgnoreCase(status)) {
+
+                return error(
+                        "This player already sent you a request."
                 );
             }
 
-            if ("PENDING".equalsIgnoreCase(existing.getStatus())) {
-                return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "success", false,
-                                "message",
-                                "This player already sent you a request."
-                        )
+
+            if ("ACCEPTED".equalsIgnoreCase(status)) {
+
+                return error(
+                        "This player is already your friend."
                 );
             }
         }
 
-        Friend request = new Friend(
-                requesterId,
-                receiverId,
+
+        Friend friend =
+                new Friend();
+
+
+        friend.setRequesterId(
+                requester.getId()
+        );
+
+
+        friend.setReceiverId(
+                receiver.getId()
+        );
+
+
+        friend.setStatus(
                 "PENDING"
         );
 
-        friendRepository.save(request);
+
+        Friend saved =
+                friendRepository.save(
+                        friend
+                );
+
+
+        Map<String, Object> response =
+                new HashMap<>();
+
+
+        response.put(
+                "success",
+                true
+        );
+
+
+        response.put(
+                "message",
+                "Friend request sent!"
+        );
+
+
+        response.put(
+                "friendId",
+                saved.getFriendId()
+        );
+
 
         return ResponseEntity.ok(
-                Map.of(
-                        "success", true,
-                        "message", "Friend request sent."
-                )
+                response
         );
     }
 
-    // ==========================================
-    // GET INCOMING REQUESTS
-    // ==========================================
+
+    // =====================================================
+    // INCOMING REQUESTS
+    // =====================================================
 
     @GetMapping("/requests")
     public ResponseEntity<?> getRequests(
-            @RequestParam Long userId
+            @RequestParam String username
     ) {
+
+        Optional<User> userOptional =
+                userRepository.findByUsername(
+                        username
+                );if (userOptional.isEmpty()) {
+
+            return error(
+                    "User not found."
+            );
+        }
+
+
+        User currentUser =
+                userOptional.get();
+
 
         List<Friend> requests =
-                friendRepository.findByReceiverIdAndStatus(
-                        userId,
-                        "PENDING"
-                );
+                friendRepository
+                        .findByReceiverIdAndStatus(
+                                currentUser.getId(),
+                                "PENDING"
+                        );
 
-        List<Map<String, Object>> result =
-                new ArrayList<>();for (Friend request : requests) {
 
-            Optional<User> optionalRequester =
+        List<Map<String, Object>> response =
+                new ArrayList<>();
+
+
+        for (Friend friend : requests) {
+
+            Optional<User> senderOptional =
                     userRepository.findById(
-                            request.getRequesterId()
+                            friend.getRequesterId()
                     );
 
-            if (optionalRequester.isEmpty()) {
-                continue;
+
+            if (senderOptional.isPresent()) {
+
+                User sender =
+                        ensureFriendCode(
+                                senderOptional.get()
+                        );
+
+
+                Map<String, Object> item =
+                        userData(sender);
+
+
+                item.put(
+                        "friendId",
+                        friend.getFriendId()
+                );
+
+
+                response.add(
+                        item
+                );
             }
-
-            User requester = optionalRequester.get();
-
-            Map<String, Object> item =
-                    new HashMap<>();
-
-            item.put(
-                    "friendId",
-                    request.getFriendId()
-            );
-
-            item.put(
-                    "userId",
-                    requester.getId()
-            );
-
-            item.put(
-                    "username",
-                    requester.getUsername()
-            );
-
-            item.put(
-                    "friendCode",
-                    requester.getFriendCode()
-            );
-
-            result.add(item);
         }
 
-        return ResponseEntity.ok(result);
+
+        return ResponseEntity.ok(
+                response
+        );
     }
 
-    // ==========================================
-    // ACCEPT REQUEST
-    // ==========================================
+
+    // =====================================================
+    // ACCEPT
+    // =====================================================
 
     @PostMapping("/{friendId}/accept")
-    public ResponseEntity<?> acceptRequest(
+    public ResponseEntity<?> accept(
             @PathVariable Long friendId,
-            @RequestParam Long userId
+            @RequestParam String username
     ) {
 
-        Optional<Friend> optionalFriend =
-                friendRepository.findById(friendId);
+        Optional<User> userOptional =
+                userRepository.findByUsername(
+                        username
+                );
 
-        if (optionalFriend.isEmpty()) {
-            return ResponseEntity
-                    .status(404)
-                    .body(Map.of(
-                            "success", false,
-                            "message",
-                            "Friend request not found."
-                    ));
-        }
 
-        Friend friend = optionalFriend.get();
+        if (userOptional.isEmpty()) {
 
-        if (!friend.getReceiverId().equals(userId)) {
-            return ResponseEntity
-                    .status(403)
-                    .body(Map.of(
-                            "success", false,
-                            "message",
-                            "You cannot accept this request."
-                    ));
-        }
-
-        if (!"PENDING".equalsIgnoreCase(friend.getStatus())) {
-            return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "success", false,
-                            "message",
-                            "Request is no longer pending."
-                    )
+            return error(
+                    "User not found."
             );
         }
 
-        friend.setStatus("ACCEPTED");
 
-        friendRepository.save(friend);
+        Optional<Friend> friendOptional =
+                friendRepository.findById(
+                        friendId
+                );
 
-        return ResponseEntity.ok(
-                Map.of(
-                        "success", true,
-                        "message",
-                        "Friend request accepted."
-                )
+
+        if (friendOptional.isEmpty()) {
+
+            return error(
+                    "Friend request not found."
+            );
+        }
+
+
+        Friend friend =
+                friendOptional.get();
+
+
+        if (!friend.getReceiverId()
+                .equals(
+                        userOptional
+                                .get()
+                                .getId()
+                )) {
+
+            return error(
+                    "You cannot accept this request."
+            );
+        }
+
+
+        if (!"PENDING".equalsIgnoreCase(
+                friend.getStatus()
+        )) {
+
+            return error(
+                    "Request is not pending."
+            );
+        }
+
+
+        friend.setStatus(
+                "ACCEPTED"
+        );
+
+
+        friendRepository.save(
+                friend
+        );
+
+
+        return success(
+                "Friend request accepted!"
         );
     }
 
-    // ==========================================
-    // REJECT REQUEST
-    // ==========================================
 
-    @DeleteMapping("/{friendId}/reject")
-    public ResponseEntity<?> rejectRequest(
+    // =====================================================
+    // REJECT
+    // =====================================================
+
+    @PostMapping("/{friendId}/reject")
+    public ResponseEntity<?> reject(
             @PathVariable Long friendId,
-            @RequestParam Long userId
+            @RequestParam String username
     ) {
 
-        Optional<Friend> optionalFriend =
-                friendRepository.findById(friendId);
+        Optional<User> userOptional =
+                userRepository.findByUsername(
+                        username
+                );
 
-        if (optionalFriend.isEmpty()) {
-            return ResponseEntity
-                    .status(404)
-                    .body(Map.of(
-                            "success", false,
-                            "message",
-                            "Friend request not found."
-                    ));
+
+        if (userOptional.isEmpty()) {
+
+            return error(
+                    "User not found."
+            );
         }
 
-        Friend friend = optionalFriend.get();
 
-        if (!friend.getReceiverId().equals(userId)) {
-            return ResponseEntity
-                    .status(403)
-                    .body(Map.of(
-                            "success", false,
-                            "message",
-                            "You cannot reject this request."
-                    ));
+        Optional<Friend> friendOptional =
+                friendRepository.findById(
+                        friendId
+                );
+
+
+        if (friendOptional.isEmpty()) {
+
+            return error(
+                    "Friend request not found."
+            );
         }
 
-        friendRepository.delete(friend);
 
-        return ResponseEntity.ok(
-                Map.of(
-                        "success", true,
-                        "message",
-                        "Friend request rejected."
-                )
+        Friend friend =
+                friendOptional.get();
+
+
+        if (!friend.getReceiverId()
+                .equals(
+                        userOptional
+                                .get()
+                                .getId()
+                )) {return error(
+                "You cannot reject this request."
         );
-    }// ==========================================
-    // GET FRIEND LIST
-    // ==========================================
+        }
+
+
+        friendRepository.delete(
+                friend
+        );
+
+
+        return success(
+                "Friend request rejected."
+        );
+    }
+
+
+    // =====================================================
+    // FRIEND LIST
+    // =====================================================
 
     @GetMapping("/list")
     public ResponseEntity<?> getFriends(
-            @RequestParam Long userId
+            @RequestParam String username
     ) {
 
-        List<Map<String, Object>> result =
-                new ArrayList<>();
-
-        List<Friend> sent =
-                friendRepository.findByRequesterIdAndStatus(
-                        userId,
-                        "ACCEPTED"
+        Optional<User> userOptional =
+                userRepository.findByUsername(
+                        username
                 );
 
-        for (Friend friend : sent) {
-            addFriendToResult(
-                    result,
+
+        if (userOptional.isEmpty()) {
+
+            return error(
+                    "User not found."
+            );
+        }
+
+
+        User current =
+                userOptional.get();
+
+
+        Set<Long> friendUserIds =
+                new LinkedHashSet<>();
+
+
+        List<Friend> outgoing =
+                friendRepository
+                        .findByRequesterIdAndStatus(
+                                current.getId(),
+                                "ACCEPTED"
+                        );
+
+
+        for (Friend friend : outgoing) {
+
+            friendUserIds.add(
                     friend.getReceiverId()
             );
         }
 
-        List<Friend> received =
-                friendRepository.findByReceiverIdAndStatus(
-                        userId,
-                        "ACCEPTED"
-                );
 
-        for (Friend friend : received) {
-            addFriendToResult(
-                    result,
+        List<Friend> incoming =
+                friendRepository
+                        .findByReceiverIdAndStatus(
+                                current.getId(),
+                                "ACCEPTED"
+                        );
+
+
+        for (Friend friend : incoming) {
+
+            friendUserIds.add(
                     friend.getRequesterId()
             );
         }
 
-        return ResponseEntity.ok(result);
-    }
 
-    // ==========================================
-    // HELPERS
-    // ==========================================
+        List<Map<String, Object>> response =
+                new ArrayList<>();
 
-    private void addFriendToResult(
-            List<Map<String, Object>> result,
-            Long userId
-    ) {
 
-        Optional<User> optionalUser =
-                userRepository.findById(userId);
+        for (Long id : friendUserIds) {
 
-        if (optionalUser.isEmpty()) {
-            return;
+            Optional<User> friendOptional =
+                    userRepository.findById(id);
+
+
+            if (friendOptional.isPresent()) {
+
+                User friendUser =
+                        ensureFriendCode(
+                                friendOptional.get()
+                        );
+
+
+                response.add(
+                        userData(friendUser)
+                );
+            }
         }
 
-        User user = optionalUser.get();
 
-        Map<String, Object> item =
+        return ResponseEntity.ok(
+                response
+        );
+    }
+
+
+    // =====================================================
+    // FIND TARGET
+    // =====================================================
+
+    private Optional<User> findTargetUser(
+            String value
+    ) {
+
+        String search =
+                value.trim();
+
+
+        // Name#Code
+        if (search.contains("#")) {
+
+            int index =
+                    search.lastIndexOf("#");
+
+
+            String name =
+                    search.substring(
+                            0,
+                            index
+                    ).trim();
+
+
+            String code =
+                    search.substring(
+                            index + 1
+                    ).trim();
+
+
+            Optional<User> byCode =
+                    userRepository.findByFriendCode(
+                            code
+                    );
+
+
+            if (byCode.isEmpty()) {
+
+                return Optional.empty();
+            }
+
+
+            User user =
+                    byCode.get();
+
+
+            if (name.isEmpty()) {
+
+                return byCode;
+            }
+
+
+            if (user.getUsername() != null
+                    && user.getUsername()
+                    .equalsIgnoreCase(name)) {
+
+                return byCode;
+            }
+
+
+            return Optional.empty();
+        }
+
+
+        // Username
+        Optional<User> byUsername =
+                userRepository.findByUsername(
+                        search
+                );
+
+
+        if (byUsername.isPresent()) {
+
+            return byUsername;
+        }
+
+
+        // Friend code
+        return userRepository
+                .findByFriendCode(
+                        search
+                );
+    }// =====================================================
+    // ENSURE FRIEND CODE
+    // =====================================================
+
+    private User ensureFriendCode(
+            User user
+    ) {
+
+        if (user.getFriendCode() == null
+                || user.getFriendCode()
+                .isBlank()) {
+
+            user.setFriendCode(
+                    generateFriendCode()
+            );
+
+
+            user =
+                    userRepository.save(
+                            user
+                    );
+        }
+
+
+        return user;
+    }
+
+
+    // =====================================================
+    // USER DATA
+    // =====================================================
+
+    private Map<String, Object> userData(
+            User user
+    ) {
+
+        Map<String, Object> data =
                 new HashMap<>();
 
-        item.put("id", user.getId());
-        item.put("username", user.getUsername());
-        item.put("friendCode", user.getFriendCode());
 
-        result.add(item);
+        data.put(
+                "id",
+                user.getId()
+        );
+
+
+        data.put(
+                "username",
+                user.getUsername()
+        );
+
+
+        data.put(
+                "friendCode",
+                user.getFriendCode()
+        );
+
+
+        data.put(
+                "playerId",
+                user.getUsername()
+                        + "#"
+                        + user.getFriendCode()
+        );
+
+
+        return data;
     }
+
+
+    // =====================================================
+    // GENERATE CODE
+    // =====================================================
 
     private String generateFriendCode() {
 
         String code;
 
+
         do {
+
             int number =
-                    100000 + random.nextInt(900000);
+                    100000
+                            + random.nextInt(
+                            900000
+                    );
 
-            code = String.valueOf(number);
 
-        } while (userRepository.existsByFriendCode(code));
+            code =
+                    String.valueOf(
+                            number
+                    );
+
+
+        } while (
+                userRepository
+                        .existsByFriendCode(
+                                code
+                        )
+        );
+
 
         return code;
+    }
+
+
+    // =====================================================
+    // SUCCESS
+    // =====================================================
+
+    private ResponseEntity<Map<String, Object>>
+    success(String message) {
+
+        Map<String, Object> data =
+                new HashMap<>();
+
+
+        data.put(
+                "success",
+                true
+        );
+
+
+        data.put(
+                "message",
+                message
+        );
+
+
+        return ResponseEntity.ok(
+                data
+        );
+    }
+
+
+    // =====================================================
+    // ERROR
+    // =====================================================
+
+    private ResponseEntity<Map<String, Object>>
+    error(String message) {
+
+        Map<String, Object> data =
+                new HashMap<>();
+
+
+        data.put(
+                "success",
+                false
+        );
+
+
+        data.put(
+                "message",
+                message
+        );
+
+
+        return ResponseEntity
+                .badRequest()
+                .body(data);
     }
 }

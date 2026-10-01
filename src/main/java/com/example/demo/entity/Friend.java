@@ -19,14 +19,10 @@ public class Friend {
 
     private String status;
 
+
     public Friend() {
     }
 
-    public Friend(Long requesterId, Long receiverId, String status) {
-        this.requesterId = requesterId;
-        this.receiverId = receiverId;
-        this.status = status;
-    }
 
     public Long getFriendId() {
         return friendId;
@@ -36,6 +32,7 @@ public class Friend {
         this.friendId = friendId;
     }
 
+
     public Long getRequesterId() {
         return requesterId;
     }
@@ -44,6 +41,7 @@ public class Friend {
         this.requesterId = requesterId;
     }
 
+
     public Long getReceiverId() {
         return receiverId;
     }
@@ -51,6 +49,7 @@ public class Friend {
     public void setReceiverId(Long receiverId) {
         this.receiverId = receiverId;
     }
+
 
     public String getStatus() {
         return status;

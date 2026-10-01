@@ -17,223 +17,386 @@
     }
 
     body {
+
         margin: 0;
+
         min-height: 100vh;
 
-        font-family: Arial, sans-serif;
-
-        background:
-                radial-gradient(
-                        circle at top,
-                        #1e293b,
-                        #0f172a 55%,
-                        #020617
-                );
+        font-family:
+            Arial,
+            sans-serif;
 
         color: white;
+
+        background:
+            radial-gradient(
+                circle at top,
+                #283052,
+                #111426
+            );
     }
 
     .page {
-        max-width: 720px;
+
+        width: 720px;
+
+        max-width: 94%;
 
         margin: auto;
 
-        padding: 30px 20px 60px;
+        padding:
+            30px
+            0
+            60px;
     }
 
     h1 {
+
         text-align: center;
 
-        font-size: 36px;
+        font-size: 40px;
+    }
+
+    .back-button {
+
+        position: absolute;
+
+        top: 25px;
+
+        left: 25px;
+
+        width: 45px;
+
+        height: 45px;
+
+        border: none;
+
+        border-radius: 8px;
+
+        background: #283552;
+
+        color: white;
+
+        cursor: pointer;
+
+        font-size: 24px;
+    }
+
+    .player-box {
+
+        text-align: center;
+
+        margin-bottom: 30px;
+
+        padding: 25px;
+    }
+
+    .small-label {
+
+        color: #87aaff;
+
+        font-size: 13px;
+
+        font-weight: bold;
+    }
+
+    #playerId {
+
+        margin-top: 8px;
+
+        color: #3baaff;
+
+        font-size: 28px;
+
+        font-weight: bold;
+    }
+
+    .hint {
+
+        margin-top: 7px;
+
+        color: #b0bad3;
+
+        font-size: 13px;
     }
 
     .card {
-        background: #1e293b;
-
-        border: 1px solid #334155;
-
-        border-radius: 16px;
-
-        padding: 22px;
 
         margin-bottom: 20px;
-    }
 
-    .player-card {
-        text-align: center;
-    }
+        padding: 23px;
 
-    .small-title {
-        color: #94a3b8;
+        border:
+            1px solid
+            #526b9d;
 
-        font-size: 13px;
+        border-radius: 15px;
 
-        font-weight: bold;
-    }
-
-    #myPlayerId {
-        color: #38bdf8;
-
-        font-size: 26px;
-
-        font-weight: bold;
-
-        margin-top: 8px;
-    }
-
-    .help-text {
-        color: #94a3b8;
-
-        font-size: 13px;
-
-        margin-top: 8px;
+        background:
+            rgba(
+                35,
+                44,
+                79,
+                0.92
+            );
     }
 
     h2 {
+
         margin-top: 0;
+
+        font-size: 25px;
+    }
+
+    label {
+
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: #c6d3ef;
     }
 
     .search-row {
+
         display: flex;
 
         gap: 10px;
     }
 
-    input {
+    #searchInput {
+
         flex: 1;
 
-        height: 46px;
+        height: 50px;
 
-        padding: 0 15px;
+        padding:
+            0
+            15px;
 
-        border: none;
-
-        border-radius: 10px;
-
-        outline: none;
-
-        font-size: 15px;
-    }
-
-    button {
         border: none;
 
         border-radius: 9px;
 
+        font-size: 16px;
+    }
+
+    button {
+
         cursor: pointer;
+    }
+
+    .search-button {
+
+        width: 120px;
+
+        border: none;
+
+        border-radius: 9px;
+
+        background: #3788ef;
 
         color: white;
 
         font-weight: bold;
     }
 
-    .search-button {
-        width: 120px;
+    #foundPlayer {
 
-        background: #2563eb;
+        display: none;
+
+        margin-top: 15px;
+
+        padding: 15px;
+
+        border-radius: 9px;
+
+        background: #141b32;
     }
 
-    .send-button {
+    #foundName {
+
+        font-size: 18px;
+
+        font-weight: bold;
+    }
+
+    #foundId {
+
+        margin-top: 5px;
+
+        color: #59b8ff;
+    }
+
+    #sendButton {
+
         display: block;
 
-        width: 250px;
-
-        max-width: 100%;
+        width: 245px;
 
         height: 45px;
 
-        margin: 15px auto 0;
+        margin:
+            16px
+            auto
+            0;
 
-        background: #22c55e;
+        border: none;
+
+        border-radius: 9px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #45d89c,
+                #5de9b5
+            );
+
+        color: white;
+
+        font-weight: bold;
     }
 
-    #messageLabel {
-        min-height: 20px;
+    #sendButton:disabled {
 
-        color: #facc15;
+        opacity: 0.4;
+
+        cursor: not-allowed;
+    }
+
+    #searchMessage {
+
+        min-height: 25px;
+
+        margin-top: 12px;
 
         text-align: center;
 
         font-weight: bold;
     }
 
-    .section-header {
-        display: flex;
+    .success {
 
-        justify-content: space-between;
+        color: #69efab;
+    }.error {
 
-        align-items: center;
-    }
+            color: #ff8195;
+        }
 
-    .refresh-button {
-        padding: 10px 15px;
+        .title-row {
 
-        background: #64748b;
-    }
+            display: flex;
 
-    #requestsList,
-    #friendsList {
-        background: #111827;
+            align-items: center;
 
-        border: 1px solid #334155;
+            justify-content:
+                space-between;
+        }
 
-        border-radius: 12px;
+        .refresh-button {
 
-        padding: 10px;
+            height: 37px;
 
-        min-height: 90px;
-    }
+            padding:
+                0
+                17px;
 
-    .friend-request,
-    .friend-item {
-        display: flex;
+            border: none;
 
-        align-items: center;
+            border-radius: 7px;
 
-        gap: 8px;
+            background: #8396bd;
 
-        background: #1f2937;
+            color: white;
 
-        padding: 12px;
+            font-weight: bold;
+        }
 
-        margin-bottom: 8px;
+        .empty {
 
-        border-radius: 10px;
-    }
+            padding: 24px;
 
-    .friend-name {
-        flex: 1;
+            border-radius: 9px;
 
-        font-weight: bold;
-    }
+            background: #151b30;
 
-    .accept-button {
-        background: #22c55e;
+            color: #b7c2da;
 
-        padding: 9px 12px;
-    }
+            text-align: center;
+        }
 
-    .reject-button {
-        background: #ef4444;
+        .request-item,
+        .friend-item {
 
-        padding: 9px 12px;
-    }
+            display: flex;
 
-    .empty {
-        text-align: center;
+            align-items: center;
 
-        padding: 25px;
+            gap: 10px;
 
-        color: #64748b;
-    }
+            margin-bottom: 10px;
 
-    .back-button {
-        width: 100%;
+            padding: 15px;
 
-        height: 45px;
+            border-radius: 9px;
 
-        background: #334155;
-    }
+            background: #151b30;
+        }
+
+        .person-data {
+
+            flex: 1;
+        }
+
+        .person-name {
+
+            font-size: 18px;
+
+            font-weight: bold;
+        }
+
+        .person-id {
+
+            margin-top: 4px;
+
+            color: #5bbaff;
+
+            font-size: 13px;
+        }
+
+        .accept-button {
+
+            padding:
+                9px
+                14px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            background: #32c78b;
+
+            color: white;
+
+            font-weight: bold;
+        }
+
+        .reject-button {
+
+            padding:
+                9px
+                14px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            background: #d95569;
+
+            color: white;
+
+            font-weight: bold;
+        }
 
   </style>
 
@@ -242,86 +405,130 @@
 
 <body>
 
+
+<button
+        class="back-button"
+        onclick="goBack()">
+
+  ←
+
+</button>
+
+
 <div class="page">
 
-  <h1>FRIENDS</h1>
+
+  <h1>
+    FRIENDS
+  </h1>
 
 
-  <!-- MY PLAYER ID -->
+  <!-- CURRENT PLAYER -->
 
-  <div class="card player-card">
+  <div class="player-box">
 
-    <div class="small-title">
+    <div class="small-label">
       YOUR PLAYER ID
     </div>
 
-    <div id="myPlayerId">
+
+    <div id="playerId">
       Loading...
-    </div><div class="help-text">
-    Share this Player ID with your friends
-  </div>
+    </div>
+
+
+    <div class="hint">
+      Share this Player ID with your friends
+    </div>
 
   </div>
+
 
 
   <!-- ADD FRIEND -->
 
   <div class="card">
 
-    <h2>ADD A FRIEND</h2>
+    <h2>
+      ADD A FRIEND
+    </h2>
 
-    <div class="help-text">
-      Enter your friend's Name#Code
-    </div>
 
-    <br>
+    <label>
+      Enter Username, Code or Name#Code
+    </label>
+
 
     <div class="search-row">
 
       <input
-              id="playerIdField"
+              id="searchInput"
               type="text"
-              placeholder="Example: Marsuki#482917">
+              placeholder="Example: Shoon#274143">
+
 
       <button
               class="search-button"
               onclick="searchPlayer()">
+
         SEARCH
+
       </button>
 
     </div>
 
+
+    <div id="foundPlayer">
+
+      <div id="foundName"></div>
+
+      <div id="foundId"></div>
+
+    </div>
+
+
     <button
-            class="send-button"
-            onclick="sendFriendRequest()">
+            id="sendButton"
+            onclick="sendFriendRequest()"
+            disabled>
+
       SEND FRIEND REQUEST
+
     </button>
 
-    <p id="messageLabel"></p>
+
+    <div id="searchMessage"></div>
 
   </div>
 
 
-  <!-- REQUESTS -->
+
+  <!-- FRIEND REQUESTS -->
 
   <div class="card">
 
-    <div class="section-header">
+    <div class="title-row">
 
-      <h2>FRIEND REQUESTS</h2>
+      <h2>
+        FRIEND REQUESTS
+      </h2>
+
 
       <button
               class="refresh-button"
-              onclick="refreshFriends()">
+              onclick="loadRequests()">
+
         REFRESH
+
       </button>
 
     </div>
+
 
     <div id="requestsList">
 
       <div class="empty">
-        Loading...
+        Loading requests...
       </div>
 
     </div>
@@ -329,671 +536,955 @@
   </div>
 
 
-  <!-- FRIENDS -->
+
+  <!-- FRIEND LIST -->
 
   <div class="card">
 
-    <h2>MY FRIENDS</h2>
+    <div class="title-row">
+
+      <h2>
+        MY FRIENDS
+      </h2>
+
+
+      <button
+              class="refresh-button"
+              onclick="loadFriends()">
+
+        REFRESH
+
+      </button>
+
+    </div>
+
 
     <div id="friendsList">
 
       <div class="empty">
-        Loading...
+        Loading friends...
       </div>
 
     </div>
 
   </div>
 
-
-  <button
-          class="back-button"
-          onclick="goBack()">
-    BACK
-  </button>
-
 </div>
 
 
-<script>
 
-  // ==========================================
-  // LOGIN USER
-  // ==========================================
-
-  const params =
-      new URLSearchParams(
-          window.location.search
-      );
-
-  const loginUser =
-      params.get("user");
-
-  let currentUser = null;
-
-  let searchedUser = null;
+<script>var parameters =
+    new URLSearchParams(
+        window.location.search
+    );
 
 
-  // ==========================================
-  // PAGE START
-  // ==========================================
-
-  document.addEventListener(
-      "DOMContentLoaded",
-      async function () {
-
-          if (!loginUser) {
-
-              document.getElementById(
-                  "myPlayerId"
-              ).textContent =
-                  "Unknown Player";
-
-              showMessage(
-                  "Login user missing."
-              );
-
-              return;
-          }
-
-          await loadCurrentUser();
-      }
-  );
+var username =
+    parameters.get("user");
 
 
-  // ==========================================
-  // CURRENT USER
-  // ==========================================
+if (!username) {
 
-  async function loadCurrentUser() {
-
-      try {
-
-          const response =
-              await fetch(
-                  "/api/friends/me?username=" +
-                  encodeURIComponent(
-                      loginUser
-                  )
-              );
-
-          const data =
-              await response.json();
-
-          if (!response.ok) {
-
-              document.getElementById(
-                  "myPlayerId"
-              ).textContent =
-                  "Unknown Player";
-
-              showMessage(
-                  data.message ||
-                  "Cannot load user."
-              );
-
-              return;
-          }
-
-          currentUser = data;
-
-          document.getElementById(
-              "myPlayerId"
-          ).textContent =
-              data.username +
-              "#" +
-              data.friendCode;
-
-          await loadRequests();
-
-          await loadFriends();
-
-      } catch (error) {
-
-          console.error(error);
-
-          document.getElementById(
-              "myPlayerId"
-          ).textContent =
-              "Unknown Player";
-
-          showMessage(
-              "Cannot connect to server."
-          );
-      }
-  }
+    username =
+        sessionStorage.getItem(
+            "username"
+        );
+}
 
 
-  // ==========================================
-  // SEARCH
-  // ==========================================
+if (!username) {
 
-  async function searchPlayer() {
+    window.location.replace(
+        "/login.html"
+    );
+}
 
-      searchedUser = null;const playerId =
-            document.getElementById(
-                "playerIdField"
-            ).value.trim();
 
-        if (!playerId) {
+sessionStorage.setItem(
+    "username",
+    username
+);
 
-            showMessage(
-                "Enter Player ID."
+
+var selectedTarget =
+    null;
+
+
+
+// =================================================
+// CURRENT USER
+// =================================================
+
+async function loadMe() {
+
+    try {
+
+        var response =
+            await fetch(
+                "/api/friends/me?username="
+                + encodeURIComponent(username)
             );
+
+
+        var data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            document.getElementById(
+                "playerId"
+            ).textContent =
+                data.message ||
+                "Cannot load player.";
 
             return;
         }
 
-        try {
 
-            const response =
-                await fetch(
-                    "/api/friends/search?playerId=" +
-                    encodeURIComponent(
-                        playerId
-                    )
-                );
+        document.getElementById(
+            "playerId"
+        ).textContent =
+            data.playerId;
 
-            const data =
-                await response.json();
 
-            if (!response.ok) {
+        sessionStorage.setItem(
+            "friendCode",
+            data.friendCode
+        );
 
-                showMessage(
-                    data.message ||
-                    "Player not found."
-                );
 
-                return;
-            }
+    } catch (error) {
 
-            if (
-                currentUser &&
-                Number(data.id) ===
-                Number(currentUser.id)
-            ) {
+        console.error(error);
 
-                showMessage(
-                    "You cannot add yourself."
-                );
 
-                return;
-            }
+        document.getElementById(
+            "playerId"
+        ).textContent =
+            "Cannot connect to server.";
+    }
+}
 
-            searchedUser = data;
 
-            showMessage(
-                "Found: " +
-                data.username +
-                "#" +
-                data.friendCode
-            );
 
-        } catch (error) {
+// =================================================
+// SEARCH
+// =================================================
 
-            console.error(error);
+async function searchPlayer() {
 
-            showMessage(
-                "Search failed."
-            );
-        }
+    var query =
+        document.getElementById(
+            "searchInput"
+        ).value.trim();
+
+
+    var message =
+        document.getElementById(
+            "searchMessage"
+        );
+
+
+    selectedTarget =
+        null;
+
+
+    document.getElementById(
+        "sendButton"
+    ).disabled =
+        true;
+
+
+    document.getElementById(
+        "foundPlayer"
+    ).style.display =
+        "none";
+
+
+    message.className =
+        "error";
+
+
+    message.textContent =
+        "";
+
+
+    if (!query) {
+
+        message.textContent =
+            "Please enter a Player ID.";
+
+        return;
     }
 
 
-    // ==========================================
-    // SEND REQUEST
-    // ==========================================
+    try {
 
-    async function sendFriendRequest() {
+        var url =
+            "/api/friends/search?query="
+            + encodeURIComponent(query)
+            + "&username="
+            + encodeURIComponent(username);
 
-        if (!currentUser) {
 
-            showMessage(
-                "Current user not loaded."
-            );
+        var response =
+            await fetch(url);
+
+
+        var data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            message.textContent =
+                data.message ||
+                "Player not found.";
 
             return;
         }
 
-        if (!searchedUser) {
 
-            showMessage(
-                "Search Player ID first."
-            );
+        selectedTarget =
+            data.playerId;
 
-            return;
-        }
 
-        try {
+        document.getElementById(
+            "foundName"
+        ).textContent =
+            data.username;
 
-            const url =
-                "/api/friends/request" +
-                "?requesterId=" +
-                encodeURIComponent(
-                    currentUser.id
-                ) +
-                "&receiverId=" +
-                encodeURIComponent(
-                    searchedUser.id
-                );
 
-            const response =
-                await fetch(
-                    url,
-                    {
-                        method: "POST"
-                    }
-                );
+        document.getElementById(
+            "foundId"
+        ).textContent =
+            data.playerId;
 
-            const data =
-                await response.json();
 
-            showMessage(
-                data.message
-            );
+        document.getElementById(
+            "foundPlayer"
+        ).style.display =
+            "block";
 
-            if (response.ok) {
 
-                document.getElementById(
-                    "playerIdField"
-                ).value = "";
+        document.getElementById(
+            "sendButton"
+        ).disabled =
+            false;
 
-                searchedUser = null;
 
-                await loadRequests();
+        message.className =
+            "success";
 
-                await loadFriends();
-            }
 
-        } catch (error) {
+        message.textContent =
+            "Player found.";
 
-            console.error(error);
 
-            showMessage(
-                "Cannot send friend request."
-            );
-        }
+    } catch (error) {
+
+        console.error(error);
+
+
+        message.textContent =
+            "Cannot connect to server.";
+    }
+}
+
+
+
+// =================================================
+// SEND REQUEST
+// =================================================
+
+async function sendFriendRequest() {
+
+    var message =
+        document.getElementById(
+            "searchMessage"
+        );
+
+
+    if (!selectedTarget) {
+
+        message.className =
+            "error";
+
+
+        message.textContent =
+            "Search Player ID first.";
+
+        return;
     }
 
 
-    // ==========================================
-    // LOAD REQUESTS
-    // ==========================================
+    try {
 
-    async function loadRequests() {
+        var response =
+            await fetch(
+                "/api/friends/request",
+                {
 
-        if (!currentUser) {
-            return;
-        }
+                    method:
+                        "POST",
 
-        const container =
-            document.getElementById(
-                "requestsList"
-            );
+                    headers: {
 
-        try {
+                        "Content-Type":
+                            "application/json"
+                    },body:
+                        JSON.stringify({
 
-            const response =
-                await fetch(
-                    "/api/friends/requests?userId=" +
-                    encodeURIComponent(
-                        currentUser.id
-                    )
-                );
+                            username:
+                                username,
 
-            const requests =
-                await response.json();
-
-            container.innerHTML = "";
-
-            if (!response.ok) {
-
-                container.innerHTML =
-                    '<div class="empty">' +
-                    'Cannot load requests.' +
-                    '</div>';
-
-                return;
-            }
-
-            if (
-                !Array.isArray(requests) ||
-                requests.length === 0
-            ) {container.innerHTML =
-                    '<div class="empty">' +
-                    'No pending requests.' +
-                    '</div>';
-
-                return;
-            }
-
-            requests.forEach(
-                request => {
-
-                    const row =
-                        document.createElement(
-                            "div"
-                        );
-
-                    row.className =
-                        "friend-request";
-
-
-                    const name =
-                        document.createElement(
-                            "div"
-                        );
-
-                    name.className =
-                        "friend-name";
-
-                    name.textContent =
-                        request.username +
-                        "#" +
-                        request.friendCode;
-
-
-                    const accept =
-                        document.createElement(
-                            "button"
-                        );
-
-                    accept.className =
-                        "accept-button";
-
-                    accept.textContent =
-                        "ACCEPT";
-
-                    accept.onclick =
-                        () =>
-                            acceptRequest(
-                                request.friendId
-                            );
-
-
-                    const reject =
-                        document.createElement(
-                            "button"
-                        );
-
-                    reject.className =
-                        "reject-button";
-
-                    reject.textContent =
-                        "REJECT";
-
-                    reject.onclick =
-                        () =>
-                            rejectRequest(
-                                request.friendId
-                            );
-
-
-                    row.appendChild(name);
-
-                    row.appendChild(accept);
-
-                    row.appendChild(reject);
-
-                    container.appendChild(row);
+                            target:
+                                selectedTarget
+                        })
                 }
             );
 
-        } catch (error) {
 
-            console.error(error);
+        var data =
+            await response.json();
 
-            container.innerHTML =
-                '<div class="empty">' +
-                'Cannot load requests.' +
-                '</div>';
+
+        if (!response.ok) {
+
+            message.className =
+                "error";
+
+
+            message.textContent =
+                data.message ||
+                "Cannot send request.";
+
+            return;
         }
+
+
+        message.className =
+            "success";
+
+
+        message.textContent =
+            data.message ||
+            "Friend request sent!";
+
+
+        document.getElementById(
+            "sendButton"
+        ).disabled =
+            true;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        message.className =
+            "error";
+
+
+        message.textContent =
+            "Cannot connect to server.";
     }
+}
 
 
-    // ==========================================
-    // ACCEPT
-    // ==========================================
 
-    async function acceptRequest(
-        friendId
-    ) {
+// =================================================
+// LOAD REQUESTS
+// =================================================
 
-        try {
+async function loadRequests() {
 
-            const response =
-                await fetch(
-                    "/api/friends/" +
-                    encodeURIComponent(friendId) +
-                    "/accept?userId=" +
-                    encodeURIComponent(
-                        currentUser.id
-                    ),
-                    {
-                        method: "POST"
-                    }
-                );
+    var container =
+        document.getElementById(
+            "requestsList"
+        );
 
-            const data =
-                await response.json();
 
-            showMessage(
-                data.message
+    container.innerHTML =
+        "";
+
+
+    var loading =
+        document.createElement(
+            "div"
+        );
+
+
+    loading.className =
+        "empty";
+
+
+    loading.textContent =
+        "Loading requests...";
+
+
+    container.appendChild(
+        loading
+    );
+
+
+    try {
+
+        var response =
+            await fetch(
+                "/api/friends/requests?username="
+                + encodeURIComponent(username)
             );
 
-            if (response.ok) {
 
-                await loadRequests();
+        var data =
+            await response.json();
 
-                await loadFriends();
+
+        console.log(
+            "REQUEST DATA:",
+            data
+        );
+
+
+        container.innerHTML =
+            "";
+
+
+        if (!response.ok) {
+
+            showEmpty(
+                container,
+                data.message ||
+                "Cannot load requests."
+            );
+
+            return;
+        }
+
+
+        if (!Array.isArray(data)
+                || data.length === 0) {
+
+            showEmpty(
+                container,
+                "No friend requests."
+            );
+
+            return;
+        }
+
+
+        data.forEach(
+            function (item) {
+
+                var row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.className =
+                    "request-item";
+
+
+                var info =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                info.className =
+                    "person-data";
+
+
+                var name =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                name.className =
+                    "person-name";
+
+
+                name.textContent =
+                    item.username;
+
+
+                var playerId =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                playerId.className =
+                    "person-id";
+
+
+                playerId.textContent =
+                    item.playerId;
+
+
+                info.appendChild(
+                    name
+                );
+
+
+                info.appendChild(
+                    playerId
+                );
+
+
+                var accept =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                accept.className =
+                    "accept-button";
+
+
+                accept.textContent =
+                    "ACCEPT";
+
+
+                accept.onclick =
+                    function () {
+
+                        acceptRequest(
+                            item.friendId
+                        );
+                    };
+
+
+                var reject =
+                    document.createElement(
+                        "button"
+                    );reject.className =
+                    "reject-button";
+
+
+                reject.textContent =
+                    "REJECT";
+
+
+                reject.onclick =
+                    function () {
+
+                        rejectRequest(
+                            item.friendId
+                        );
+                    };
+
+
+                row.appendChild(
+                    info
+                );
+
+
+                row.appendChild(
+                    accept
+                );
+
+
+                row.appendChild(
+                    reject
+                );
+
+
+                container.appendChild(
+                    row
+                );
             }
+        );
 
-        } catch (error) {
 
-            console.error(error);
+    } catch (error) {
 
-            showMessage(
+        console.error(
+            error
+        );
+
+
+        container.innerHTML =
+            "";
+
+
+        showEmpty(
+            container,
+            "Cannot load requests."
+        );
+    }
+}
+
+
+
+// =================================================
+// ACCEPT
+// =================================================
+
+async function acceptRequest(
+    friendId
+) {
+
+    try {
+
+        var url =
+            "/api/friends/"
+            + friendId
+            + "/accept?username="
+            + encodeURIComponent(
+                username
+            );
+
+
+        var response =
+            await fetch(
+                url,
+                {
+                    method:
+                        "POST"
+                }
+            );
+
+
+        var data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                data.message ||
                 "Cannot accept request."
             );
-        }
-    }
-
-
-    // ==========================================
-    // REJECT
-    // ==========================================
-
-    async function rejectRequest(
-        friendId
-    ) {
-
-        try {
-
-            const response =
-                await fetch(
-                    "/api/friends/" +
-                    encodeURIComponent(friendId) +
-                    "/reject?userId=" +
-                    encodeURIComponent(
-                        currentUser.id
-                    ),
-                    {
-                        method: "DELETE"
-                    }
-                );
-
-            const data =
-                await response.json();
-
-            showMessage(
-                data.message
-            );
-
-            if (response.ok) {
-
-                await loadRequests();await loadFriends();
-            }
-
-        } catch (error) {
-
-            console.error(error);
-
-            showMessage(
-                "Cannot reject request."
-            );
-        }
-    }
-
-
-    // ==========================================
-    // LOAD FRIENDS
-    // ==========================================
-
-    async function loadFriends() {
-
-        if (!currentUser) {
-            return;
-        }
-
-        const container =
-            document.getElementById(
-                "friendsList"
-            );
-
-        try {
-
-            const response =
-                await fetch(
-                    "/api/friends/list?userId=" +
-                    encodeURIComponent(
-                        currentUser.id
-                    )
-                );
-
-            const friends =
-                await response.json();
-
-            container.innerHTML = "";
-
-            if (!response.ok) {
-
-                container.innerHTML =
-                    '<div class="empty">' +
-                    'Cannot load friends.' +
-                    '</div>';
-
-                return;
-            }
-
-            if (
-                !Array.isArray(friends) ||
-                friends.length === 0
-            ) {
-
-                container.innerHTML =
-                    '<div class="empty">' +
-                    'No friends yet.' +
-                    '</div>';
-
-                return;
-            }
-
-            friends.forEach(
-                friend => {
-
-                    const row =
-                        document.createElement(
-                            "div"
-                        );
-
-                    row.className =
-                        "friend-item";
-
-
-                    const name =
-                        document.createElement(
-                            "div"
-                        );
-
-                    name.className =
-                        "friend-name";
-
-                    name.textContent =
-                        friend.username +
-                        "#" +
-                        friend.friendCode;
-
-
-                    row.appendChild(name);
-
-                    container.appendChild(row);
-                }
-            );
-
-        } catch (error) {
-
-            console.error(error);
-
-            container.innerHTML =
-                '<div class="empty">' +
-                'Cannot load friends.' +
-                '</div>';
-        }
-    }
-
-
-    // ==========================================
-    // REFRESH
-    // ==========================================
-
-    async function refreshFriends() {
-
-        if (!currentUser) {
-
-            showMessage(
-                "Current user not loaded."
-            );
 
             return;
         }
+
+
+        alert(
+            "Friend request accepted!"
+        );
+
 
         await loadRequests();
 
         await loadFriends();
 
-        showMessage(
-            "Updated."
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        alert(
+            "Cannot connect to server."
         );
     }
+}
 
 
-    // ==========================================
-    // MESSAGE
-    // ==========================================
 
-    function showMessage(message) {
+// =================================================
+// REJECT
+// =================================================
 
-        document.getElementById(
-            "messageLabel"
-        ).textContent =
-            message || "";
-    }
+async function rejectRequest(
+    friendId
+) {
 
+    try {
 
-    // ==========================================
-    // BACK
-    // ==========================================
-
-    function goBack() {
-
-        window.location.href =
-            "homepage.html?user=" +
-            encodeURIComponent(
-                loginUser || ""
+        var url =
+            "/api/friends/"
+            + friendId
+            + "/reject?username="
+            + encodeURIComponent(
+                username
             );
+
+
+        var response =
+            await fetch(
+                url,
+                {
+                    method:
+                        "POST"
+                }
+            );
+
+
+        var data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                data.message ||
+                "Cannot reject request."
+            );
+
+            return;
+        }
+
+
+        await loadRequests();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        alert(
+            "Cannot connect to server."
+        );
     }
+}
+
+
+
+// =================================================
+// FRIEND LIST
+// =================================================
+
+async function loadFriends() {
+
+    var container =
+        document.getElementById(
+            "friendsList"
+        );
+
+
+    container.innerHTML =
+        "";
+
+
+    try {
+
+        var response =
+            await fetch(
+                "/api/friends/list?username="
+                + encodeURIComponent(
+                    username
+                )
+            );
+
+
+        var data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            showEmpty(
+                container,
+                "Cannot load friends."
+            );
+
+            return;
+        }
+
+
+        if (!Array.isArray(data)
+                || data.length === 0) {
+
+            showEmpty(
+                container,
+                "No friends yet."
+            );
+
+            return;
+        }
+
+
+        data.forEach(
+            function (item) {
+
+                var row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.className =
+                    "friend-item";var info =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                info.className =
+                    "person-data";
+
+
+                var name =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                name.className =
+                    "person-name";
+
+
+                name.textContent =
+                    item.username;
+
+
+                var playerId =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                playerId.className =
+                    "person-id";
+
+
+                playerId.textContent =
+                    item.playerId;
+
+
+                info.appendChild(
+                    name
+                );
+
+
+                info.appendChild(
+                    playerId
+                );
+
+
+                row.appendChild(
+                    info
+                );
+
+
+                container.appendChild(
+                    row
+                );
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        showEmpty(
+            container,
+            "Cannot load friends."
+        );
+    }
+}
+
+
+
+// =================================================
+// EMPTY BOX
+// =================================================
+
+function showEmpty(
+    container,
+    text
+) {
+
+    container.innerHTML =
+        "";
+
+
+    var box =
+        document.createElement(
+            "div"
+        );
+
+
+    box.className =
+        "empty";
+
+
+    box.textContent =
+        text;
+
+
+    container.appendChild(
+        box
+    );
+}
+
+
+
+// =================================================
+// BACK
+// =================================================
+
+function goBack() {
+
+    window.location.href =
+        "/homepage.html?user="
+        + encodeURIComponent(
+            username
+        );
+}
+
+
+
+// =================================================
+// ENTER SEARCH
+// =================================================
+
+document
+    .getElementById(
+        "searchInput"
+    )
+    .addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+
+                searchPlayer();
+            }
+        }
+    );
+
+
+
+// =================================================
+// INITIAL LOAD
+// =================================================
+
+window.addEventListener(
+    "load",
+    function () {
+
+        loadMe();
+
+        loadRequests();
+
+        loadFriends();
+    }
+);
 
 </script>
 
+
 </body>
+<div style="position:fixed;top:0;left:0;background:red;color:white;z-index:999999;">
+  NEW FRIENDS FILE
+</div>
 </html>

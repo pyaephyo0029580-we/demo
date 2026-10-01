@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>MyGaming - Login</title>
+
+  <link rel="stylesheet"
+        href="auth.css">
+</head>
+
+<body>
+
+<div class="auth-container">
+
+  <div class="auth-card">
+
+    <div class="game-logo">
+      🎮
+    </div>
+
+    <h1>LOGIN</h1>
+
+    <p class="subtitle">
+      Welcome back to MyGaming
+    </p>
+
+
+    <label>Email</label>
+
+    <input
+            id="email"
+            type="email"
+            placeholder="Enter your email"
+            autocomplete="email">
+
+
+    <label>Password</label>
+
+    <div class="password-box">
+
+      <input
+              id="password"
+              type="password"
+              placeholder="Enter password"
+              autocomplete="current-password">
+
+      <button
+              type="button"
+              class="eye-button"
+              onclick="togglePassword()">
+        👁
+      </button>
+
+    </div>
+
+
+    <p id="message"></p>
+
+
+    <button
+            id="loginButton"
+            class="main-button"
+            type="button"
+            onclick="login()">
+
+      LOGIN
+
+    </button>
+
+
+    <p class="switch-text">
+
+      Don't have an account?
+
+      <a href="signup.html">
+        Sign Up
+      </a>
+
+    </p>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  function togglePassword() {
+
+      const password =
+          document.getElementById("password");
+
+      if (password.type === "password") {
+
+          password.type = "text";
+
+      } else {
+
+          password.type = "password";
+      }
+  }
+
+
+  async function login() {
+
+      const email =
+          document
+              .getElementById("email")
+              .value
+              .trim();
+
+
+      const password =
+          document
+              .getElementById("password")
+              .value;
+
+
+      const message =
+          document.getElementById("message");
+
+
+      const button =
+          document.getElementById("loginButton");
+
+
+      message.className =
+          "error-message";
+
+      message.textContent =
+          "";
+
+
+      // ==============================
+      // VALIDATION
+      // ==============================
+
+      if (!email || !password) {
+
+          message.textContent =
+              "Please enter email and password.";
+
+          return;
+      }
+
+
+      try {
+
+          button.disabled =
+              true;
+
+          button.textContent =
+              "Logging in...";
+
+
+          // ==============================
+          // CALL SPRING BOOT LOGIN API
+          // ==============================
+
+          const response =
+              await fetch(
+                  "/api/auth/login",
+                  {
+
+                      method: "POST",
+
+                      headers: {
+                          "Content-Type":
+                              "application/json"
+                      },
+
+                      body:
+                          JSON.stringify({
+
+                              email: email,
+
+                              password: password
+
+                          })
+                  }
+              );
+
+
+          // ==============================
+          // READ RESPONSE
+          // ==============================
+
+          const data =
+              await response.json();
+
+
+          console.log(
+              "Login response:",
+              data
+          );
+
+
+          // ==============================
+          // LOGIN FAILED
+          // ==============================
+
+          if (!response.ok || !data.success) {
+
+              message.textContent =
+                  data.message ||
+                  "Login failed.";
+
+              return;
+          }// ==============================
+            // GET USERNAME
+            // ==============================
+
+            const username =
+                data.username;
+
+
+            if (!username) {
+
+                message.textContent =
+                    "Username information is missing.";
+
+                return;
+            }
+
+
+            // ==============================
+            // SAVE LOGIN USER
+            // ==============================
+
+            sessionStorage.setItem(
+                "username",
+                username
+            );
+
+
+            sessionStorage.setItem(
+                "email",
+                email
+            );
+
+
+            if (data.id !== undefined) {
+
+                sessionStorage.setItem(
+                    "userId",
+                    data.id
+                );
+            }
+
+
+            if (data.friendCode) {
+
+                sessionStorage.setItem(
+                    "friendCode",
+                    data.friendCode
+                );
+            }
+
+
+            sessionStorage.setItem(
+                "coins",
+                data.coins || "0"
+            );
+
+
+            // ==============================
+            // SUCCESS MESSAGE
+            // ==============================
+
+            message.className =
+                "success-message";
+
+            message.textContent =
+                "Login successful!";
+
+
+            // ==============================
+            // GO TO HOMEPAGE
+            // ==============================
+
+            window.location.href =
+                "homepage.html?user=" +
+                encodeURIComponent(username);
+
+
+        } catch (error) {
+
+            console.error(
+                "Login error:",
+                error
+            );
+
+
+            message.className =
+                "error-message";
+
+
+            message.textContent =
+                "Cannot connect to server.";
+
+        } finally {
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "LOGIN";
+        }
+    }
+
+
+    // ==============================
+    // ENTER KEY LOGIN
+    // ==============================
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+
+                login();
+            }
+        }
+    );
+
+</script>
+
+</body>
+
+</html>
