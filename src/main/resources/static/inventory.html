@@ -1,223 +1,794 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Among Us - Inventory</title>
+
     <link rel="stylesheet" href="inventory.css">
 </head>
+
+
 <body class="inventory-body">
 
-<!-- ===== TOP BAR ===== -->
+
+<!-- ============================================================
+     TOP BAR
+============================================================ -->
+
 <div class="inv-topbar">
-    <button class="inv-back-btn" onclick="goBack()">✕</button>
-    <span class="inv-nav-tab active" onclick="showTab('colors', this)">🎨 COLORS</span>
-    <span class="inv-nav-tab" onclick="showTab('hats', this)">🎩 HAT</span>
-    <!-- SKIN နဲ့ PET Tab များကို ဖယ်ရှားလိုက်ပါပြီ -->
+
+    <button
+            class="inv-back-btn"
+            onclick="goBack()">
+        ✕
+    </button>
+
+
+    <span
+            class="inv-nav-tab active"
+            onclick="showTab('colors', this)">
+        🎨 COLORS
+    </span>
+
+
+    <span
+            class="inv-nav-tab"
+            onclick="showTab('hats', this)">
+        🎩 HAT
+    </span>
+
 </div>
 
-<!-- ===== MAIN CONTENT ===== -->
+
+
+<!-- ============================================================
+     MAIN CONTENT
+============================================================ -->
+
 <div class="inv-content">
 
-    <!-- LEFT: Item Selection -->
+
+    <!-- ========================================================
+         LEFT SIDE
+    ======================================================== -->
+
     <div class="inv-left">
+
         <div id="tabContent"></div>
+
     </div>
 
-    <!-- RIGHT: Character Preview -->
+
+
+    <!-- ========================================================
+         RIGHT SIDE
+    ======================================================== -->
+
     <div class="inv-right">
+
+
+        <!-- ====================================================
+             CHARACTER PREVIEW
+        ==================================================== -->
+
         <div class="inv-char-pane">
-            <img id="characterImg"
-                 src="Image/Jellypop-Photoroom.png"
-                 class="inv-character"
-                 alt="Character">
-            <img id="hatImg" class="inv-hat" style="display:none;" alt="Hat">
+
+
+            <!--
+                IMPORTANT
+
+                Character နဲ့ Hat ကို
+                container တစ်ခုထဲမှာထားပါတယ်။
+            -->
+
+            <div class="character-layer">
+
+
+                <!-- CHARACTER -->
+
+                <img
+                        id="characterImg"
+                        src="Image/Jellypop-Photoroom.png"
+                        class="inv-character"
+                        alt="Character"
+                >
+
+
+                <!-- HAT -->
+
+                <img
+                        id="hatImg"
+                        class="inv-hat"
+                        alt="Hat"
+                        style="display: none;"
+                >
+
+            </div>
+
         </div>
-        <div class="inv-item-name" id="itemName">RED</div>
-        <div class="inv-equipped">EQUIPPED</div>
+
+
+
+        <!-- ====================================================
+             ITEM NAME
+        ==================================================== -->
+
+        <div
+                id="itemName"
+                class="inv-item-name">
+
+            RED
+
+        </div>
+
+
+
+        <!-- ====================================================
+             EQUIPPED
+        ==================================================== -->
+
+        <div class="inv-equipped">
+
+            EQUIPPED
+
+        </div>
+
+
     </div>
 
 </div>
 
-<script>
-    // ============================================
-    // URL Parameters
-    // ============================================
-    const params = new URLSearchParams(window.location.search);
-    const roomCode = params.get('room') || 'DEFAULT';
-    const username = params.get('user') || 'Player';
 
-    // ============================================
-    // DATA
-    // ============================================
+
+<script>
+
+    /* ============================================================
+       URL
+    ============================================================ */
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    const roomCode =
+        params.get('room') || 'DEFAULT';
+
+    const username =
+        params.get('user') || 'Player';
+
+
+
+    /* ============================================================
+       COLORS
+    ============================================================ */
+
     const COLORS = [
-        ["Red", "#C51111"], ["Blue", "#132ED1"], ["Green", "#117F2D"],
-        ["Pink", "#ED54BA"], ["Orange", "#EF7D0D"], ["Yellow", "#F5F557"],
-        ["Black", "#3F474E"], ["White", "#D6E0F0"], ["Purple", "#6B2FBB"],
-        ["Brown", "#71491E"], ["Cyan", "#38FEDC"], ["Lime", "#50EF39"]
+
+        ["Red", "#C51111"],
+        ["Blue", "#132ED1"],
+        ["Green", "#117F2D"],
+        ["Pink", "#ED54BA"],
+        ["Orange", "#EF7D0D"],
+        ["Yellow", "#F5F557"],
+        ["Black", "#3F474E"],
+        ["White", "#D6E0F0"],
+        ["Purple", "#6B2FBB"],
+        ["Brown", "#71491E"],
+        ["Cyan", "#38FEDC"],
+        ["Lime", "#50EF39"]
+
     ];
+
+
+
+    /* ============================================================
+       HATS
+
+       x     = Left / Right
+       y     = Up / Down
+       scale = Size
+
+       ဒီ values တွေကို Hat တစ်ခုချင်းစီအတွက်
+       သီးသန့်ချိန်နိုင်ပါတယ်။
+    ============================================================ */
 
     const HATS = [
-        ["No Hat", null, 0],
-        ["Hat 1", "Image/Hat1-removebg-preview.png", 0],
-        ["Hat 2", "Image/Hat2-removebg-preview.png", 0],
-        ["Hat 3", "Image/Hat3-removebg-preview.png", 0],
-        ["Hat 4", "Image/Hat4-removebg-preview.png", 0]
-        ["Lufi", "Image/Lufi.png",0],
+
+        {
+            name: "No Hat",
+            path: null,
+            x: 0,
+            y: 0,
+            scale: 1
+        },
+
+
+        {
+            name: "Hat 1",
+            path: "Image/hat1.png",
+
+            /*
+             * Character ရဲ့ center နဲ့ညှိ
+             */
+            x: 0,
+
+            /*
+             * Character head ပေါ်ကိုတင်
+             */
+            y: -105,
+
+            /*
+             * Hat size
+             */
+            scale: 1.5
+        },
+
+
+        {
+            name: "Hat 2",
+            path: "Image/hat2.png",
+
+            x: 0,
+
+            y: -90,
+
+            scale: 1.2
+        },
+
+
+        {
+            name: "Hat 3",
+            path: "Image/hat3.png",
+
+            x: 0,
+
+            y: 35,
+
+            scale: 1.5
+        },
+        {
+            name: "Hat 4",
+            path: "Image/hat4.png",
+
+            x: 0,
+
+            y: -30,
+
+            scale: 1.8
+        },
+        {
+            name: "Hat 5",
+            path: "Image/hat5.png",
+
+            x: 0,
+
+            y: -90,
+
+            scale: 1.2
+        },
+        {
+            name: "Hat 6",
+            path: "Image/hat6.png",
+
+            x: 0,
+
+            y: -90,
+
+            scale: 1.3
+        },
+
+        {
+            name: "Hat 7",
+            path: "Image/hat7.png",
+
+            x: 0,
+
+            y: -30,
+
+            scale: 1.8
+        }
+
     ];
 
+
+
+    /* ============================================================
+       CURRENT STATE
+    ============================================================ */
+
     let currentColor = "Red";
+
     let currentColorHex = "#C51111";
+
     let currentHat = "No Hat";
-    let originalImageSrc = "Image/Jellypop-Photoroom.png";
 
-    // ============================================
-    // Tab Switching
-    // ============================================
-    function showTab(tab, el) {
-        document.querySelectorAll('.inv-nav-tab').forEach(t => t.classList.remove('active'));
-        el.classList.add('active');
+    let originalImageSrc =
+        "Image/Jellypop-Photoroom.png";
 
-        if (tab === 'colors') renderColors();
-        else if (tab === 'hats') renderHats();
-        else renderPlaceholder(tab.toUpperCase());
+
+
+    /* ============================================================
+       TAB
+    ============================================================ */
+
+    function showTab(tab, element) {
+
+        document
+            .querySelectorAll(".inv-nav-tab")
+            .forEach(tabElement => {
+
+                tabElement.classList.remove("active");
+
+            });
+
+
+        element.classList.add("active");
+
+
+        if (tab === "colors") {
+
+            renderColors();
+
+        }
+
+        else if (tab === "hats") {
+
+            renderHats();
+
+        }
+
     }
 
-    // ============================================
-    // COLORS Tab
-    // ============================================
+
+
+    /* ============================================================
+       COLORS
+    ============================================================ */
+
     function renderColors() {
-        let html = '<h2 class="inv-section-title">COLORS</h2><div class="inv-color-grid">';
+
+        let html = `
+
+            <h2 class="inv-section-title">
+                COLORS
+            </h2>
+
+            <div class="inv-color-grid">
+
+        `;
+
+
         COLORS.forEach(([name, hex]) => {
-            const sel = (name === currentColor) ? 'selected' : '';
-            html += '<div class="inv-color-btn ' + sel + '" ' +
-                    'style="background:' + hex + ';" ' +
-                    'onclick="pickColor(\'' + name + '\',\'' + hex + '\')"></div>';
+
+            const selected =
+                name === currentColor
+                    ? "selected"
+                    : "";
+
+
+            html += `
+
+                <div
+                    class="inv-color-btn ${selected}"
+                    style="background:${hex};"
+                    onclick="pickColor('${name}', '${hex}')">
+                </div>
+
+            `;
+
         });
-        html += '</div>';
-        document.getElementById('tabContent').innerHTML = html;
+
+
+        html += `
+
+            </div>
+
+        `;
+
+
+        document
+            .getElementById("tabContent")
+            .innerHTML = html;
+
     }
+
+
+
+    /* ============================================================
+       PICK COLOR
+    ============================================================ */
 
     function pickColor(name, hex) {
+
         currentColor = name;
+
         currentColorHex = hex;
-        document.getElementById('itemName').innerText = name.toUpperCase();
+
+
+        document
+            .getElementById("itemName")
+            .innerText =
+            name.toUpperCase();
+
+
         applyColor(hex);
+
+
+        renderColors();
+
     }
 
-    // ============================================
-    // Color Tinting (Canvas API)
-    // ============================================
+
+
+    /* ============================================================
+       CHARACTER COLOR
+    ============================================================ */
+
     function applyColor(hex) {
-        const img = document.getElementById('characterImg');
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const temp = new Image();
-        temp.crossOrigin = 'anonymous';
+
+        const img =
+            document.getElementById("characterImg");
+
+
+        const canvas =
+            document.createElement("canvas");
+
+
+        const ctx =
+            canvas.getContext("2d");
+
+
+        const temp =
+            new Image();
+
+
+        temp.crossOrigin = "anonymous";
+
         temp.src = originalImageSrc;
 
+
         temp.onload = () => {
+
             canvas.width = temp.width;
+
             canvas.height = temp.height;
-            ctx.drawImage(temp, 0, 0);
 
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const data = imgData.data;
-            const rgb = hexToRgb(hex);
 
-            for (let i = 0; i < data.length; i += 4) {
-                const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
-                if (a < 25) continue;
+            ctx.drawImage(
+                temp,
+                0,
+                0
+            );
 
-                const brightness = (r + g + b) / 3;
-                const isFace = r > 153 && g > 127 && (r - b) > 5;
-                const isDark = brightness < 115;
+
+            const imageData =
+                ctx.getImageData(
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+
+            const data =
+                imageData.data;
+
+
+            const rgb =
+                hexToRgb(hex);
+
+
+            for (
+                let i = 0;
+                i < data.length;
+                i += 4
+            ) {
+
+                const r = data[i];
+
+                const g = data[i + 1];
+
+                const b = data[i + 2];
+
+                const a = data[i + 3];
+
+
+                if (a < 25) {
+                    continue;
+                }
+
+
+                const brightness =
+                    (r + g + b) / 3;
+
+
+                const isFace =
+                    r > 153 &&
+                    g > 127 &&
+                    (r - b) > 5;
+
+
+                const isDark =
+                    brightness < 115;
+
 
                 if (!isFace && !isDark) {
-                    data[i] = rgb.r;
-                    data[i+1] = rgb.g;
-                    data[i+2] = rgb.b;
+
+                    data[i] =
+                        rgb.r;
+
+                    data[i + 1] =
+                        rgb.g;
+
+                    data[i + 2] =
+                        rgb.b;
+
                 }
+
             }
 
-            ctx.putImageData(imgData, 0, 0);
-            img.src = canvas.toDataURL();
+
+            ctx.putImageData(
+                imageData,
+                0,
+                0
+            );
+
+
+            img.src =
+                canvas.toDataURL();
+
         };
+
 
         temp.onerror = () => {
-            console.error('❌ ပုံ load မဖြစ်ပါ:', originalImageSrc);
-            img.src = originalImageSrc;
+
+            console.error(
+                "Character image failed:",
+                originalImageSrc
+            );
+
+
+            img.src =
+                originalImageSrc;
+
         };
+
     }
+
+
+
+    /* ============================================================
+       HEX TO RGB
+    ============================================================ */
 
     function hexToRgb(hex) {
-        const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return m ? {
-            r: parseInt(m[1], 16),
-            g: parseInt(m[2], 16),
-            b: parseInt(m[3], 16)
-        } : { r: 255, g: 0, b: 0 };
-    }
 
-    // ============================================
-    // HATS Tab
-    // ============================================
-    function renderHats() {
-        let html = '<h2 class="inv-section-title">HATS</h2><div class="inv-hat-grid">';
-        HATS.forEach(([name, path, offset]) => {
-            const sel = (name === currentHat) ? 'selected' : '';
-            if (path) {
-                html += '<div class="inv-hat-btn ' + sel + '" ' +
-                        'onclick="pickHat(\'' + name + '\',\'' + path + '\',' + offset + ')">' +
-                        '<img src="' + path + '" alt="' + name + '"></div>';
-            } else {
-                html += '<div class="inv-hat-btn ' + sel + '" ' +
-                        'onclick="pickHat(\'' + name + '\',null,0)">∅</div>';
+        const match =
+            /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
+            .exec(hex);
+
+
+        return match
+            ? {
+
+                r: parseInt(match[1], 16),
+
+                g: parseInt(match[2], 16),
+
+                b: parseInt(match[3], 16)
+
             }
+
+            : {
+
+                r: 255,
+
+                g: 0,
+
+                b: 0
+
+            };
+
+    }
+
+
+
+    /* ============================================================
+       HATS
+    ============================================================ */
+
+    function renderHats() {
+
+        let html = `
+
+            <h2 class="inv-section-title">
+                HATS
+            </h2>
+
+            <div class="inv-hat-grid">
+
+        `;
+
+
+        HATS.forEach((hat, index) => {
+
+            const selected =
+                hat.name === currentHat
+                    ? "selected"
+                    : "";
+
+
+            if (hat.path) {
+
+                html += `
+
+                    <div
+                        class="inv-hat-btn ${selected}"
+                        onclick="pickHat(${index})">
+
+                        <img
+                            src="${hat.path}"
+                            alt="${hat.name}"
+                        >
+
+                    </div>
+
+                `;
+
+            }
+
+            else {
+
+                html += `
+
+                    <div
+                        class="inv-hat-btn ${selected}"
+                        onclick="pickHat(${index})">
+
+                        ∅
+
+                    </div>
+
+                `;
+
+            }
+
         });
-        html += '</div>';
-        document.getElementById('tabContent').innerHTML = html;
+
+
+        html += `
+
+            </div>
+
+        `;
+
+
+        document
+            .getElementById("tabContent")
+            .innerHTML = html;
+
     }
 
-    // ဒီနေရာမှာ pickHat function က နှစ်ခါ ထပ်နေတာကို ရှင်းလင်းလိုက်ပါပြီ
-    function pickHat(name, path, offset) {
-        currentHat = name;
-        document.getElementById('itemName').innerText = name.toUpperCase();
-        const hatImg = document.getElementById('hatImg');
 
-        if (path) {
-            hatImg.src = path;
-            hatImg.style.display = 'block';
-            // CSS ရဲ့ translateX(-50%) နဲ့ ပေါင်းရေးထားပါတယ်
-            hatImg.style.transform = 'translateX(-50%) translateY(' + offset + 'px)';
-        } else {
-            hatImg.style.display = 'none';
+
+    /* ============================================================
+       EQUIP HAT
+    ============================================================ */
+
+    function pickHat(index) {
+
+        const hat =
+            HATS[index];
+
+
+        currentHat =
+            hat.name;
+
+
+        document
+            .getElementById("itemName")
+            .innerText =
+            hat.name.toUpperCase();
+
+
+        const hatImg =
+            document.getElementById("hatImg");
+
+
+        /* ========================================================
+           NO HAT
+        ======================================================== */
+
+        if (!hat.path) {
+
+            hatImg.style.display =
+                "none";
+
+            renderHats();
+
+            return;
+
         }
+
+
+        /* ========================================================
+           HAT IMAGE
+        ======================================================== */
+
+        hatImg.src =
+            hat.path;
+
+
+        hatImg.style.display =
+            "block";
+
+
+        /* ========================================================
+           HAT POSITION
+
+           Character center = Hat center
+
+           x = horizontal
+           y = vertical
+           scale = size
+        ======================================================== */
+
+        hatImg.style.left =
+            `calc(50% + ${hat.x}px)`;
+
+
+        hatImg.style.top =
+            `calc(50% + ${hat.y}px)`;
+
+
+        hatImg.style.transform =
+            `translate(-50%, -50%) scale(${hat.scale})`;
+
+
+        renderHats();
+
     }
 
-    // ============================================
-    // Placeholder
-    // ============================================
-    function renderPlaceholder(name) {
-        document.getElementById('tabContent').innerHTML =
-            '<h2 class="inv-section-title">' + name + '</h2>' +
-            '<p style="color:#b0b0c0; padding: 20px 0;">🚧 ' + name + ' items coming soon...</p>';
-    }
 
-    // ============================================
-    // Navigation
-    // ============================================
+
+    /* ============================================================
+       BACK
+    ============================================================ */
+
     function goBack() {
-        window.location.href = 'homepage.html?user=' + encodeURIComponent(username);
+
+        window.location.href =
+            "homepage.html?user=" +
+            encodeURIComponent(username);
+
     }
 
-    // ============================================
-    // INIT
-    // ============================================
-    window.onload = function() {
+
+
+    /* ============================================================
+       INITIAL LOAD
+    ============================================================ */
+
+    window.onload = function () {
+
         renderColors();
-        setTimeout(() => applyColor(currentColorHex), 100);
+
+
+        setTimeout(() => {
+
+            applyColor(
+                currentColorHex
+            );
+
+        }, 100);
+
     };
+
 </script>
+
+
 </body>
 </html>
