@@ -5,6 +5,8 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.FriendRepository;
 import com.example.demo.repository.UserRepository;
 
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,11 +19,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+
 @RestController
 @RequestMapping("/api/friends")
 public class FriendApiController {
 
     private final FriendRepository friendRepository;
+
     private final UserRepository userRepository;
 
     private final SecureRandom random =
@@ -42,25 +46,49 @@ public class FriendApiController {
 
 
     // =====================================================
-    // CURRENT PLAYER
+    // GET LOGIN USER FROM SESSION
+    // =====================================================
+
+    private Optional<User> getLoggedInUser(
+            HttpSession session
+    ) {
+
+        Long userId =
+                (Long) session.getAttribute(
+                        "userId"
+                );
+
+
+        if (userId == null) {
+
+            return Optional.empty();
+        }
+
+
+        return userRepository.findById(
+                userId
+        );
+    }
+
+
+    // =====================================================
+    // CURRENT LOGIN USER
     // =====================================================
 
     @GetMapping("/me")
     public ResponseEntity<?> getMe(
-            @RequestParam String username
+            HttpSession session
     ) {
 
         Optional<User> optionalUser =
-                userRepository.findByUsername(
-                        username
+                getLoggedInUser(
+                        session
                 );
 
 
         if (optionalUser.isEmpty()) {
 
-            return error(
-                    "User not found."
-            );
+            return notLoggedIn();
         }
 
 
@@ -71,7 +99,9 @@ public class FriendApiController {
 
 
         Map<String, Object> response =
-                userData(user);
+                userData(
+                        user
+                );
 
 
         response.put(
@@ -87,49 +117,42 @@ public class FriendApiController {
 
 
     // =====================================================
-    // SEARCH
-    //
-    // Supports:
-    // Boon
-    // 823132
-    // Boon#823132
+    // SEARCH FRIEND
     // =====================================================
 
     @GetMapping("/search")
     public ResponseEntity<?> search(
             @RequestParam String query,
-            @RequestParam String username
+            HttpSession session
     ) {
 
         Optional<User> currentOptional =
-                userRepository.findByUsername(
-                        username
+                getLoggedInUser(
+                        session
                 );
 
 
         if (currentOptional.isEmpty()) {
 
-            return error(
-                    "Current user not found."
-            );
+            return notLoggedIn();
         }
 
 
-        String search =
+        String searchValue =
                 query.trim();
 
 
-        if (search.isEmpty()) {
+        if (searchValue.isEmpty()) {
 
             return error(
-                    "Please enter a player."
+                    "Please enter Username, Code or Player ID."
             );
         }
 
 
         Optional<User> targetOptional =
                 findTargetUser(
-                        search
+                        searchValue
                 );
 
 
@@ -141,18 +164,18 @@ public class FriendApiController {
         }
 
 
-        User current =
+        User currentUser =
                 currentOptional.get();
 
 
-        User target =
+        User targetUser =
                 ensureFriendCode(
                         targetOptional.get()
                 );
 
 
-        if (current.getId()
-                .equals(target.getId())) {
+        if (currentUser.getId()
+                .equals(targetUser.getId())) {
 
             return error(
                     "You cannot add yourself."
@@ -161,16 +184,15 @@ public class FriendApiController {
 
 
         Map<String, Object> response =
-                userData(target);
+                userData(
+                        targetUser
+                );
 
 
         response.put(
                 "success",
                 true
-        );
-
-
-        return ResponseEntity.ok(
+        );return ResponseEntity.ok(
                 response
         );
     }
@@ -182,39 +204,33 @@ public class FriendApiController {
 
     @PostMapping("/request")
     public ResponseEntity<?> sendRequest(
-            @RequestBody Map<String, String> request
+            @RequestBody Map<String, String> request,
+            HttpSession session
     ) {
 
-        String username =
-                request.getOrDefault(
-                        "username",
-                        ""
-                ).trim();String targetValue =
+        Optional<User> requesterOptional =
+                getLoggedInUser(
+                        session
+                );
+
+
+        if (requesterOptional.isEmpty()) {
+
+            return notLoggedIn();
+        }
+
+
+        String targetValue =
                 request.getOrDefault(
                         "target",
                         ""
                 ).trim();
 
 
-        if (username.isEmpty()
-                || targetValue.isEmpty()) {
+        if (targetValue.isEmpty()) {
 
             return error(
-                    "Username and target are required."
-            );
-        }
-
-
-        Optional<User> requesterOptional =
-                userRepository.findByUsername(
-                        username
-                );
-
-
-        if (requesterOptional.isEmpty()) {
-
-            return error(
-                    "Current user not found."
+                    "Target player is required."
             );
         }
 
@@ -234,15 +250,11 @@ public class FriendApiController {
 
 
         User requester =
-                ensureFriendCode(
-                        requesterOptional.get()
-                );
+                requesterOptional.get();
 
 
         User receiver =
-                ensureFriendCode(
-                        receiverOptional.get()
-                );
+                receiverOptional.get();
 
 
         if (requester.getId()
@@ -304,7 +316,7 @@ public class FriendApiController {
             if ("PENDING".equalsIgnoreCase(status)) {
 
                 return error(
-                        "This player already sent you a request."
+                        "This player already sent you a friend request."
                 );
             }
 
@@ -352,12 +364,10 @@ public class FriendApiController {
                 true
         );
 
-
         response.put(
                 "message",
                 "Friend request sent!"
         );
-
 
         response.put(
                 "friendId",
@@ -371,79 +381,83 @@ public class FriendApiController {
     }
 
 
-    // =====================================================
-    // INCOMING REQUESTS
-    // =====================================================
+// =====================================================
+// INCOMING REQUESTS
+// =====================================================
+@GetMapping("/requests")
+public ResponseEntity<?> getRequests(
+        HttpSession session
+) {
 
-    @GetMapping("/requests")
-    public ResponseEntity<?> getRequests(
-            @RequestParam String username
-    ) {
-
-        Optional<User> userOptional =
-                userRepository.findByUsername(
-                        username
-                );if (userOptional.isEmpty()) {
-
-            return error(
-                    "User not found."
+    Optional<User> optionalUser =
+            getLoggedInUser(
+                    session
             );
-        }
 
 
-        User currentUser =
-                userOptional.get();
+    if (optionalUser.isEmpty()) {
+
+        return notLoggedIn();
+    }
 
 
-        List<Friend> requests =
-                friendRepository
-                        .findByReceiverIdAndStatus(
-                                currentUser.getId(),
-                                "PENDING"
-                        );
+    Long currentUserId =
+            optionalUser
+                    .get()
+                    .getId();
 
 
-        List<Map<String, Object>> response =
-                new ArrayList<>();
-
-
-        for (Friend friend : requests) {
-
-            Optional<User> senderOptional =
-                    userRepository.findById(
-                            friend.getRequesterId()
+    List<Friend> requests =
+            friendRepository
+                    .findByReceiverIdAndStatus(
+                            currentUserId,
+                            "PENDING"
                     );
 
 
-            if (senderOptional.isPresent()) {
-
-                User sender =
-                        ensureFriendCode(
-                                senderOptional.get()
-                        );
+    List<Map<String, Object>> result =
+            new ArrayList<>();
 
 
-                Map<String, Object> item =
-                        userData(sender);
+    for (Friend friend : requests) {
 
-
-                item.put(
-                        "friendId",
-                        friend.getFriendId()
+        Optional<User> senderOptional =
+                userRepository.findById(
+                        friend.getRequesterId()
                 );
 
 
-                response.add(
-                        item
-                );
-            }
+        if (senderOptional.isPresent()) {
+
+            User sender =
+                    ensureFriendCode(
+                            senderOptional.get()
+                    );
+
+
+            Map<String, Object> item =
+                    userData(
+                            sender
+                    );
+
+
+            item.put(
+                    "friendId",
+                    friend.getFriendId()
+            );
+
+
+            result.add(
+                    item
+            );
         }
-
-
-        return ResponseEntity.ok(
-                response
-        );
     }
+
+
+    return ResponseEntity.ok(
+            result
+    );
+}
 
 
     // =====================================================
@@ -453,21 +467,25 @@ public class FriendApiController {
     @PostMapping("/{friendId}/accept")
     public ResponseEntity<?> accept(
             @PathVariable Long friendId,
-            @RequestParam String username
+            HttpSession session
     ) {
 
-        Optional<User> userOptional =
-                userRepository.findByUsername(
-                        username
+        Optional<User> optionalUser =
+                getLoggedInUser(
+                        session
                 );
 
 
-        if (userOptional.isEmpty()) {
+        if (optionalUser.isEmpty()) {
 
-            return error(
-                    "User not found."
-            );
+            return notLoggedIn();
         }
+
+
+        Long currentUserId =
+                optionalUser
+                        .get()
+                        .getId();
 
 
         Optional<Friend> friendOptional =
@@ -488,16 +506,22 @@ public class FriendApiController {
                 friendOptional.get();
 
 
+        // Request က login ဝင်ထားတဲ့ user ဆီပို့ထားတာ
+        // ဟုတ်မဟုတ်စစ်
         if (!friend.getReceiverId()
-                .equals(
-                        userOptional
-                                .get()
-                                .getId()
-                )) {
+                .equals(currentUserId)) {
 
-            return error(
-                    "You cannot accept this request."
-            );
+            return ResponseEntity
+                    .status(403)
+                    .body(
+                            Map.of(
+                                    "success",
+                                    false,
+
+                                    "message",
+                                    "This request is not for you."
+                            )
+                    );
         }
 
 
@@ -522,7 +546,7 @@ public class FriendApiController {
 
 
         return success(
-                "Friend request accepted!"
+                "Friend request accepted."
         );
     }
 
@@ -534,21 +558,22 @@ public class FriendApiController {
     @PostMapping("/{friendId}/reject")
     public ResponseEntity<?> reject(
             @PathVariable Long friendId,
-            @RequestParam String username
+            HttpSession session
     ) {
 
-        Optional<User> userOptional =
-                userRepository.findByUsername(
-                        username
+        Optional<User> optionalUser =
+                getLoggedInUser(
+                        session
                 );
 
 
-        if (userOptional.isEmpty()) {
+        if (optionalUser.isEmpty()) {
 
-            return error(
-                    "User not found."
-            );
-        }
+            return notLoggedIn();
+        }Long currentUserId =
+                optionalUser
+                        .get()
+                        .getId();
 
 
         Optional<Friend> friendOptional =
@@ -570,13 +595,19 @@ public class FriendApiController {
 
 
         if (!friend.getReceiverId()
-                .equals(
-                        userOptional
-                                .get()
-                                .getId()
-                )) {return error(
-                "You cannot reject this request."
-        );
+                .equals(currentUserId)) {
+
+            return ResponseEntity
+                    .status(403)
+                    .body(
+                            Map.of(
+                                    "success",
+                                    false,
+
+                                    "message",
+                                    "This request is not for you."
+                            )
+                    );
         }
 
 
@@ -597,25 +628,25 @@ public class FriendApiController {
 
     @GetMapping("/list")
     public ResponseEntity<?> getFriends(
-            @RequestParam String username
+            HttpSession session
     ) {
 
-        Optional<User> userOptional =
-                userRepository.findByUsername(
-                        username
+        Optional<User> optionalUser =
+                getLoggedInUser(
+                        session
                 );
 
 
-        if (userOptional.isEmpty()) {
+        if (optionalUser.isEmpty()) {
 
-            return error(
-                    "User not found."
-            );
+            return notLoggedIn();
         }
 
 
-        User current =
-                userOptional.get();
+        Long currentUserId =
+                optionalUser
+                        .get()
+                        .getId();
 
 
         Set<Long> friendUserIds =
@@ -625,7 +656,7 @@ public class FriendApiController {
         List<Friend> outgoing =
                 friendRepository
                         .findByRequesterIdAndStatus(
-                                current.getId(),
+                                currentUserId,
                                 "ACCEPTED"
                         );
 
@@ -641,7 +672,7 @@ public class FriendApiController {
         List<Friend> incoming =
                 friendRepository
                         .findByReceiverIdAndStatus(
-                                current.getId(),
+                                currentUserId,
                                 "ACCEPTED"
                         );
 
@@ -654,14 +685,16 @@ public class FriendApiController {
         }
 
 
-        List<Map<String, Object>> response =
+        List<Map<String, Object>> result =
                 new ArrayList<>();
 
 
-        for (Long id : friendUserIds) {
+        for (Long friendUserId : friendUserIds) {
 
             Optional<User> friendOptional =
-                    userRepository.findById(id);
+                    userRepository.findById(
+                            friendUserId
+                    );
 
 
             if (friendOptional.isPresent()) {
@@ -672,21 +705,23 @@ public class FriendApiController {
                         );
 
 
-                response.add(
-                        userData(friendUser)
+                result.add(
+                        userData(
+                                friendUser
+                        )
                 );
             }
         }
 
 
         return ResponseEntity.ok(
-                response
+                result
         );
     }
 
 
     // =====================================================
-    // FIND TARGET
+    // SEARCH TARGET
     // =====================================================
 
     private Optional<User> findTargetUser(
@@ -697,11 +732,14 @@ public class FriendApiController {
                 value.trim();
 
 
-        // Name#Code
+        // Example:
+        // Shoon#274143
         if (search.contains("#")) {
 
             int index =
-                    search.lastIndexOf("#");
+                    search.lastIndexOf(
+                            "#"
+                    );
 
 
             String name =
@@ -714,36 +752,28 @@ public class FriendApiController {
             String code =
                     search.substring(
                             index + 1
-                    ).trim();
+                    ).trim();Optional<User> optionalUser =
+                    userRepository
+                            .findByFriendCode(
+                                    code
+                            );
 
 
-            Optional<User> byCode =
-                    userRepository.findByFriendCode(
-                            code
-                    );
-
-
-            if (byCode.isEmpty()) {
+            if (optionalUser.isEmpty()) {
 
                 return Optional.empty();
             }
 
 
             User user =
-                    byCode.get();
-
-
-            if (name.isEmpty()) {
-
-                return byCode;
-            }
+                    optionalUser.get();
 
 
             if (user.getUsername() != null
                     && user.getUsername()
                     .equalsIgnoreCase(name)) {
 
-                return byCode;
+                return optionalUser;
             }
 
 
@@ -751,26 +781,29 @@ public class FriendApiController {
         }
 
 
-        // Username
-        Optional<User> byUsername =
+        // Search Username
+        Optional<User> usernameResult =
                 userRepository.findByUsername(
                         search
                 );
 
 
-        if (byUsername.isPresent()) {
+        if (usernameResult.isPresent()) {
 
-            return byUsername;
+            return usernameResult;
         }
 
 
-        // Friend code
+        // Search Friend Code
         return userRepository
                 .findByFriendCode(
                         search
                 );
-    }// =====================================================
-    // ENSURE FRIEND CODE
+    }
+
+
+    // =====================================================
+    // FRIEND CODE
     // =====================================================
 
     private User ensureFriendCode(
@@ -796,52 +829,6 @@ public class FriendApiController {
         return user;
     }
 
-
-    // =====================================================
-    // USER DATA
-    // =====================================================
-
-    private Map<String, Object> userData(
-            User user
-    ) {
-
-        Map<String, Object> data =
-                new HashMap<>();
-
-
-        data.put(
-                "id",
-                user.getId()
-        );
-
-
-        data.put(
-                "username",
-                user.getUsername()
-        );
-
-
-        data.put(
-                "friendCode",
-                user.getFriendCode()
-        );
-
-
-        data.put(
-                "playerId",
-                user.getUsername()
-                        + "#"
-                        + user.getFriendCode()
-        );
-
-
-        return data;
-    }
-
-
-    // =====================================================
-    // GENERATE CODE
-    // =====================================================
 
     private String generateFriendCode() {
 
@@ -876,52 +863,85 @@ public class FriendApiController {
 
 
     // =====================================================
-    // SUCCESS
+    // USER JSON
     // =====================================================
 
-    private ResponseEntity<Map<String, Object>>
-    success(String message) {
+    private Map<String, Object> userData(
+            User user
+    ) {
 
         Map<String, Object> data =
                 new HashMap<>();
 
 
         data.put(
+                "id",
+                user.getId()
+        );
+
+        data.put(
+                "username",
+                user.getUsername()
+        );
+
+        data.put(
+                "friendCode",
+                user.getFriendCode()
+        );
+
+        data.put(
+                "playerId",
+                user.getUsername()
+                        + "#"
+                        + user.getFriendCode()
+        );
+
+
+        return data;
+    }
+
+
+    // =====================================================
+    // RESPONSES
+    // =====================================================
+
+    private ResponseEntity<Map<String, Object>>
+    success(String message) {
+
+        Map<String, Object> result =
+                new HashMap<>();
+
+
+        result.put(
                 "success",
                 true
         );
 
-
-        data.put(
+        result.put(
                 "message",
                 message
         );
 
 
         return ResponseEntity.ok(
-                data
+                result
         );
     }
 
 
-    // =====================================================
-    // ERROR
-    // =====================================================
-
     private ResponseEntity<Map<String, Object>>
     error(String message) {
 
-        Map<String, Object> data =
+        Map<String, Object> result =
                 new HashMap<>();
 
 
-        data.put(
+        result.put(
                 "success",
                 false
         );
 
-
-        data.put(
+        result.put(
                 "message",
                 message
         );
@@ -929,6 +949,28 @@ public class FriendApiController {
 
         return ResponseEntity
                 .badRequest()
-                .body(data);
+                .body(result);
+    }
+
+
+    private ResponseEntity<Map<String, Object>>
+    notLoggedIn() {
+
+        Map<String, Object> result =
+                new HashMap<>();
+
+
+        result.put(
+                "success",
+                false
+        );result.put(
+                "message",
+                "Please login first."
+        );
+
+
+        return ResponseEntity
+                .status(401)
+                .body(result);
     }
 }
