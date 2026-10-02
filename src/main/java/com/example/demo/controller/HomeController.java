@@ -8,6 +8,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String startPage() {
-        return "redirect:/login.html";
+        return "redirect:/signup.html";
     }
 }

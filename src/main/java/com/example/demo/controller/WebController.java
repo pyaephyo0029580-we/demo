@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class WebController {
 
     // Login Page
-    @GetMapping("/login")
+    @GetMapping("/signup")
     public String login() {
-        return "redirect:/login.html";
+        return "redirect:/signup.html";
     }
 
     // Signup Page
-    @GetMapping("/signup")
+    @GetMapping("/login")
     public String signup() {
-        return "redirect:/signup.html";
+        return "redirect:/login.html";
     }
 
     // Homepage
