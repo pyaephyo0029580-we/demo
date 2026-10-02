@@ -57,11 +57,13 @@ public class AuthApiController {
                         ""
                 ).trim();
 
+
         String email =
                 request.getOrDefault(
                         "email",
                         ""
                 ).trim();
+
 
         String password =
                 request.getOrDefault(
@@ -80,28 +82,46 @@ public class AuthApiController {
         }
 
 
-        Optional<User> usernameOwner =
-                userRepository.findByUsername(
-                        username
-                );
+        // =========================================
+        // CHECK EMAIL
+        // =========================================
 
-
-        Optional<User> emailOwner =
+        Optional<User> emailUser =
                 userRepository.findByEmail(
                         email
                 );
 
 
-        if (usernameOwner.isPresent()) {
+        if (emailUser.isPresent()
+                && emailUser.get().isVerified()) {
 
-            User existing =
-                    usernameOwner.get();
+            return error(
+                    "Email already registered."
+            );
+        }
 
 
-            if (emailOwner.isEmpty()
-                    || !existing.getId().equals(
-                    emailOwner.get().getId()
-            )) {
+        // =========================================
+        // CHECK USERNAME
+        // =========================================
+
+        Optional<User> usernameUser =
+                userRepository.findByUsername(
+                        username
+                );
+
+
+        if (usernameUser.isPresent()) {
+
+            if (emailUser.isEmpty()
+                    || !usernameUser
+                    .get()
+                    .getId()
+                    .equals(
+                            emailUser
+                                    .get()
+                                    .getId()
+                    )) {
 
                 return error(
                         "Username already exists."
@@ -113,18 +133,11 @@ public class AuthApiController {
         User user;
 
 
-        if (emailOwner.isPresent()) {
+        // Existing unverified email can signup again
+        if (emailUser.isPresent()) {
 
             user =
-                    emailOwner.get();
-
-
-            if (user.isVerified()) {
-
-                return error(
-                        "Email already registered."
-                );
-            }
+                    emailUser.get();
 
         } else {
 
@@ -141,9 +154,11 @@ public class AuthApiController {
                 username
         );
 
+
         user.setEmail(
                 email
         );
+
 
         user.setPassword(
                 passwordEncoder.encode(
@@ -151,9 +166,11 @@ public class AuthApiController {
                 )
         );
 
+
         user.setVerificationCode(
                 verificationCode
         );
+
 
         user.setVerified(
                 false
@@ -161,40 +178,144 @@ public class AuthApiController {
 
 
         if (user.getFriendCode() == null
-                || user.getFriendCode().isBlank()) {
-
-            user.setFriendCode(
-                    generateFriendCode()
-            );
+                || user.getFriendCode().isBlank()) {user.setFriendCode(
+                generateFriendCode()
+        );
         }
 
 
-        userRepository.save(
-                user
+        // =========================================
+        // SAVE DATABASE FIRST
+        // =========================================
+
+        user =
+                userRepository.save(
+                        user
+                );
+
+
+        System.out.println(
+                "===================================="
+        );
+
+        System.out.println(
+                "SIGNUP SUCCESS"
+        );
+
+        System.out.println(
+                "DATABASE USER ID = "
+                        + user.getId()
+        );
+
+        System.out.println(
+                "USERNAME = "
+                        + user.getUsername()
+        );
+
+        System.out.println(
+                "EMAIL = "
+                        + user.getEmail()
+        );
+
+        System.out.println(
+                "VERIFICATION CODE = "
+                        + verificationCode
+        );
+
+        System.out.println(
+                "===================================="
         );
 
 
-        emailService.sendVerificationCode(
-                email,
-                verificationCode
-        );
+        // =========================================
+        // TRY EMAIL
+        // =========================================
+
+        boolean emailSent =
+                true;
+
+
+        try {
+
+            emailService.sendVerificationCode(
+                    email,
+                    verificationCode
+            );
+
+        } catch (Exception e) {
+
+            emailSent =
+                    false;
+
+
+            System.out.println(
+                    "===================================="
+            );
+
+            System.out.println(
+                    "EMAIL SEND FAILED"
+            );
+
+            System.out.println(
+                    e.getMessage()
+            );
+
+            System.out.println(
+                    "USE THIS CODE:"
+            );
+
+            System.out.println(
+                    verificationCode
+            );
+
+            System.out.println(
+                    "===================================="
+            );
+        }
 
 
         Map<String, Object> response =
                 new HashMap<>();
 
+
         response.put(
                 "success",
                 true
-        );response.put(
-                "message",
-                "Verification code sent."
         );
+
 
         response.put(
                 "email",
                 email
         );
+
+
+        response.put(
+                "id",
+                user.getId()
+        );
+
+
+        response.put(
+                "emailSent",
+                emailSent
+        );
+
+
+        if (emailSent) {
+
+            response.put(
+                    "message",
+                    "Verification code sent to your email."
+            );
+
+        } else {
+
+            response.put(
+                    "message",
+                    "Account created. Check IntelliJ Console for verification code."
+            );
+        }
 
 
         return ResponseEntity.ok(
@@ -218,11 +339,21 @@ public class AuthApiController {
                         ""
                 ).trim();
 
+
         String code =
                 request.getOrDefault(
                         "code",
                         ""
                 ).trim();
+
+
+        if (email.isEmpty()
+                || code.isEmpty()) {
+
+            return error(
+                    "Email and verification code are required."
+            );
+        }
 
 
         Optional<User> optionalUser =
@@ -244,12 +375,11 @@ public class AuthApiController {
 
 
         if (user.getVerificationCode() == null
-                || !user.getVerificationCode()
-                .equals(code)) {
-
-            return error(
-                    "Wrong verification code."
-            );
+                || !user
+                .getVerificationCode()
+                .equals(code)) {return error(
+                "Wrong verification code."
+        );
         }
 
 
@@ -258,9 +388,15 @@ public class AuthApiController {
         );
 
 
-        // Verification code ကို database ထဲမှာထားမယ်
+        // Keep verification code in DB
         userRepository.save(
                 user
+        );
+
+
+        System.out.println(
+                "EMAIL VERIFIED: "
+                        + email
         );
 
 
@@ -271,7 +407,7 @@ public class AuthApiController {
 
 
     // =====================================================
-    // RESEND CODE
+    // RESEND VERIFICATION CODE
     // =====================================================
 
     @PostMapping("/resend")
@@ -284,6 +420,14 @@ public class AuthApiController {
                         "email",
                         ""
                 ).trim();
+
+
+        if (email.isEmpty()) {
+
+            return error(
+                    "Email is required."
+            );
+        }
 
 
         Optional<User> optionalUser =
@@ -318,14 +462,75 @@ public class AuthApiController {
         );
 
 
-        emailService.sendVerificationCode(
-                email,
-                verificationCode
+        System.out.println(
+                "NEW VERIFICATION CODE = "
+                        + verificationCode
         );
 
 
-        return success(
-                "Verification code resent."
+        boolean emailSent =
+                true;
+
+
+        try {
+
+            emailService.sendVerificationCode(
+                    email,
+                    verificationCode
+            );
+
+        } catch (Exception e) {
+
+            emailSent =
+                    false;
+
+
+            System.out.println(
+                    "EMAIL SEND FAILED"
+            );
+
+
+            System.out.println(
+                    "USE CODE = "
+                            + verificationCode
+            );
+        }
+
+
+        Map<String, Object> response =
+                new HashMap<>();
+
+
+        response.put(
+                "success",
+                true
+        );
+
+
+        response.put(
+                "emailSent",
+                emailSent
+        );
+
+
+        if (emailSent) {
+
+            response.put(
+                    "message",
+                    "Verification code sent."
+            );
+
+        } else {
+
+            response.put(
+                    "message",
+                    "Check IntelliJ Console for verification code."
+            );
+        }
+
+
+        return ResponseEntity.ok(
+                response
         );
     }
 
@@ -345,6 +550,7 @@ public class AuthApiController {
                         "email",
                         ""
                 ).trim();
+
 
         String password =
                 request.getOrDefault(
@@ -385,7 +591,16 @@ public class AuthApiController {
             return error(
                     "Please verify your email first."
             );
-        }if (!passwordEncoder.matches(
+        }if (user.getPassword() == null
+                || user.getPassword().isBlank()) {
+
+            return error(
+                    "Password not found."
+            );
+        }
+
+
+        if (!passwordEncoder.matches(
                 password,
                 user.getPassword()
         )) {
@@ -403,6 +618,7 @@ public class AuthApiController {
                     generateFriendCode()
             );
 
+
             user =
                     userRepository.save(
                             user
@@ -410,10 +626,9 @@ public class AuthApiController {
         }
 
 
-        // ==========================================
-        // MOST IMPORTANT PART
-        // LOGIN USER DATABASE ID SAVE IN SESSION
-        // ==========================================
+        // =========================================
+        // SAVE LOGIN USER ID IN SESSION
+        // =========================================
 
         session.setAttribute(
                 "userId",
@@ -436,24 +651,57 @@ public class AuthApiController {
                 true
         );
 
+
         response.put(
                 "id",
                 user.getId()
         );
+
 
         response.put(
                 "username",
                 user.getUsername()
         );
 
+
         response.put(
                 "email",
                 user.getEmail()
         );
 
+
         response.put(
                 "friendCode",
                 user.getFriendCode()
+        );
+
+
+        response.put(
+                "message",
+                "Login successful."
+        );
+
+
+        System.out.println(
+                "===================================="
+        );
+
+        System.out.println(
+                "LOGIN SUCCESS"
+        );
+
+        System.out.println(
+                "USER ID = "
+                        + user.getId()
+        );
+
+        System.out.println(
+                "USERNAME = "
+                        + user.getUsername()
+        );
+
+        System.out.println(
+                "===================================="
         );
 
 
@@ -464,11 +712,11 @@ public class AuthApiController {
 
 
     // =====================================================
-    // CHECK LOGIN SESSION
+    // CURRENT SESSION
     // =====================================================
 
     @GetMapping("/session")
-    public ResponseEntity<?> session(
+    public ResponseEntity<?> getSession(
             HttpSession session
     ) {
 
@@ -504,6 +752,7 @@ public class AuthApiController {
 
             session.invalidate();
 
+
             return ResponseEntity
                     .status(401)
                     .body(
@@ -531,20 +780,21 @@ public class AuthApiController {
                 true
         );
 
+
         response.put(
                 "id",
                 user.getId()
         );
 
+
         response.put(
                 "username",
                 user.getUsername()
-        );
-
-        response.put(
+        );response.put(
                 "email",
                 user.getEmail()
         );
+
 
         response.put(
                 "friendCode",
@@ -569,49 +819,51 @@ public class AuthApiController {
 
         session.invalidate();
 
+
         return success(
                 "Logged out."
         );
     }
 
 
-// =====================================================
-// FRIEND CODE
-// =====================================================
-private String generateFriendCode() {
+    // =====================================================
+    // GENERATE FRIEND CODE
+    // =====================================================
 
-    String code;
+    private String generateFriendCode() {
 
-
-    do {
-
-        int number =
-                100000
-                        + random.nextInt(
-                        900000
-                );
+        String code;
 
 
-        code =
-                String.valueOf(
-                        number
-                );
+        do {
+
+            int number =
+                    100000
+                            + random.nextInt(
+                            900000
+                    );
 
 
-    } while (
-            userRepository
-                    .existsByFriendCode(
-                            code
-                    )
-    );
+            code =
+                    String.valueOf(
+                            number
+                    );
 
 
-    return code;
-}
+        } while (
+                userRepository
+                        .existsByFriendCode(
+                                code
+                        )
+        );
+
+
+        return code;
+    }
 
 
     // =====================================================
-    // RESPONSES
+    // SUCCESS RESPONSE
     // =====================================================
 
     private ResponseEntity<Map<String, Object>>
@@ -626,6 +878,7 @@ private String generateFriendCode() {
                 true
         );
 
+
         response.put(
                 "message",
                 message
@@ -638,6 +891,10 @@ private String generateFriendCode() {
     }
 
 
+    // =====================================================
+    // ERROR RESPONSE
+    // =====================================================
+
     private ResponseEntity<Map<String, Object>>
     error(String message) {
 
@@ -649,6 +906,7 @@ private String generateFriendCode() {
                 "success",
                 false
         );
+
 
         response.put(
                 "message",
