@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
  * Browser မှာ inventory.html ကို ဖွင့်ပေးတယ်။
  */
 @Component
-public class InventoryController {
+public class InventoryLauncher {
 
     private static final String BASE_URL = "http://localhost:8081";
 

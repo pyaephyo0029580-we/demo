@@ -2,119 +2,347 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
     <title>MyGaming - Sign Up</title>
 
-    <link rel="stylesheet" href="auth.css">
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family:
+                    Arial,
+                    Helvetica,
+                    sans-serif;
+
+            color: white;
+
+            background:
+                    radial-gradient(
+                            circle at top,
+                            #252b45,
+                            #0c0f18
+                    );
+        }
+
+        .signup-container {
+
+            width: 430px;
+            max-width: 92%;
+
+            padding: 35px;
+
+            border-radius: 18px;
+
+            background:
+                    rgba(
+                            22,
+                            27,
+                            44,
+                            0.96
+                    );
+
+            box-shadow:
+                    0 20px 50px
+                    rgba(
+                            0,
+                            0,
+                            0,
+                            0.4
+                    );
+        }
+
+        .logo {
+
+            width: 65px;
+            height: 65px;
+
+            margin:
+                    0 auto
+                    18px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            border-radius: 15px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #328cff,
+                            #676cff
+                    );
+
+            font-size: 28px;
+        }
+
+        h1 {
+
+            margin:
+                    0
+                    0
+                    7px;
+
+            text-align: center;
+
+            font-size: 27px;
+        }
+
+        .subtitle {
+
+            margin-bottom: 30px;
+
+            text-align: center;
+
+            color: #7e8db3;
+
+            font-size: 14px;
+        }
+
+        label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #e5eaff;
+
+            font-weight: bold;
+
+            font-size: 14px;
+        }
+
+        input {
+
+            width: 100%;
+            height: 50px;
+
+            margin-bottom: 18px;
+
+            padding:
+                    0
+                    15px;
+
+            border:
+                    1px solid
+                    #3b4667;
+
+            border-radius: 10px;
+
+            outline: none;
+
+            background: #171c2d;
+
+            color: white;
+
+            font-size: 15px;
+
+            pointer-events: auto;
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+        input:focus {
+
+            border-color: #4c8dff;
+
+            box-shadow:
+                    0 0 0 2px
+                    rgba(
+                            76,
+                            141,
+                            255,
+                            0.15
+                    );
+        }
+
+        #message {
+
+            min-height: 25px;
+
+            margin-bottom: 12px;
+
+            text-align: center;
+
+            font-weight: bold;
+
+            color: #ff8999;
+        }
+
+        #message.success {
+
+            color: #5de6a5;
+        }
+
+        #signupButton {
+
+            width: 100%;
+            height: 50px;
+
+            border: none;
+            border-radius: 10px;
+
+            background:
+                    linear-gradient(
+                            90deg,
+                            #268bff,
+                            #8174ff
+                    );
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+        #signupButton:hover {
+
+            opacity: 0.95;
+        }
+
+        #signupButton:disabled {opacity: 0.55;
+
+            cursor: not-allowed;
+        }
+
+        .login-link {
+
+            margin-top: 20px;
+
+            text-align: center;
+
+            color: #aeb7cf;
+
+            font-size: 14px;
+        }
+
+        .login-link a {
+
+            color: #76b4ff;
+
+            text-decoration: none;
+
+            font-weight: bold;
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-<div class="auth-container">
 
-    <div class="auth-card">
+<div class="signup-container">
 
-        <div class="game-logo">🎮</div>
-
-        <h1>Create Your Game Account</h1>
-
-        <p class="subtitle">
-            Join MyGaming and start playing
-        </p>
+    <div class="logo">
+        🎮
+    </div>
 
 
-        <!-- USERNAME -->
-        <label for="username">Username</label>
-
-        <input
-                id="username"
-                type="text"
-                placeholder="Enter username"
-                autocomplete="username">
+    <h1>
+        Create Your Game Account
+    </h1>
 
 
-        <!-- EMAIL -->
-        <label for="email">Email</label>
-
-        <input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                autocomplete="email">
+    <div class="subtitle">
+        Join MyGaming and start playing
+    </div>
 
 
-        <!-- PASSWORD -->
-        <label for="password">Password</label>
+    <label for="username">
+        Username
+    </label>
 
-        <div class="password-box">
-
-            <input
-                    id="password"
-                    type="password"
-                    placeholder="Enter password"
-                    autocomplete="new-password">
-
-            <button
-                    type="button"
-                    class="eye-button"
-                    onclick="togglePassword('password')">
-                👁
-            </button>
-
-        </div>
+    <input
+            id="username"
+            name="username"
+            type="text"
+            placeholder="Enter username"
+            autocomplete="username">
 
 
-        <!-- CONFIRM PASSWORD -->
-        <label for="confirmPassword">
-            Confirm Password
-        </label>
+    <label for="email">
+        Email
+    </label>
 
-        <div class="password-box">
-
-            <input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="Confirm password"
-                    autocomplete="new-password">
-
-            <button
-                    type="button"
-                    class="eye-button"
-                    onclick="togglePassword('confirmPassword')">
-                👁
-            </button>
-
-        </div>
+    <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Enter email"
+            autocomplete="email">
 
 
-        <!-- MESSAGE -->
-        <p id="message"></p>
+    <label for="password">
+        Password
+    </label>
+
+    <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Enter password"
+            autocomplete="new-password">
 
 
-        <!-- SIGN UP BUTTON -->
-        <button
-                id="signupButton"
-                type="button"
-                class="main-button"
-                onclick="signup()">
+    <label for="confirmPassword">
+        Confirm Password
+    </label>
 
-            Sign Up
+    <input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            placeholder="Confirm password"
+            autocomplete="new-password">
 
-        </button>
+
+    <div id="message"></div>
 
 
-        <p class="switch-text">
+    <button
+            id="signupButton"
+            type="button">
 
-            I already have an account.
+        Sign Up
 
-            <a href="/login.html">
-                Login
-            </a>
+    </button>
 
-        </p>
+
+    <div class="login-link">
+
+        I already have an account.
+
+        <a href="/login.html">
+            Login
+        </a>
 
     </div>
 
@@ -123,143 +351,140 @@
 
 <script>
 
-    // =========================================
-    // SHOW / HIDE PASSWORD
-    // =========================================
+    // =====================================================
+    // ELEMENTS
+    // =====================================================
 
-    function togglePassword(id) {
+    const usernameInput =
+        document.getElementById(
+            "username"
+        );
 
-        const input =
-            document.getElementById(id);
+    const emailInput =
+        document.getElementById(
+            "email"
+        );
 
-        if (input.type === "password") {
+    const passwordInput =
+        document.getElementById(
+            "password"
+        );
 
-            input.type = "text";
+    const confirmPasswordInput =
+        document.getElementById(
+            "confirmPassword"
+        );
 
-        } else {
+    const message =
+        document.getElementById(
+            "message"
+        );
 
-            input.type = "password";
-        }
-    }
+    const signupButton =
+        document.getElementById(
+            "signupButton"
+        );
 
 
-    // =========================================
-    // SHOW MESSAGE
-    // =========================================
+    // =====================================================
+    // MESSAGE
+    // =====================================================
 
     function showError(text) {
 
-        const message =
-            document.getElementById("message");
+        message.className =
+            "";
 
-        message.className = "error-message";
-
-        message.textContent = text;
+        message.textContent =
+            text;
     }
 
 
     function showSuccess(text) {
 
-        const message =
-            document.getElementById("message");
+        message.className =
+            "success";
 
-        message.className = "success-message";
-
-        message.textContent = text;
+        message.textContent =
+            text;
     }
 
 
-    // =========================================
-    // SIGN UP
-    // =========================================
+    // =====================================================
+    // SIGNUP
+    // =====================================================
 
-    async function signup() {
-
-        console.log("Sign Up button clicked");
-
+    async function signupUser() {
 
         const username =
-            document
-                .getElementById("username")
-                .value
-                .trim();
-
+            usernameInput.value.trim();
 
         const email =
-            document
-                .getElementById("email")
-                .value
-                .trim();
-
+            emailInput.value.trim();
 
         const password =
-            document
-                .getElementById("password")
-                .value;
-
+            passwordInput.value;
 
         const confirmPassword =
-            document
-                .getElementById("confirmPassword")
-                .value;const button =
-            document.getElementById(
-                "signupButton"
-            );
+            confirmPasswordInput.value;
 
 
-        // =====================================
-        // EMPTY CHECK
-        // =====================================
+        message.className =
+            "";
 
-        if (
-            !username ||
-            !email ||
-            !password ||
-            !confirmPassword
-        ) {
+        message.textContent =
+            "";
+
+
+        // -----------------------------
+        // VALIDATION
+        // -----------------------------
+
+        if (!username) {
 
             showError(
-                "Please fill all fields."
+                "Please enter username."
             );
+
+            usernameInput.focus();
 
             return;
         }
 
 
-        // =====================================
-        // EMAIL CHECK
-        // =====================================
-
-        if (
-            !email.includes("@") ||
-            !email.includes(".")
-        ) {
+        if (!email) {
 
             showError(
-                "Please enter a valid email."
+                "Please enter email."
             );
+
+            emailInput.focus();
 
             return;
         }
 
 
-        // =====================================
-        // PASSWORD LENGTH
-        // =====================================
-
-        if (password.length < 6) {
+        if (!password) {
 
             showError(
-                "Password must be at least 6 characters."
+                "Please enter password."
             );
+
+            passwordInput.focus();return;
+        }
+
+
+        if (!confirmPassword) {
+
+            showError(
+                "Please confirm password."
+            );
+
+            confirmPasswordInput.focus();
 
             return;
         }
 
-
-        // =====================================
-        // PASSWORD MATCH
-        // =====================================
 
         if (password !== confirmPassword) {
 
@@ -271,47 +496,77 @@
         }
 
 
-        // =====================================
-        // SEND TO SPRING BOOT
-        // =====================================
+        // -----------------------------
+        // BUTTON LOADING
+        // -----------------------------
+
+        signupButton.disabled =
+            true;
+
+        signupButton.textContent =
+            "Creating Account...";
+
 
         try {
 
-            button.disabled = true;
-
-            button.textContent =
-                "Creating Account...";
-
-
-            console.log(
-                "Sending signup request..."
-            );
-
+            // =============================================
+            // IMPORTANT
+            // DO NOT PUT localhost HERE
+            // Relative API path works with Cloudflare too
+            // =============================================
 
             const response =
                 await fetch(
                     "/api/auth/signup",
                     {
-                        method: "POST",
+
+                        method:
+                            "POST",
 
                         headers: {
+
                             "Content-Type":
                                 "application/json"
                         },
 
+                        credentials:
+                            "same-origin",
+
                         body:
                             JSON.stringify({
-                                username: username,
-                                email: email,
-                                password: password
+
+                                username:
+                                    username,
+
+                                email:
+                                    email,
+
+                                password:
+                                    password
                             })
                     }
                 );
 
 
-            // =================================
-            // READ SERVER RESPONSE
-            // =================================
+            // ---------------------------------------------
+            // READ RAW SERVER RESPONSE
+            // ---------------------------------------------
+
+            const responseText =
+                await response.text();
+
+
+            console.log(
+                "SIGNUP STATUS =",
+                response.status
+            );
+
+
+            console.log(
+                "SIGNUP RESPONSE =",
+                responseText
+            );
+
 
             let data;
 
@@ -319,37 +574,30 @@
             try {
 
                 data =
-                    await response.json();
+                    JSON.parse(
+                        responseText
+                    );
 
-            } catch (jsonError) {
-
-                console.error(
-                    "Invalid server response:",
-                    jsonError
-                );
+            } catch (error) {
 
                 showError(
-                    "Invalid response from server."
+                    "Server response error."
+                );
+
+                console.error(
+                    "JSON ERROR:",
+                    error
                 );
 
                 return;
             }
 
 
-            console.log(
-                "Server response:",
-                data
-            );
+            // ---------------------------------------------
+            // BACKEND ERROR
+            // ---------------------------------------------
 
-
-            // =================================
-            // SIGNUP FAILED
-            // =================================
-
-            if (
-                !response.ok ||
-                data.success === false
-            ) {
+            if (!response.ok) {
 
                 showError(
                     data.message ||
@@ -360,47 +608,58 @@
             }
 
 
-            // =================================
-            // SIGNUP SUCCESS
-            // =================================
+            // ---------------------------------------------
+            // SUCCESS
+            // ---------------------------------------------
 
-            showSuccess(
+            if (data.success === true) {
+
+                showSuccess(
+                    data.message ||
+                    "Account created successfully."
+                );
+
+
+                sessionStorage.setItem(
+                    "verifyEmail",
+                    email
+                );
+
+
+                // Small delay so success message
+                // can render before redirect
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            "/verifyemail.html?email="
+                            + encodeURIComponent(
+                                email
+                            );
+
+                    },
+                    300
+                );
+
+
+                return;
+            }
+
+
+            // ---------------------------------------------
+            // UNKNOWN RESPONSE
+            // ---------------------------------------------
+
+    showError(
                 data.message ||
-                "Verification code sent!"
-            );
-
-
-            // Save temporarily
-            sessionStorage.setItem(
-                "signupEmail",
-                email
-            );
-
-
-            sessionStorage.setItem(
-                "signupUsername",
-                username
-            );
-
-
-            // =================================
-            // GO TO VERIFY PAGE
-            // =================================
-
-            setTimeout(
-                function () {window.location.href =
-                        "/verifyemail.html?email=" +
-                        encodeURIComponent(email);
-
-                },
-                800
+                "Sign up failed."
             );
 
 
         } catch (error) {
 
             console.error(
-                "Signup error:",
+                "SIGNUP FETCH ERROR:",
                 error
             );
 
@@ -409,32 +668,48 @@
                 "Cannot connect to server."
             );
 
+
         } finally {
 
-            button.disabled = false;
+            signupButton.disabled =
+                false;
 
-            button.textContent =
+            signupButton.textContent =
                 "Sign Up";
         }
     }
 
 
-    // =========================================
-    // ENTER KEY
-    // =========================================
+    // =====================================================
+    // BUTTON CLICK
+    // =====================================================
 
-    document.addEventListener(
+    signupButton.addEventListener(
+        "click",
+        function () {
+
+            signupUser();
+        }
+    );
+
+
+    // =====================================================
+    // ENTER KEY
+    // =====================================================
+
+    confirmPasswordInput.addEventListener(
         "keydown",
         function (event) {
 
             if (event.key === "Enter") {
 
-                signup();
+                signupUser();
             }
         }
     );
 
 </script>
+
 
 </body>
 
