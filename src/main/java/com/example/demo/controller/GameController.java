@@ -6,6 +6,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.*;
@@ -145,5 +146,15 @@ public class GameController {
         Map<String, Object> response = new HashMap<>();
         response.put("voteCounts", voteCounts);
         messagingTemplate.convertAndSend("/topic/votes", response);
+    }
+
+    @GetMapping("/api/player/spawn")
+    public Map<String, Object> getPlayerSpawn() {
+        Map<String, Object> spawnData = new HashMap<>();
+        // hospital.tmx ထဲက PlayerSpawn တည်နေရာ Data များ
+        spawnData.put("x", 478);
+        spawnData.put("y", 410);
+        spawnData.put("characterType", "Hero");
+        return spawnData;
     }
 }
