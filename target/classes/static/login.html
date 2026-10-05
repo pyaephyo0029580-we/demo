@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>Login</title>
+
+  <style>
+    body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #111426;
+        font-family: Arial, sans-serif;
+    }
+
+    .box {
+        width: 380px;
+        padding: 30px;
+        background: #202947;
+        border-radius: 15px;
+        color: white;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    input {
+        width: 100%;
+        height: 48px;
+        margin-bottom: 15px;
+        padding: 0 12px;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 8px;
+    }
+
+    button {
+        width: 100%;
+        height: 48px;
+        border: none;
+        border-radius: 8px;
+        background: #3689ef;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    #message {
+        margin-top: 15px;
+        text-align: center;
+        color: #ff8b9b;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+
+  <h1>LOGIN</h1>
+
+  <input
+          id="email"
+          type="email"
+          placeholder="Email">
+
+  <input
+          id="password"
+          type="password"
+          placeholder="Password">
+
+  <button
+          type="button"
+          onclick="loginUser()">
+
+    LOGIN
+
+  </button>
+
+  <div id="message"></div>
+
+</div>
+
+
+<script>
+
+  async function loginUser() {
+
+      var email =
+          document.getElementById("email").value.trim();
+
+      var password =
+          document.getElementById("password").value;
+
+      var message =
+          document.getElementById("message");
+
+
+      message.textContent =
+          "Logging in...";
+
+
+      if (!email || !password) {
+
+          message.textContent =
+              "Please enter email and password.";
+
+          return;
+      }
+
+
+      try {
+
+          var response =
+              await fetch(
+                  "/api/auth/login",
+                  {
+                      method: "POST",
+
+                      headers: {
+                          "Content-Type":
+                              "application/json"
+                      },
+
+                      credentials:
+                          "same-origin",
+
+                      body:
+                          JSON.stringify({
+                              email: email,
+                              password: password
+                          })
+                  }
+              );
+
+
+          var text =
+              await response.text();
+
+
+          console.log(
+              "LOGIN STATUS:",
+              response.status
+          );
+
+          console.log(
+              "LOGIN RESPONSE:",
+              text
+          );
+
+
+          var data;
+
+          try {
+
+              data =
+                  JSON.parse(text);
+
+          } catch (e) {
+
+              message.textContent =
+                  "Server error: " + text;
+
+              return;
+          }
+
+
+          if (!response.ok) {
+
+              message.textContent =
+                  data.message ||
+                  "Login failed.";
+
+              return;
+          }
+
+
+          if (data.success === true) {
+
+              // optional browser-side copy
+              sessionStorage.setItem(
+                  "userId",
+                  String(data.id)
+              );
+
+              sessionStorage.setItem(
+                  "username",
+                  data.username
+              );
+
+
+              // MAIN REDIRECT
+              window.location.replace(
+                  "/homepage.html"
+              );
+
+          } else {
+
+              message.textContent =
+                  data.message ||
+                  "Login failed.";
+          }
+
+
+      } catch (error) {
+
+          console.error(error);
+
+          message.textContent =
+              "Cannot connect to server.";
+      }
+  }document
+    .getElementById("password")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+                loginUser();
+            }
+        }
+    );
+
+</script>
+
+</body>
+</html>

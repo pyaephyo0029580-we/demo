@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Among Us Shop</title>
+    <!-- shop-style.css ကို ချိတ်ဆက်ပေးခြင်း -->
+    <link rel="stylesheet" th:href="@{/shop-style.css}">
+</head>
+<body class="shop-body">
+
+<!-- TOP BAR (Inventory Layout) -->
+<div class="inv-topbar">
+    <a href="/inventory" class="inv-back-btn">✕</a>
+    <a href="/shop?category=HAT" class="inv-nav-tab" th:classappend="${category == 'HAT'} ? 'active'">HATS</a>
+    <a href="/shop?category=SKIN" class="inv-nav-tab" th:classappend="${category == 'SKIN'} ? 'active'">SKINS</a>
+</div>
+
+<!-- MAIN CONTENT (Inventory Split Screen Layout) -->
+<div class="inv-content">
+
+    <!-- LEFT: Shop Items Grid (Shop Card Style with Prices) -->
+    <div class="inv-left">
+        <div class="inv-section-title" th:text="${category == 'HAT'} ? 'HATS SHOP' : 'SKINS SHOP'">HATS SHOP</div>
+
+        <div class="shop-grid">
+
+            <!-- 1. Database မှ ပစ္စည်းများ (Shop Item Card Style) -->
+            <div class="shop-item-card" th:each="item : ${items}">
+                <div class="shop-item-img-box">
+                    <img th:src="${item.imageUrl}" alt="Item">
+                </div>
+                <div class="shop-item-footer">
+                    <span th:text="${item.price}">150</span>
+                    <span>🪙</span>
+                </div>
+            </div>
+
+            <!-- 2. Admin က ပစ္စည်းအသစ်ထည့်ရန် အလိုအလျောက်ပေါ်မယ့် Blank Templates များ -->
+            <th:block th:if="${#lists.isEmpty(items) or #lists.size(items) < 12}" th:with="emptyCount=${#lists.isEmpty(items) ? 12 : 12 - #lists.size(items)}">
+                <div class="shop-item-card blank" th:each="i : ${#numbers.sequence(1, emptyCount)}">
+                    <div class="shop-blank-box">Empty</div>
+                    <div class="shop-blank-footer">-</div>
+                </div>
+            </th:block>
+
+        </div>
+    </div>
+
+    <!-- RIGHT: Shop Banner / Preview Area (Inventory Right Pane Style) -->
+    <div class="inv-right">
+        <div class="shop-banner-title" th:text="${category == 'HAT'} ? 'HAT STORE' : 'SKIN STORE'">HAT STORE</div>
+        <div class="shop-banner-sub">Browse and purchase items directly from the database!</div>
+    </div>
+
+</div>
+
+</body>
+</html>
