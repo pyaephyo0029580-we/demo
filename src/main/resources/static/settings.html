@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Settings</title>
+
+    <link rel="stylesheet" href="settings.css">
+</head>
+
+
+<body class="settings-body">
+
+
+<!-- ============================================================
+     OVERLAY
+============================================================ -->
+
+<div class="settings-overlay">
+
+
+    <!-- ========================================================
+         SETTINGS MODAL
+    ======================================================== -->
+
+    <div class="settings-modal">
+
+
+        <!-- ====================================================
+             CONTROLS SECTION
+        ==================================================== -->
+
+        <h2 class="settings-heading">
+            Controls
+        </h2>
+
+
+
+        <!-- Joystick / Touch -->
+
+        <div class="settings-mode-row">
+
+            <button
+                    id="btnJoystick"
+                    class="settings-mode-btn active"
+                    onclick="setControlMode('joystick')">
+                Joystick
+            </button>
+
+
+            <button
+                    id="btnTouch"
+                    class="settings-mode-btn"
+                    onclick="setControlMode('touch')">
+                Touch
+            </button>
+
+        </div>
+
+
+
+        <!-- Size Slider -->
+
+        <div class="settings-slider-row">
+
+            <span class="settings-label">
+                Size
+            </span>
+
+
+            <input
+                    type="range"
+                    id="sizeSlider"
+                    class="settings-slider"
+                    min="0"
+                    max="100"
+                    value="50"
+                    oninput="onSizeChange(this.value)"
+            >
+
+        </div>
+
+
+
+        <!-- ====================================================
+             SOUND SECTION
+        ==================================================== -->
+
+        <h2 class="settings-heading settings-heading-sound">
+            Sound
+        </h2>
+
+
+
+        <!-- SFX Slider -->
+
+        <div class="settings-slider-row">
+
+            <span class="settings-label">
+                SFX
+            </span>
+
+
+            <input
+                    type="range"
+                    id="sfxSlider"
+                    class="settings-slider"
+                    min="0"
+                    max="100"
+                    value="65"
+                    oninput="onSFXChange(this.value)"
+            >
+
+        </div>
+
+
+
+        <!-- Music Slider -->
+
+        <div class="settings-slider-row">
+
+            <span class="settings-label">
+                Music
+            </span>
+
+
+            <input
+                    type="range"
+                    id="musicSlider"
+                    class="settings-slider"
+                    min="0"
+                    max="100"
+                    value="40"
+                    oninput="onMusicChange(this.value)"
+            >
+
+        </div>
+
+
+
+        <!-- ====================================================
+             CLOSE BUTTON
+        ==================================================== -->
+
+        <div class="settings-close-row">
+
+            <button
+                    class="settings-close-btn"
+                    onclick="goBack()">
+                CLOSE
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- ============================================================
+     SAVED TOAST
+============================================================ -->
+
+<div
+        id="saveStatus"
+        class="settings-save-status">
+</div>
+
+
+
+<script>
+
+    /* ============================================================
+       URL PARAMS
+    ============================================================ */
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    const username =
+        params.get('user') || 'Player';
+
+
+
+    /* ============================================================
+       SETTINGS STATE
+    ============================================================ */
+
+    let settings = {
+
+        controlMode: 'joystick',
+
+        size: 50,
+
+        sfx: 65,
+
+        music: 40
+
+    };
+
+
+
+    /* ============================================================
+       MUSIC PREVIEW
+    ============================================================ */
+
+    let previewMusic = null;
+
+
+
+    /* ============================================================
+       LOAD SETTINGS
+    ============================================================ */
+
+    function loadSettings() {
+
+        const saved =
+            localStorage.getItem('gameSettings');
+
+
+        if (saved) {
+
+            try {
+
+                settings = JSON.parse(saved);
+
+            }
+
+            catch (e) {
+
+                console.error(
+                    'Settings parse error:',
+                    e
+                );
+
+            }
+
+        }
+
+
+        document.getElementById('sizeSlider').value
+            = settings.size;
+
+        document.getElementById('sfxSlider').value
+            = settings.sfx;
+
+        document.getElementById('musicSlider').value
+            = settings.music;
+
+
+        setControlMode(
+            settings.controlMode,
+            true
+        );
+
+    }
+
+
+
+    /* ============================================================
+       SAVE SETTINGS
+    ============================================================ */
+
+    function saveSettings() {
+
+        localStorage.setItem(
+            'gameSettings',
+            JSON.stringify(settings)
+        );
+
+
+        showSaved();
+
+    }
+
+
+
+    /* ============================================================
+       SAVED TOAST
+    ============================================================ */
+
+    let savedTimer = null;
+
+
+    function showSaved() {
+
+        const el =
+            document.getElementById('saveStatus');
+
+
+        el.innerText = '✓ Saved';
+
+        el.classList.add('visible');
+
+
+        clearTimeout(savedTimer);
+
+
+        savedTimer = setTimeout(() => {
+
+            el.classList.remove('visible');
+
+        }, 1200);
+
+    }
+
+
+
+    /* ============================================================
+       CONTROL MODE
+    ============================================================ */
+
+    function setControlMode(mode, skipSave) {
+
+        settings.controlMode = mode;
+
+
+        const btnJoy =
+            document.getElementById('btnJoystick');
+
+        const btnTouch =
+            document.getElementById('btnTouch');
+
+
+        if (mode === 'joystick') {
+
+            btnJoy.classList.add('active');
+
+            btnTouch.classList.remove('active');
+
+        }
+
+        else {
+
+            btnTouch.classList.add('active');
+
+            btnJoy.classList.remove('active');
+
+        }
+
+
+        if (!skipSave) saveSettings();
+
+    }
+
+
+
+    /* ============================================================
+       SIZE SLIDER
+    ============================================================ */
+
+    function onSizeChange(val) {
+
+        settings.size = parseInt(val);
+
+        saveSettings();
+
+    }
+
+
+
+    /* ============================================================
+       SFX SLIDER
+    ============================================================ */
+
+    function onSFXChange(val) {
+
+        settings.sfx = parseInt(val);
+
+        saveSettings();
+
+
+        if (val > 0) {
+
+            playSFXPreview(val / 100);
+
+        }
+
+    }
+
+
+
+    /* ============================================================
+       SFX PREVIEW
+    ============================================================ */
+
+    function playSFXPreview(vol) {
+
+        const sfx =
+            new Audio('/sounds/click.mp3');
+
+        sfx.volume = vol;
+
+        sfx.play().catch(() => {});
+
+    }
+
+
+
+    /* ============================================================
+       MUSIC SLIDER — Live Preview
+    ============================================================ */
+
+    function onMusicChange(val) {
+
+        settings.music = parseInt(val);
+
+        saveSettings();
+
+
+        if (!previewMusic) {
+
+            previewMusic =
+                new Audio('/sounds/Horror.mp3');
+
+            previewMusic.loop = true;
+
+        }
+
+
+        previewMusic.volume = val / 100;
+
+
+        if (val > 0 && previewMusic.paused) {
+
+            previewMusic.play().catch(err => {
+
+                console.log('Music blocked:', err);
+
+            });
+
+        }
+
+
+        if (val === 0) {
+
+            previewMusic.pause();
+
+        }
+
+    }
+
+
+
+    /* ============================================================
+       BACK
+    ============================================================ */
+
+    function goBack() {
+
+        if (previewMusic) {
+
+            previewMusic.pause();
+
+        }
+
+
+        window.location.href =
+            'homepage.html?user=' +
+            encodeURIComponent(username);
+
+    }
+
+
+
+    /* ============================================================
+       INITIAL LOAD
+    ============================================================ */
+
+    window.onload = loadSettings;
+
+
+</script>
+
+
+</body>
+</html>

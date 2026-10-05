@@ -27,13 +27,9 @@
 
         <div class="player-info">
 
-            <span class="player-icon">
-                ●
-            </span>
+            <span class="player-icon">●</span>
 
-            <span
-                    class="player-name"
-                    id="playerName">
+            <span class="player-name" id="playerName">
                 Player
             </span>
 
@@ -45,27 +41,19 @@
 
         <div class="coin-area">
 
-            <span class="coin-icon">
-                ●
-            </span>
+            <span class="coin-icon">●</span>
 
-            <span
-                    class="coin-text"
-                    id="coinLabel">
+            <span class="coin-text" id="coinLabel">
                 0
             </span>
 
         </div>
 
 
-        <!-- FRIENDS -->
-        <a
-                id="friendsLink"
-                class="friends-button"
-                href="/friends.html">
-
+        <a id="friendsLink"
+           class="friends-button"
+           href="/friends.html">
             FRIENDS
-
         </a>
 
     </div>
@@ -79,9 +67,7 @@
     <div class="home-main-content">
 
 
-        <!-- ================================= -->
         <!-- LEFT PANEL -->
-        <!-- ================================= -->
 
         <div class="home-left-panel">
 
@@ -92,77 +78,52 @@
 
             <div class="home-menu-buttons">
 
-
-                <!-- PLAY -->
-                <a
-                        id="playLink"
-                        class="home-menu-button"
-                        href="/play.html">
-
+                <a id="playLink"
+                   class="home-menu-button"
+                   href="/play.html">
                     PLAY
-
                 </a>
 
 
-                <!-- INVENTORY -->
-                <a
-                        id="inventoryLink"
-                        class="home-menu-button"
-                        href="/inventory.html">
-
+                <a id="inventoryLink"
+                   class="home-menu-button"
+                   href="/inventory.html">
                     INVENTORY
-
                 </a>
 
 
-                <!-- SHOP -->
-                <button
-                        type="button"
+                <button type="button"
                         id="shopButton"
                         class="home-menu-button">
-
                     SHOP
-
                 </button>
 
 
-                <!-- MY ACCOUNT -->
-                <button
-                        type="button"
+                <button type="button"
                         id="accountButton"
                         class="home-menu-button">
-
                     MY ACCOUNT
-
                 </button>
 
 
-                <!-- SETTINGS -->
-                <button
-                        type="button"
+                <button type="button"
                         id="settingsButton"
                         class="home-menu-button">
-
                     SETTING
-
                 </button>
 
             </div>
 
 
             <div class="home-version-label">
-
                 v18a (build num: 7240)
-
             </div>
 
         </div>
 
 
 
-        <!-- ================================= -->
         <!-- RIGHT PANEL -->
-        <!-- ================================= -->
 
         <div class="home-right-panel">
 
@@ -171,16 +132,6 @@
                 <span class="placeholder-label">
                     Character GIF Area
                 </span>
-
-
-                <!--
-                Character GIF ထည့်ချင်ရင်
-
-                <img
-                    src="Image/character.gif"
-                    class="character-gif"
-                    alt="Character">
-                -->
 
             </div>
 
@@ -201,273 +152,386 @@
             console.log("HOME PAGE JS LOADED");
 
 
-            // =====================================
-            // GET USERNAME
-            // =====================================
+            /* =====================================
+               USERNAME
+            ===================================== */
 
             var params =
                 new URLSearchParams(
                     window.location.search
-                );var username =
-            params.get("user");
-
-
-        if (!username) {
-
-            username =
-                sessionStorage.getItem(
-                    "username"
                 );
-        }
+
+            var username =
+                params.get("user");
 
 
-        // Login မဝင်ထားရင် login page ပြန်ပို့
-        if (!username ||
-            username.trim() === "") {
+            if (!username) {
 
-            window.location.replace(
-                "/login.html"
-            );
-
-            return;
-        }
+                username =
+                    sessionStorage.getItem(
+                        "username"
+                    );
+            }
 
 
-        // Save username
-        sessionStorage.setItem(
-            "username",
-            username
-        );
+            if (!username ||
+                username.trim() === "") {
 
-
-        // =====================================
-        // SHOW USERNAME
-        // =====================================
-
-        var playerName =
-            document.getElementById(
-                "playerName"
-            );
-
-
-        playerName.textContent =
-            username;
-
-
-
-        // =====================================
-        // COINS
-        // =====================================
-
-        var coins =
-            params.get("coins");
-
-
-        if (!coins) {
-
-            coins =
-                sessionStorage.getItem(
-                    "coins"
+                window.location.replace(
+                    "/login.html"
                 );
-        }
 
-
-        if (!coins) {
-
-            coins = "0";
-        }
-
-
-        sessionStorage.setItem(
-            "coins",
-            coins
-        );
-
-
-        document.getElementById(
-            "coinLabel"
-        ).textContent =
-            coins;
-
-
-
-        // =====================================
-        // ROOM CODE
-        // =====================================
-
-        var roomCode =
-            sessionStorage.getItem(
-                "roomCode"
-            );
-
-
-        if (!roomCode) {
-
-            roomCode =
-                "ROOM" +
-                Math.floor(
-                    1000 +
-                    Math.random() * 9000
-                );
+                return;
+            }
 
 
             sessionStorage.setItem(
-                "roomCode",
-                roomCode
+                "username",
+                username
             );
+
+
+            /* =====================================
+               SHOW USERNAME
+            ===================================== */
+
+            document.getElementById(
+                "playerName"
+            ).textContent = username;
+
+
+
+            /* =====================================
+               COINS
+            ===================================== */
+
+            var coins =
+                params.get("coins");
+
+
+            if (!coins) {
+
+                coins =
+                    sessionStorage.getItem("coins");
+            }
+
+
+            if (!coins) {
+
+                coins = "0";
+            }
+
+
+            sessionStorage.setItem(
+                "coins",
+                coins
+            );
+
+
+            document.getElementById(
+                "coinLabel"
+            ).textContent = coins;
+
+
+
+            /* =====================================
+               ROOM CODE
+            ===================================== */
+
+            var roomCode =
+                sessionStorage.getItem("roomCode");
+
+
+            if (!roomCode) {
+
+                roomCode =
+                    "ROOM" +
+                    Math.floor(
+                        1000 +
+                        Math.random() * 9000
+                    );
+
+
+                sessionStorage.setItem(
+                    "roomCode",
+                    roomCode
+                );
+            }
+
+
+
+            /* =====================================
+               PLAY LINK
+            ===================================== */
+
+            document.getElementById(
+                "playLink"
+            ).href =
+                "/play.html?room=" +
+                encodeURIComponent(roomCode) +
+                "&user=" +
+                encodeURIComponent(username);
+
+
+
+            /* =====================================
+               INVENTORY LINK
+            ===================================== */
+
+            document.getElementById(
+                "inventoryLink"
+            ).href =
+                "/inventory.html?room=" +
+                encodeURIComponent(roomCode) +
+                "&user=" +
+                encodeURIComponent(username);
+
+
+
+            /* =====================================
+               FRIENDS LINK
+            ===================================== */
+
+            document.getElementById(
+                "friendsLink"
+            ).href =
+                "/friends.html?user=" +
+                encodeURIComponent(username);
+
+
+
+            /* =====================================
+               SHOP BUTTON
+            ===================================== */
+
+            document.getElementById(
+                "shopButton"
+            ).addEventListener(
+                "click",
+                function () {
+
+                    playClickSound();
+
+                    alert("SHOP\n\nComing soon...");
+                }
+            );
+
+
+
+            /* =====================================
+               MY ACCOUNT
+            ===================================== */
+
+            document.getElementById(
+                "accountButton"
+            ).addEventListener(
+                "click",
+                function () {
+
+                    playClickSound();
+
+
+                    var email =
+                        sessionStorage.getItem("email")
+                        || "No email";
+
+
+                    var friendCode =
+                        sessionStorage.getItem("friendCode")
+                        || "No friend code";
+
+
+                    alert(
+                        "MY ACCOUNT\n\n" +
+                        "Username: " + username +
+                        "\n\nEmail: " + email +
+                        "\n\nFriend Code: " + friendCode +
+                        "\n\nCoins: " + coins
+                    );
+                }
+            );
+
+
+
+            /* =====================================
+               SETTINGS  ← ဒီမှာ ပြင်ပြီး
+            ===================================== */
+
+            document.getElementById(
+                "settingsButton"
+            ).addEventListener(
+                "click",
+                function () {
+
+                    /* Click SFX */
+
+                    playClickSound();
+
+
+                    /* Music ခဏ ရပ် */
+
+                    if (typeof bgMusic !== "undefined" && bgMusic) {
+
+                        bgMusic.pause();
+                    }
+
+
+                    /* Settings page ကို သွား */
+
+                    window.location.href =
+                        "/settings.html?user=" +
+                        encodeURIComponent(username);
+                }
+            );
+
+
+
+            /* =====================================
+               CLICK SFX FOR LINKS
+            ===================================== */
+
+            document.getElementById(
+                "playLink"
+            ).addEventListener(
+                "click",
+                function () { playClickSound(); }
+            );
+
+
+            document.getElementById(
+                "inventoryLink"
+            ).addEventListener(
+                "click",
+                function () { playClickSound(); }
+            );
+
+
+            document.getElementById(
+                "friendsLink"
+            ).addEventListener(
+                "click",
+                function () { playClickSound(); }
+            );
+
+
+
+            /* =====================================
+               BACKGROUND MUSIC
+            ===================================== */
+
+            startBackgroundMusic();
+
+        }
+    );
+
+
+
+    /* ============================================================
+       BACKGROUND MUSIC
+    ============================================================ */
+
+    var bgMusic =
+        new Audio('/sounds/Horror.mp3');
+
+    bgMusic.loop = true;
+
+
+
+    function applyMusicVolume() {
+
+        var saved =
+            localStorage.getItem('gameSettings');
+
+
+        if (saved) {
+
+            try {
+
+                var s = JSON.parse(saved);
+
+                bgMusic.volume = s.music / 100;
+
+            }
+
+            catch (err) {
+
+                bgMusic.volume = 0.4;
+            }
+
+        }
+
+        else {
+
+            bgMusic.volume = 0.4;
+        }
+    }
+
+
+
+    /* ============================================================
+       CLICK SFX
+    ============================================================ */
+
+    function playClickSound() {
+
+        var sfx =
+            new Audio('/sounds/click.mp3');
+
+
+        var saved =
+            localStorage.getItem('gameSettings');
+
+        var vol = 0.65;
+
+
+        if (saved) {
+
+            try {
+
+                vol =
+                    JSON.parse(saved).sfx / 100;
+
+            }
+
+            catch (e) {}
         }
 
 
+        sfx.volume = vol;
 
-        // =====================================
-        // PLAY LINK
-        // =====================================
-
-        var playLink =
-            document.getElementById(
-                "playLink"
-            );
-
-
-        playLink.href =
-            "/play.html?room=" +
-            encodeURIComponent(roomCode) +
-            "&user=" +
-            encodeURIComponent(username);
-
-
-
-        // =====================================
-        // INVENTORY LINK
-        // =====================================
-
-        var inventoryLink =
-            document.getElementById(
-                "inventoryLink"
-            );
-
-
-        inventoryLink.href =
-            "/inventory.html?room=" +
-            encodeURIComponent(roomCode) +
-            "&user=" +
-            encodeURIComponent(username);
-
-
-
-        // =====================================
-        // FRIENDS LINK
-        // =====================================
-
-        var friendsLink =
-            document.getElementById(
-                "friendsLink"
-            );
-
-
-        friendsLink.href =
-            "/friends.html?user=" +
-            encodeURIComponent(username);
-
-
-
-        // =====================================
-        // SHOP BUTTON
-        // =====================================
-
-        document.getElementById(
-            "shopButton"
-        ).addEventListener(
-            "click",
-            function () {
-
-                alert(
-                    "SHOP\n\nComing soon..."
-                );
-            }
-        );
-
-
-
-        // =====================================
-        // MY ACCOUNT
-        // =====================================
-
-        document.getElementById(
-            "accountButton"
-        ).addEventListener(
-            "click",
-            function () {
-
-                var email =
-                    sessionStorage.getItem(
-                        "email"
-                    );
-
-
-                var friendCode =
-                    sessionStorage.getItem(
-                        "friendCode"
-                    );
-
-
-                if (!email) {
-
-                    email =
-                        "No email";
-                }if (!friendCode) {
-
-                    friendCode =
-                        "No friend code";
-                }
-
-
-                alert(
-                    "MY ACCOUNT\n\n" +
-                    "Username: " +
-                    username +
-                    "\n\nEmail: " +
-                    email +
-                    "\n\nFriend Code: " +
-                    friendCode +
-                    "\n\nCoins: " +
-                    coins
-                );
-            }
-        );
-
-
-
-        // =====================================
-        // SETTINGS
-        // =====================================
-
-        document.getElementById(
-            "settingsButton"
-        ).addEventListener(
-            "click",
-            function () {
-
-                alert(
-                    "SETTINGS\n\nComing soon..."
-                );
-            }
-        );
-
-
-        console.log(
-            "Home user:",
-            username
-        );
-
-
-        console.log(
-            "Friends URL:",
-            friendsLink.href
-        );
-
+        sfx.play().catch(function () {});
     }
-);
+
+
+
+    /* ============================================================
+       START MUSIC
+    ============================================================ */
+
+    function startBackgroundMusic() {
+
+        applyMusicVolume();
+
+
+        bgMusic.play().catch(function (err) {
+
+            console.log("Music blocked:", err);
+
+
+            /* Autoplay block ဖြစ်ရင်
+               ပထမ click မှာ စမယ် */
+
+            document.addEventListener(
+                "click",
+                function () {
+
+                    bgMusic.play().catch(function () {});
+
+                },
+                { once: true }
+            );
+        });
+    }
 
 </script>
 

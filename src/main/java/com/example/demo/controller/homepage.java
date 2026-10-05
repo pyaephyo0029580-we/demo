@@ -16,9 +16,11 @@ public class homepage {
     private String userEmail = "Player";
     private int coins = 0;
 
-    // =========================================================
-    // User Info
-    // =========================================================
+
+    /* =========================================================
+       User Info
+    ========================================================= */
+
     public void setUserEmail(String email) {
         this.userEmail = email;
         System.out.println("👤 Logged in: " + userEmail);
@@ -32,21 +34,17 @@ public class homepage {
         this.coins = coins;
     }
 
-    // =========================================================
-    // Helper Methods - Encode & Browser Open
-    // =========================================================
 
-    /**
-     * URL Encode - Exception မရှိဘဲ စာသားကို encode လုပ်ပေးတယ်
-     */
+    /* =========================================================
+       Helper Methods
+    ========================================================= */
+
     private String encode(String text) {
         if (text == null) return "";
         return URLEncoder.encode(text, StandardCharsets.UTF_8);
     }
 
-    /**
-     * Browser ဖွင့်ရန် Helper Method
-     */
+
     private void openBrowser(String path) {
         try {
             String url = BASE_URL + path;
@@ -69,75 +67,107 @@ public class homepage {
         }
     }
 
-    // =========================================================
-    // Button Actions
-    // =========================================================
+
+    /* =========================================================
+       Button Actions
+    ========================================================= */
 
     /**
-     * PLAY - Game Room ဖန်တီးပြီး game.html ကို ဖွင့်
+     * PLAY — play.html ကို ဖွင့်
      */
     public void openPlay() {
-        String roomCode = "ROOM" + (int)(Math.random() * 9000 + 1000);
-        String path = "/game.html?room=" + roomCode + "&user=" + encode(userEmail);
+
+        String roomCode =
+                "ROOM" + (int)(Math.random() * 9000 + 1000);
+
+        String path =
+                "/play.html?room=" + roomCode +
+                        "&user=" + encode(userEmail);
 
         System.out.println("🎮 Room created: " + roomCode);
-        System.out.println("📢 Share link: " + BASE_URL + "/game.html?room=" + roomCode);
+        System.out.println("📢 Share link: " + BASE_URL +
+                "/play.html?room=" + roomCode);
 
         openBrowser(path);
     }
 
+
     /**
-     * INVENTORY - inventory.html ကို ဖွင့်
+     * INVENTORY — inventory.html ကို ဖွင့်
      */
     public void openInventory() {
-        String roomCode = "ROOM" + (int)(Math.random() * 9000 + 1000);
-        String path = "/inventory.html?room=" + roomCode +
-                "&user=" + encode(userEmail) +
-                "&coins=" + coins;
+
+        String roomCode =
+                "ROOM" + (int)(Math.random() * 9000 + 1000);
+
+        String path =
+                "/inventory.html?room=" + roomCode +
+                        "&user=" + encode(userEmail) +
+                        "&coins=" + coins;
 
         openBrowser(path);
     }
 
+
     /**
-     * SHOP - shop.html ကို ဖွင့်
+     * SHOP — shop.html ကို ဖွင့်
      */
     public void openShop() {
-        String path = "/shop.html?user=" + encode(userEmail) +
-                "&coins=" + coins;
+
+        String path =
+                "/shop.html?user=" + encode(userEmail) +
+                        "&coins=" + coins;
+
         openBrowser(path);
     }
 
+
     /**
-     * MY ACCOUNT - account.html ကို ဖွင့်
+     * MY ACCOUNT — account.html ကို ဖွင့်
      */
     public void openMyAccount() {
-        String path = "/account.html?user=" + encode(userEmail) +
-                "&coins=" + coins;
+
+        String path =
+                "/account.html?user=" + encode(userEmail) +
+                        "&coins=" + coins;
+
         openBrowser(path);
     }
 
+
     /**
-     * SETTING - setting.html ကို ဖွင့်
+     * SETTING — settings.html ကို ဖွင့်  ✅
      */
     public void openSetting() {
-        String path = "/setting.html?user=" + encode(userEmail);
+
+        String path =
+                "/settings.html?user=" + encode(userEmail);
+
         openBrowser(path);
     }
 
+
     /**
-     * FRIENDS - friends.html ကို ဖွင့်
+     * FRIENDS — friends.html ကို ဖွင့်
      */
     public void openFriends() {
-        String path = "/friends.html?user=" + encode(userEmail);
+
+        String path =
+                "/friends.html?user=" + encode(userEmail);
+
         openBrowser(path);
     }
 
+
     /**
-     * HOMEPAGE - homepage.html ကို ဖွင့်
+     * HOMEPAGE — homepage.html ကို ဖွင့်
      */
     public void openHomepage() {
-        String path = "/homepage.html?user=" + encode(userEmail) +
-                "&coins=" + coins;
+
+        String path =
+                "/homepage.html?user=" + encode(userEmail) +
+                        "&coins=" + coins;
+
         openBrowser(path);
     }
 }
