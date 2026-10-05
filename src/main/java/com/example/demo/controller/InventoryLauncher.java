@@ -4,20 +4,11 @@ import org.springframework.stereotype.Component;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-/**
- * InventoryController - Browser Launcher
- *
- * JavaFX FXML ကို လုံးဝ မသုံးတော့ဘူး။
- * Browser မှာ inventory.html ကို ဖွင့်ပေးတယ်။
- */
 @Component
-public class InventoryController {
+public class InventoryLauncher {
 
     private static final String BASE_URL = "http://localhost:8081";
 
-    // =========================================================
-    // Helper Methods
-    // =========================================================
     private String encode(String text) {
         if (text == null) return "";
         return URLEncoder.encode(text, StandardCharsets.UTF_8);
@@ -45,9 +36,6 @@ public class InventoryController {
         }
     }
 
-    // =========================================================
-    // Show Method - Browser မှာ inventory.html ဖွင့်ရန်
-    // =========================================================
     public void show() {
         show(null, null);
     }
@@ -67,9 +55,6 @@ public class InventoryController {
         openBrowser(path);
     }
 
-    // =========================================================
-    // Optional - Room Code နဲ့ User ကို သတ်မှတ်ပြီး ဖွင့်ရန်
-    // =========================================================
     public void showWithUser(String roomCode, String userEmail, int coins) {
         if (roomCode == null) {
             roomCode = "ROOM" + (int)(Math.random() * 9000 + 1000);
