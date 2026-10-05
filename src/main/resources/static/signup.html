@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>MyGaming - Sign Up</title>
+
+    <link rel="stylesheet" href="auth.css">
+</head>
+
+<body>
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <div class="game-logo">🎮</div>
+
+        <h1>Create Your Game Account</h1>
+
+        <p class="subtitle">
+            Join MyGaming and start playing
+        </p>
+
+
+        <!-- USERNAME -->
+        <label for="username">Username</label>
+
+        <input
+                id="username"
+                type="text"
+                placeholder="Enter username"
+                autocomplete="username">
+
+
+        <!-- EMAIL -->
+        <label for="email">Email</label>
+
+        <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                autocomplete="email">
+
+
+        <!-- PASSWORD -->
+        <label for="password">Password</label>
+
+        <div class="password-box">
+
+            <input
+                    id="password"
+                    type="password"
+                    placeholder="Enter password"
+                    autocomplete="new-password">
+
+            <button
+                    type="button"
+                    class="eye-button"
+                    onclick="togglePassword('password')">
+                👁
+            </button>
+
+        </div>
+
+
+        <!-- CONFIRM PASSWORD -->
+        <label for="confirmPassword">
+            Confirm Password
+        </label>
+
+        <div class="password-box">
+
+            <input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm password"
+                    autocomplete="new-password">
+
+            <button
+                    type="button"
+                    class="eye-button"
+                    onclick="togglePassword('confirmPassword')">
+                👁
+            </button>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+        <p id="message"></p>
+
+
+        <!-- SIGN UP BUTTON -->
+        <button
+                id="signupButton"
+                type="button"
+                class="main-button"
+                onclick="signup()">
+
+            Sign Up
+
+        </button>
+
+
+        <p class="switch-text">
+
+            I already have an account.
+
+            <a href="/login.html">
+                Login
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // =========================================
+    // SHOW / HIDE PASSWORD
+    // =========================================
+
+    function togglePassword(id) {
+
+        const input =
+            document.getElementById(id);
+
+        if (input.type === "password") {
+
+            input.type = "text";
+
+        } else {
+
+            input.type = "password";
+        }
+    }
+
+
+    // =========================================
+    // SHOW MESSAGE
+    // =========================================
+
+    function showError(text) {
+
+        const message =
+            document.getElementById("message");
+
+        message.className = "error-message";
+
+        message.textContent = text;
+    }
+
+
+    function showSuccess(text) {
+
+        const message =
+            document.getElementById("message");
+
+        message.className = "success-message";
+
+        message.textContent = text;
+    }
+
+
+    // =========================================
+    // SIGN UP
+    // =========================================
+
+    async function signup() {
+
+        console.log("Sign Up button clicked");
+
+
+        const username =
+            document
+                .getElementById("username")
+                .value
+                .trim();
+
+
+        const email =
+            document
+                .getElementById("email")
+                .value
+                .trim();
+
+
+        const password =
+            document
+                .getElementById("password")
+                .value;
+
+
+        const confirmPassword =
+            document
+                .getElementById("confirmPassword")
+                .value;const button =
+            document.getElementById(
+                "signupButton"
+            );
+
+
+        // =====================================
+        // EMPTY CHECK
+        // =====================================
+
+        if (
+            !username ||
+            !email ||
+            !password ||
+            !confirmPassword
+        ) {
+
+            showError(
+                "Please fill all fields."
+            );
+
+            return;
+        }
+
+
+        // =====================================
+        // EMAIL CHECK
+        // =====================================
+
+        if (
+            !email.includes("@") ||
+            !email.includes(".")
+        ) {
+
+            showError(
+                "Please enter a valid email."
+            );
+
+            return;
+        }
+
+
+        // =====================================
+        // PASSWORD LENGTH
+        // =====================================
+
+        if (password.length < 6) {
+
+            showError(
+                "Password must be at least 6 characters."
+            );
+
+            return;
+        }
+
+
+        // =====================================
+        // PASSWORD MATCH
+        // =====================================
+
+        if (password !== confirmPassword) {
+
+            showError(
+                "Passwords do not match."
+            );
+
+            return;
+        }
+
+
+        // =====================================
+        // SEND TO SPRING BOOT
+        // =====================================
+
+        try {
+
+            button.disabled = true;
+
+            button.textContent =
+                "Creating Account...";
+
+
+            console.log(
+                "Sending signup request..."
+            );
+
+
+            const response =
+                await fetch(
+                    "/api/auth/signup",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                username: username,
+                                email: email,
+                                password: password
+                            })
+                    }
+                );
+
+
+            // =================================
+            // READ SERVER RESPONSE
+            // =================================
+
+            let data;
+
+
+            try {
+
+                data =
+                    await response.json();
+
+            } catch (jsonError) {
+
+                console.error(
+                    "Invalid server response:",
+                    jsonError
+                );
+
+                showError(
+                    "Invalid response from server."
+                );
+
+                return;
+            }
+
+
+            console.log(
+                "Server response:",
+                data
+            );
+
+
+            // =================================
+            // SIGNUP FAILED
+            // =================================
+
+            if (
+                !response.ok ||
+                data.success === false
+            ) {
+
+                showError(
+                    data.message ||
+                    "Sign up failed."
+                );
+
+                return;
+            }
+
+
+            // =================================
+            // SIGNUP SUCCESS
+            // =================================
+
+            showSuccess(
+                data.message ||
+                "Verification code sent!"
+            );
+
+
+            // Save temporarily
+            sessionStorage.setItem(
+                "signupEmail",
+                email
+            );
+
+
+            sessionStorage.setItem(
+                "signupUsername",
+                username
+            );
+
+
+            // =================================
+            // GO TO VERIFY PAGE
+            // =================================
+
+            setTimeout(
+                function () {window.location.href =
+                        "/verifyemail.html?email=" +
+                        encodeURIComponent(email);
+
+                },
+                800
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Signup error:",
+                error
+            );
+
+
+            showError(
+                "Cannot connect to server."
+            );
+
+        } finally {
+
+            button.disabled = false;
+
+            button.textContent =
+                "Sign Up";
+        }
+    }
+
+
+    // =========================================
+    // ENTER KEY
+    // =========================================
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+
+                signup();
+            }
+        }
+    );
+
+</script>
+
+</body>
+
+</html>
