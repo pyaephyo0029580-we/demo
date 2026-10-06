@@ -16,7 +16,6 @@ public class homepage {
     private String userEmail = "Player";
     private int coins = 0;
 
-
     /* =========================================================
        User Info
     ========================================================= */
