@@ -1,7 +1,5 @@
 package com.example.demo.config;
 
-//ipackage com.example.demo;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -14,12 +12,24 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic"); // Client တွေ စာလက်ခံရယူမယ့် channel prefix
-        config.setApplicationDestinationPrefixes("/app"); // Client က ဆာဗာဆီ ပို့မယ့် prefix
+
+        // Client တွေ message လက်ခံမယ့် channel
+        config.enableSimpleBroker("/topic");
+
+        // Client က Server ဆီ message ပို့မယ့် prefix
+        config.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/game-websocket").withSockJS(); // Client တွေ ချိတ်ဆက်မယ့် WebSocket Endpoint
+
+        // Browser / SockJS အတွက်
+        registry.addEndpoint("/game-websocket")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
+
+        // JavaFX Native WebSocket အတွက်
+        registry.addEndpoint("/game-websocket-native")
+                .setAllowedOriginPatterns("*");
     }
 }

@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Play - My Online Game</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
     <style>
         body {
             background-color: #0d1117;
-            color: #ffffff;
+            color: white;
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
@@ -14,6 +18,7 @@
             height: 100vh;
             margin: 0;
         }
+
         .container {
             width: 1000px;
             height: 650px;
@@ -22,7 +27,7 @@
             justify-content: center;
             align-items: center;
         }
-        /* Back Button */
+
         .back-btn {
             position: absolute;
             top: 30px;
@@ -35,10 +40,7 @@
             cursor: pointer;
             font-weight: bold;
         }
-        .back-btn:hover {
-            background-color: #30363d;
-        }
-        /* Main Center Box VBox */
+
         .center-box {
             background-color: #161b22;
             border: 1px solid #30363d;
@@ -47,16 +49,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 25px;
+            gap: 20px;
             width: 350px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.6);
         }
+
         h2 {
-            color: #f0f6fc;
-            font-size: 24px;
-            margin: 0;
-            font-weight: bold;
+            margin: 0 0 10px 0;
         }
+
         .action-btn {
             width: 250px;
             height: 50px;
@@ -65,37 +66,428 @@
             font-weight: bold;
             cursor: pointer;
             border: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.2s;
         }
-        .action-btn:hover {
-            opacity: 0.9;
-        }
+
         .btn-create {
             background-color: #238636;
             color: white;
         }
+
         .btn-join {
             background-color: #1f6feb;
             color: white;
         }
+
+        .action-btn:hover {
+            opacity: 0.9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 30px;
+            width: 320px;
+            text-align: center;
+        }
+
+        .modal-box h3 {
+            margin-top: 0;
+        }
+
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 6px;
+            border: 1px solid #30363d;
+            background: #0d1117;
+            color: white;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .modal-btn {
+            width: 120px;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .join-confirm {
+            background: #238636;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #30363d;
+            color: white;
+        }
+
+        #status {
+            margin-top: 10px;
+            color: #ff7b72;
+            font-size: 14px;
+        }
     </style>
 </head>
+
 <body>
 
 <div class="container">
-    <!-- Back Button to Home -->
-    <button class="back-btn" onclick="location.href='index.html'">&lt; Back to Home</button>
 
-    <!-- Main Center Box -->
+    <button class="back-btn"
+            onclick="location.href='index.html'">
+        &lt; Back to Home
+    </button>
+
     <div class="center-box">
+
         <h2>SELECT GAME MODE</h2>
-        <button class="action-btn btn-create" onclick="alert('Create Room clicked!')">CREATE ROOM</button>
-        <button class="action-btn btn-join" onclick="alert('Join Room clicked!')">JOIN ROOM</button>
+
+        <button class="action-btn btn-create"
+                onclick="createRoom()">
+            CREATE ROOM
+        </button>
+
+        <button class="action-btn btn-join"
+                onclick="openJoinModal()">
+            JOIN ROOM
+        </button>
+
     </div>
 </div>
+
+
+<!-- JOIN ROOM MODAL -->
+
+<div id="joinModal" class="modal">
+
+    <div class="modal-box">
+
+        <h3>JOIN ROOM</h3>
+
+        <p>Enter Room Code</p>
+
+        <input
+                type="text"
+                id="roomCodeInput"
+                placeholder="ABC123"
+                maxlength="6"
+        >
+
+        <br>
+
+        <button class="modal-btn join-confirm"
+                onclick="joinRoom()">
+            JOIN
+        </button>
+
+        <button class="modal-btn cancel-btn"
+                onclick="closeJoinModal()">
+            CANCEL
+        </button>
+
+        <div id="status"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    let stompClient = null;
+
+
+    // ==========================================
+    // GET USERNAME
+    // ==========================================
+
+   function getUsername() {
+
+    // 1. URL ထဲက user ကို အရင်စစ်
+    const params = new URLSearchParams(window.location.search);
+    const urlUsername = params.get("user");
+
+    if (urlUsername && urlUsername.trim() !== "") {
+
+        const username = urlUsername.trim();
+
+        // နောက်ပိုင်း page တွေအတွက် သိမ်းထား
+        localStorage.setItem("username", username);
+
+        return username;
+    }
+
+    // 2. URL မှာမရှိရင် localStorage ကိုစစ်
+    const username = localStorage.getItem("username");
+
+    if (!username || username.trim() === "") {
+
+        alert("Please login first.");
+
+        return null;
+    }
+
+    return username.trim();
+}
+
+    // ==========================================
+    // CONNECT WEBSOCKET
+    // ==========================================
+
+    function connectSocket(callback) {
+
+        const socket = new SockJS("/game-websocket");
+
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+
+            console.log("Connected: " + frame);
+
+            if (callback) {
+                callback();
+            }
+
+        }, function(error) {
+
+            console.error("WebSocket error:", error);
+
+            alert("Could not connect to game server.");
+
+        });
+    }
+
+
+    // ==========================================
+    // CREATE ROOM
+    // ==========================================
+
+    function createRoom() {
+
+        const username = getUsername();
+
+        if (!username) {
+            return;
+        }
+
+        connectSocket(function() {
+
+            stompClient.subscribe(
+                "/topic/room-created/" + username,
+                function(message) {
+
+                    const data = JSON.parse(message.body);
+
+                    console.log("Room Created:", data);
+
+                    if (data.type === "ROOM_CREATED") {
+
+                        sessionStorage.setItem(
+                            "roomCode",
+                            data.roomCode
+                        );
+
+                        sessionStorage.setItem(
+                            "host",
+                            data.host
+                        );
+
+                        sessionStorage.setItem(
+                            "username",
+                            username
+                        );
+
+                        window.location.href = "lobby.html";
+                    }
+                }
+            );
+
+
+            stompClient.send(
+                "/app/create-room",
+                {},
+                JSON.stringify({
+                    username: username
+                })
+            );
+
+        });
+    }
+
+
+    // ==========================================
+    // OPEN JOIN MODAL
+    // ==========================================
+
+    function openJoinModal() {
+
+        const username = getUsername();
+
+        if (!username) {
+            return;
+        }
+
+        document.getElementById("joinModal").style.display = "flex";
+
+        document.getElementById("roomCodeInput").focus();
+    }
+
+
+    // ==========================================
+    // CLOSE JOIN MODAL
+    // ==========================================
+
+    function closeJoinModal() {
+
+        document.getElementById("joinModal").style.display = "none";
+
+        document.getElementById("status").innerText = "";
+
+        document.getElementById("roomCodeInput").value = "";
+    }
+
+
+    // ==========================================
+    // JOIN ROOM
+    // ==========================================
+
+    function joinRoom() {
+
+        const username = getUsername();
+
+        if (!username) {
+            return;
+        }
+
+        const roomCode =
+            document
+                .getElementById("roomCodeInput")
+                .value
+                .trim()
+                .toUpperCase();
+
+
+        if (!roomCode) {
+
+            document.getElementById("status").innerText =
+                "Please enter a room code.";
+
+            return;
+        }
+
+
+        if (roomCode.length !== 6) {
+
+            document.getElementById("status").innerText =
+                "Room code must be 6 characters.";
+
+            return;
+        }
+
+
+        connectSocket(function() {
+
+            // ==================================
+            // ROOM JOINED
+            // ==================================
+
+            stompClient.subscribe(
+                "/topic/room-joined/" + username,
+                function(message) {
+
+                    const data = JSON.parse(message.body);
+
+                    console.log("Room Joined:", data);
+
+
+                    if (data.type === "ROOM_JOINED") {
+
+                        sessionStorage.setItem(
+                            "roomCode",
+                            data.roomCode
+                        );
+
+                        sessionStorage.setItem(
+                            "host",
+                            data.host
+                        );
+
+                        sessionStorage.setItem(
+                            "username",
+                            username
+                        );
+
+                        window.location.href = "lobby.html";
+                    }
+                }
+            );
+
+
+            // ==================================
+            // ROOM ERROR
+            // ==================================
+
+            stompClient.subscribe(
+                "/topic/room-error/" + username,
+                function(message) {
+
+                    const data = JSON.parse(message.body);
+
+                    console.log("Room Error:", data);
+
+                    document.getElementById("status").innerText =
+                        data.message || "Unable to join room.";
+                }
+            );
+
+
+            // ==================================
+            // SEND JOIN REQUEST
+            // ==================================
+
+            stompClient.send(
+                "/app/join-room",
+                {},
+                JSON.stringify({
+                    username: username,
+                    roomCode: roomCode
+                })
+            );
+
+        });
+    }
+
+
+    // ==========================================
+    // ENTER KEY
+    // ==========================================
+
+    document
+        .getElementById("roomCodeInput")
+        .addEventListener("keydown", function(event) {
+
+            if (event.key === "Enter") {
+                joinRoom();
+            }
+
+        });
+
+</script>
 
 </body>
 </html>
