@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import org.springframework.stereotype.Component;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -10,7 +9,6 @@ import java.nio.charset.StandardCharsets;
  * JavaFX FXML ကို လုံးဝ မသုံးတော့ဘူး။
  * Browser မှာ inventory.html ကို ဖွင့်ပေးတယ်။
  */
-@Component
 public class InventoryController {
 
     private static final String BASE_URL = "http://localhost:8081";
