@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class WebController {
 
-    // 1. Home Page (http://localhost:8081/)
+   /* // 1. Home Page (http://localhost:8081/)
     @GetMapping("/")
     public String index() {
         return "forward:/homepage.html";
-    }
+    }*/
 
     // 2. Signup Page
     @GetMapping("/signup")
