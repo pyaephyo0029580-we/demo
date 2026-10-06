@@ -1,349 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>MyGaming - Sign Up</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - MyGaming</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
 
         body {
-
             margin: 0;
-
             min-height: 100vh;
-
             display: flex;
             justify-content: center;
             align-items: center;
-
-            font-family:
-                    Arial,
-                    Helvetica,
-                    sans-serif;
-
-            color: white;
-
-            background:
-                    radial-gradient(
-                            circle at top,
-                            #252b45,
-                            #0c0f18
-                    );
+            background: #f3f5f9;
+            font-family: Arial, sans-serif;
         }
 
-        .signup-container {
-
-            width: 430px;
-            max-width: 92%;
-
+        .container {
+            width: 100%;
+            max-width: 430px;
             padding: 35px;
-
-            border-radius: 18px;
-
-            background:
-                    rgba(
-                            22,
-                            27,
-                            44,
-                            0.96
-                    );
-
-            box-shadow:
-                    0 20px 50px
-                    rgba(
-                            0,
-                            0,
-                            0,
-                            0.4
-                    );
-        }
-
-        .logo {
-
-            width: 65px;
-            height: 65px;
-
-            margin:
-                    0 auto
-                    18px;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            border-radius: 15px;
-
-            background:
-                    linear-gradient(
-                            135deg,
-                            #328cff,
-                            #676cff
-                    );
-
-            font-size: 28px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
         }
 
         h1 {
-
-            margin:
-                    0
-                    0
-                    7px;
-
             text-align: center;
-
-            font-size: 27px;
+            margin: 0 0 8px;
         }
 
         .subtitle {
-
-            margin-bottom: 30px;
-
             text-align: center;
+            color: #777;
+            margin-bottom: 25px;
+        }
 
-            color: #7e8db3;
-
-            font-size: 14px;
+        .input-group {
+            margin-bottom: 16px;
         }
 
         label {
-
             display: block;
-
-            margin-bottom: 8px;
-
-            color: #e5eaff;
-
-            font-weight: bold;
-
             font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 7px;
         }
 
         input {
-
             width: 100%;
-            height: 50px;
-
-            margin-bottom: 18px;
-
-            padding:
-                    0
-                    15px;
-
-            border:
-                    1px solid
-                    #3b4667;
-
+            height: 48px;
+            padding: 0 14px;
+            border: 2px solid #ddd;
             border-radius: 10px;
-
             outline: none;
-
-            background: #171c2d;
-
-            color: white;
-
             font-size: 15px;
-
-            pointer-events: auto;
-
-            position: relative;
-
-            z-index: 2;
         }
 
         input:focus {
-
-            border-color: #4c8dff;
-
-            box-shadow:
-                    0 0 0 2px
-                    rgba(
-                            76,
-                            141,
-                            255,
-                            0.15
-                    );
+            border-color: #555;
         }
 
-        #message {
+        .password-wrapper {
+            position: relative;
+        }
 
-            min-height: 25px;
+        .password-wrapper input {
+            padding-right: 65px;
+        }
 
-            margin-bottom: 12px;
-
-            text-align: center;
-
+        .show-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            font-size: 13px;
             font-weight: bold;
-
-            color: #ff8999;
+            cursor: pointer;
         }
 
-        #message.success {
+        .password-rules {
+            margin: 8px 0 0;
+            padding-left: 20px;
+            color: #777;
+            font-size: 12px;
+            line-height: 1.7;
+        }
 
-            color: #5de6a5;
+        .valid {
+            color: #159447;
+            font-weight: bold;
         }
 
         #signupButton {
-
             width: 100%;
             height: 50px;
-
+            margin-top: 8px;
             border: none;
-            border-radius: 10px;
-
-            background:
-                    linear-gradient(
-                            90deg,
-                            #268bff,
-                            #8174ff
-                    );
-
+            border-radius: 11px;
+            background: #222;
             color: white;
-
-            font-size: 15px;
-
+            font-size: 16px;
             font-weight: bold;
-
             cursor: pointer;
-
-            position: relative;
-
-            z-index: 2;
         }
 
-        #signupButton:hover {
-
-            opacity: 0.95;
-        }
-
-        #signupButton:disabled {opacity: 0.55;
-
+        #signupButton:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
         }
 
-        .login-link {
-
-            margin-top: 20px;
-
+        #message {
+            min-height: 22px;
             text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
 
-            color: #aeb7cf;
+        .error {
+            color: #d93025;
+        }
 
+        .success {
+            color: #159447;
+        }
+
+        .login-link {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
             font-size: 14px;
         }
 
         .login-link a {
-
-            color: #76b4ff;
-
-            text-decoration: none;
-
+            color: #222;
             font-weight: bold;
+            text-decoration: none;
         }
-
     </style>
-
 </head>
-
 
 <body>
 
+<div class="container">
 
-<div class="signup-container">
+    <h1>Create Account</h1>
+    <div class="subtitle">Create your MyGaming account</div>
 
-    <div class="logo">
-        🎮
+    <div class="input-group">
+        <label for="username">Username</label>
+
+        <input
+                id="username"
+                type="text"
+                placeholder="Enter username"
+                maxlength="30"
+                autocomplete="username"
+        >
     </div>
 
+    <div class="input-group">
+        <label for="email">Email</label>
 
-    <h1>
-        Create Your Game Account
-    </h1>
-
-
-    <div class="subtitle">
-        Join MyGaming and start playing
+        <input
+                id="email"
+                type="email"
+                placeholder="Enter email"
+                autocomplete="email"
+        >
     </div>
 
+    <div class="input-group">
+        <label for="password">Password</label>
 
-    <label for="username">
-        Username
-    </label>
+        <div class="password-wrapper"><input
+                id="password"
+                type="password"
+                placeholder="Enter password"
+                autocomplete="new-password"
+        >
 
-    <input
-            id="username"
-            name="username"
-            type="text"
-            placeholder="Enter username"
-            autocomplete="username">
+            <button
+                    id="showPassword"
+                    class="show-btn"
+                    type="button"
+            >
+                Show
+            </button>
 
+        </div>
 
-    <label for="email">
-        Email
-    </label>
+        <ul class="password-rules">
+            <li id="ruleLength">At least 8 characters</li>
+            <li id="ruleUpper">At least 1 uppercase letter</li>
+            <li id="ruleLower">At least 1 lowercase letter</li>
+            <li id="ruleNumber">At least 1 number</li>
+            <li id="ruleSpecial">At least 1 special character (@#$!%*?&)</li>
+        </ul>
+    </div>
 
-    <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Enter email"
-            autocomplete="email">
+    <div class="input-group">
+        <label for="confirmPassword">Confirm Password</label>
 
+        <div class="password-wrapper">
 
-    <label for="password">
-        Password
-    </label>
+            <input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Enter password again"
+                    autocomplete="new-password"
+            >
 
-    <input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Enter password"
-            autocomplete="new-password">
+            <button
+                    id="showConfirmPassword"
+                    class="show-btn"
+                    type="button"
+            >
+                Show
+            </button>
 
+        </div>
+    </div>
 
-    <label for="confirmPassword">
-        Confirm Password
-    </label>
-
-    <input
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            placeholder="Confirm password"
-            autocomplete="new-password">
-
+    <button id="signupButton" type="button">
+        Sign Up
+    </button>
 
     <div id="message"></div>
 
-
-    <button
-            id="signupButton"
-            type="button">
-
-        Sign Up
-
-    </button>
-
-
     <div class="login-link">
-
-        I already have an account.
-
-        <a href="/login.html">
-            Login
-        </a>
-
+        Already have an account?
+        <a href="/login.html">Login</a>
     </div>
 
 </div>
@@ -351,70 +245,157 @@
 
 <script>
 
-    // =====================================================
-    // ELEMENTS
-    // =====================================================
-
     const usernameInput =
-        document.getElementById(
-            "username"
-        );
+        document.getElementById("username");
 
     const emailInput =
-        document.getElementById(
-            "email"
-        );
+        document.getElementById("email");
 
     const passwordInput =
-        document.getElementById(
-            "password"
-        );
+        document.getElementById("password");
 
     const confirmPasswordInput =
-        document.getElementById(
-            "confirmPassword"
-        );
-
-    const message =
-        document.getElementById(
-            "message"
-        );
+        document.getElementById("confirmPassword");
 
     const signupButton =
-        document.getElementById(
-            "signupButton"
+        document.getElementById("signupButton");
+
+    const message =
+        document.getElementById("message");
+
+
+    const ruleLength =
+        document.getElementById("ruleLength");
+
+    const ruleUpper =
+        document.getElementById("ruleUpper");
+
+    const ruleLower =
+        document.getElementById("ruleLower");
+
+    const ruleNumber =
+        document.getElementById("ruleNumber");
+
+    const ruleSpecial =
+        document.getElementById("ruleSpecial");
+
+
+    function isStrongPassword(password) {
+
+        return (
+            password.length >= 8 &&
+            /[A-Z]/.test(password) &&
+            /[a-z]/.test(password) &&
+            /\d/.test(password) &&
+            /[@#$!%*?&]/.test(password)
+        );
+    }
+
+
+    function updateRule(element, condition) {
+
+        if (condition) {
+            element.classList.add("valid");
+        } else {
+            element.classList.remove("valid");
+        }
+    }
+
+
+    passwordInput.addEventListener("input", function () {
+
+        const password = passwordInput.value;
+
+        updateRule(
+            ruleLength,
+            password.length >= 8
         );
 
+        updateRule(
+            ruleUpper,
+            /[A-Z]/.test(password)
+        );
 
-    // =====================================================
-    // MESSAGE
-    // =====================================================
+        updateRule(
+            ruleLower,
+            /[a-z]/.test(password)
+        );
 
-    function showError(text) {
+        updateRule(
+            ruleNumber,
+            /\d/.test(password)
+        );
 
-        message.className =
-            "";
+        updateRule(
+            ruleSpecial,
+            /[@#$!%*?&]/.test(password)
+        );
 
-        message.textContent =
-            text;
+        clearMessage();
+    });
+
+
+    document
+        .getElementById("showPassword")
+        .addEventListener("click", function () {
+
+            togglePassword(
+                passwordInput,
+                this
+            );
+        });
+
+
+    document
+        .getElementById("showConfirmPassword")
+        .addEventListener("click", function () {
+
+            togglePassword(
+                confirmPasswordInput,
+                this
+            );
+        });
+
+
+    function togglePassword(input, button) {
+
+        if (input.type === "password") {
+
+            input.type = "text";
+            button.textContent = "Hide";
+
+        } else {input.type = "password";
+            button.textContent = "Show";
+        }
     }
 
 
-    function showSuccess(text) {
+    function isValidEmail(email) {
 
-        message.className =
-            "success";
-
-        message.textContent =
-            text;
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
 
-    // =====================================================
-    // SIGNUP
-    // =====================================================
+    signupButton.addEventListener(
+        "click",
+        signup
+    );
 
-    async function signupUser() {
+
+    confirmPasswordInput.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+                signup();
+            }
+        }
+    );
+
+
+    async function signup() {
+
+        clearMessage();
 
         const username =
             usernameInput.value.trim();
@@ -429,58 +410,46 @@
             confirmPasswordInput.value;
 
 
-        message.className =
-            "";
-
-        message.textContent =
-            "";
-
-
-        // -----------------------------
-        // VALIDATION
-        // -----------------------------
-
-        if (!username) {
+        if (
+            username === "" ||
+            email === "" ||
+            password === "" ||
+            confirmPassword === ""
+        ) {
 
             showError(
-                "Please enter username."
+                "Please fill in all fields."
             );
-
-            usernameInput.focus();
 
             return;
         }
 
 
-        if (!email) {
+        if (username.length < 3) {
 
             showError(
-                "Please enter email."
+                "Username must be at least 3 characters."
             );
-
-            emailInput.focus();
 
             return;
         }
 
 
-        if (!password) {
+        if (!isValidEmail(email)) {
 
             showError(
-                "Please enter password."
+                "Please enter a valid email address."
             );
 
-            passwordInput.focus();return;
+            return;
         }
 
 
-        if (!confirmPassword) {
+        if (!isStrongPassword(password)) {
 
             showError(
-                "Please confirm password."
+                "Password must contain at least 8 characters, uppercase, lowercase, number and special character."
             );
-
-            confirmPasswordInput.focus();
 
             return;
         }
@@ -496,35 +465,20 @@
         }
 
 
-        // -----------------------------
-        // BUTTON LOADING
-        // -----------------------------
-
-        signupButton.disabled =
-            true;
-
+        signupButton.disabled = true;
         signupButton.textContent =
             "Creating Account...";
 
 
         try {
 
-            // =============================================
-            // IMPORTANT
-            // DO NOT PUT localhost HERE
-            // Relative API path works with Cloudflare too
-            // =============================================
-
             const response =
                 await fetch(
                     "/api/auth/signup",
                     {
-
-                        method:
-                            "POST",
+                        method: "POST",
 
                         headers: {
-
                             "Content-Type":
                                 "application/json"
                         },
@@ -532,70 +486,30 @@
                         credentials:
                             "same-origin",
 
-                        body:
-                            JSON.stringify({
-
-                                username:
-                                    username,
-
-                                email:
-                                    email,
-
-                                password:
-                                    password
-                            })
+                        body: JSON.stringify({
+                            username: username,
+                            email: email,
+                            password: password
+                        })
                     }
                 );
 
-
-            // ---------------------------------------------
-            // READ RAW SERVER RESPONSE
-            // ---------------------------------------------
 
             const responseText =
                 await response.text();
 
 
-            console.log(
-                "SIGNUP STATUS =",
-                response.status
-            );
-
-
-            console.log(
-                "SIGNUP RESPONSE =",
-                responseText
-            );
-
-
-            let data;
-
+            let data = {};
 
             try {
-
-                data =
-                    JSON.parse(
-                        responseText
-                    );
-
-            } catch (error) {
-
-                showError(
-                    "Server response error."
-                );
-
+                data = JSON.parse(responseText);
+            } catch (e) {
                 console.error(
-                    "JSON ERROR:",
-                    error
+                    "Server response:",
+                    responseText
                 );
-
-                return;
             }
 
-
-            // ---------------------------------------------
-            // BACKEND ERROR
-            // ---------------------------------------------
 
             if (!response.ok) {
 
@@ -608,17 +522,7 @@
             }
 
 
-            // ---------------------------------------------
-            // SUCCESS
-            // ---------------------------------------------
-
             if (data.success === true) {
-
-                showSuccess(
-                    data.message ||
-                    "Account created successfully."
-                );
-
 
                 sessionStorage.setItem(
                     "verifyEmail",
@@ -626,53 +530,41 @@
                 );
 
 
-                // Small delay so success message
-                // can render before redirect
-                setTimeout(
-                    function () {
-
-                        window.location.href =
-                            "/verifyemail.html?email="
-                            + encodeURIComponent(
-                                email
-                            );
-
-                    },
-                    300
+                showSuccess(
+                    data.message ||
+                    "Verification code sent."
                 );
 
 
-                return;
+                setTimeout(function () {
+
+                    window.location.href =
+                        "/verifyemail.html?email="
+                        +
+                        encodeURIComponent(email);
+
+                }, 600);
+
+            } else {
+
+                showError(
+                    data.message ||
+                    "Sign up failed."
+                );
             }
-
-
-            // ---------------------------------------------
-            // UNKNOWN RESPONSE
-            // ---------------------------------------------
-
-    showError(
-                data.message ||
-                "Sign up failed."
-            );
 
 
         } catch (error) {
 
-            console.error(
-                "SIGNUP FETCH ERROR:",
-                error
-            );
-
+            console.error(error);
 
             showError(
-                "Cannot connect to server."
+                "Cannot connect to the server."
             );
-
 
         } finally {
 
-            signupButton.disabled =
-                false;
+            signupButton.disabled = false;
 
             signupButton.textContent =
                 "Sign Up";
@@ -680,37 +572,25 @@
     }
 
 
-    // =====================================================
-    // BUTTON CLICK
-    // =====================================================
-
-    signupButton.addEventListener(
-        "click",
-        function () {
-
-            signupUser();
-        }
-    );
+    function showError(text) {message.textContent = text;
+        message.className = "error";
+    }
 
 
-    // =====================================================
-    // ENTER KEY
-    // =====================================================
+    function showSuccess(text) {
 
-    confirmPasswordInput.addEventListener(
-        "keydown",
-        function (event) {
+        message.textContent = text;
+        message.className = "success";
+    }
 
-            if (event.key === "Enter") {
 
-                signupUser();
-            }
-        }
-    );
+    function clearMessage() {
+
+        message.textContent = "";
+        message.className = "";
+    }
 
 </script>
 
-
 </body>
-
 </html>
