@@ -1,28 +1,31 @@
 package com.example.demo.entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
 
-@Table("friends")
+@Entity
+@Table(name = "friends")
 public class Friend {
 
     @Id
-    @Column("friend_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "friend_id")
     private Long friendId;
 
-    @Column("requester_id")
+    @Column(name = "requester_id")
     private Long requesterId;
 
-    @Column("receiver_id")
+    @Column(name = "receiver_id")
     private Long receiverId;
 
     private String status;
 
-
     public Friend() {
     }
-
 
     public Long getFriendId() {
         return friendId;
@@ -32,7 +35,6 @@ public class Friend {
         this.friendId = friendId;
     }
 
-
     public Long getRequesterId() {
         return requesterId;
     }
@@ -41,7 +43,6 @@ public class Friend {
         this.requesterId = requesterId;
     }
 
-
     public Long getReceiverId() {
         return receiverId;
     }
@@ -49,7 +50,6 @@ public class Friend {
     public void setReceiverId(Long receiverId) {
         this.receiverId = receiverId;
     }
-
 
     public String getStatus() {
         return status;
