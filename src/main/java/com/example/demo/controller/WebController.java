@@ -6,33 +6,51 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class WebController {
 
-    // Login Page
+    // 1. Home Page (http://localhost:8081/)
+    @GetMapping("/")
+    public String index() {
+        return "forward:/homepage.html";
+    }
+
+    // 2. Signup Page
     @GetMapping("/signup")
-    public String login() {
+    public String signupPage() {
         return "redirect:/signup.html";
     }
 
-    // Signup Page
+    // 3. Login Page
     @GetMapping("/login")
-    public String signup() {
+    public String loginPage() {
         return "redirect:/login.html";
     }
 
-    // Homepage
+    // 4. Homepage
     @GetMapping("/home")
     public String home() {
         return "redirect:/homepage.html";
     }
 
-    // Friends Page
+    // 5. Friends Page
     @GetMapping("/friends")
     public String friends() {
         return "redirect:/friends.html";
     }
 
-    // Game Page
+    // 6. Controller Page
+    @GetMapping("/controller")
+    public String controller() {
+        return "controller";
+    }
+
+    // 7. Play/Game Page (Player.html သို့ သွားရန်)
+    @GetMapping("/player.html")
+    public String playerPage() {
+        return "forward:/player.html";
+    }
+
+    // 8. Game Page (URL အတို /game ဖြင့် Player.html သို့ သွားရန်)
     @GetMapping("/game")
-    public String game() {
-        return "redirect:/game.html";
+    public String gamePage() {
+        return "forward:/player.html";
     }
 }

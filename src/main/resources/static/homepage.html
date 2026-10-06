@@ -1,540 +1,199 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>My Online Game - Home Page</title>-->
+<!--    <link rel="stylesheet" href="homepage.css">-->
+<!--</head>-->
+<!--<body class="home-game-body">-->
+
+<!--<div class="home-game-container">-->
+
+<!--    &lt;!&ndash; TOP BAR &ndash;&gt;-->
+<!--    <div class="home-top-bar">-->
+<!--        <span class="player-icon">🟢</span>-->
+<!--        <span class="player-name" id="playerName">XXXXXXXXXX</span>-->
+
+<!--        <div class="top-bar-spacer"></div>-->
+
+<!--        <span class="coin-icon">●</span>-->
+<!--        <span class="coin-text" id="coinLabel">0</span>-->
+<!--        <button type="button" class="friends-button" onclick="openFriends()">-->
+<!--            FRIENDS-->
+<!--        </button>-->
+
+<!--    </div>-->
+
+<!--    &lt;!&ndash; LEFT MENU PANEL &ndash;&gt;-->
+<!--    <div class="home-left-panel">-->
+<!--        <h1 class="home-title-label">AMONG US</h1>-->
+
+<!--        <div class="home-menu-buttons">-->
+<!--            <button class="home-menu-button" onclick="openPlay()">PLAY</button>-->
+<!--            <button class="home-menu-button" onclick="openInventory()">INVENTORY</button>-->
+<!--            <button class="home-menu-button" onclick="openShop()">SHOP</button>-->
+<!--            <button class="home-menu-button" onclick="openMyAccount()">MY ACCOUNT</button>-->
+<!--            <button class="home-menu-button" onclick="openSetting()">SETTING</button>-->
+<!--        </div>-->
+
+<!--        <div class="home-version-label">v18a (build num: 7240)</div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; RIGHT CONTENT PANEL (GIF Area) &ndash;&gt;-->
+<!--    <div class="home-right-panel">-->
+<!--        <div class="character-gif-area">-->
+<!--            <span class="placeholder-label">Character GIF Area</span>-->
+
+<!--            &lt;!&ndash; GIF ထည့်ချင်ရင် ဒီနေရာမှာ ထည့်ပါ &ndash;&gt;-->
+<!--            &lt;!&ndash; <img src="Image/character.gif" class="character-gif" alt="Character"> &ndash;&gt;-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--</div>-->
+
+<!--<script>-->
+<!--    // ===== URL Parameters မှ User info ယူ =====-->
+<!--    const params = new URLSearchParams(window.location.search);-->
+<!--    const username = params.get('user') || 'Player';-->
+<!--    const coins = params.get('coins') || '0';-->
+
+<!--    document.getElementById('playerName').innerText = username;-->
+<!--    document.getElementById('coinLabel').innerText = coins;-->
+
+<!--    // ===== Button Actions =====-->
+<!--    function openPlay() {-->
+<!--    const roomCode = 'ROOM' + Math.floor(1000 + Math.random() * 9000);-->
+<!--    const url = `game.html?room=${roomCode}&user=${encodeURIComponent(username)}`;-->
+
+<!--    if (confirm(`Room: ${roomCode}\n\nဒီ Room ထဲ ဝင်ဆော့မှာလား?\n\n(သူငယ်ချင်းတွေကို ဒီ Link ပို့ပါ)\n${window.location.origin}/game.html?room=${roomCode}`)) {-->
+<!--    window.location.href = url;-->
+<!--    }-->
+<!--    }-->
+
+<!--    function openInventory() {-->
+<!--    const roomCode = 'ROOM' + Math.floor(1000 + Math.random() * 9000);-->
+<!--    window.location.href = `inventory.html?room=${roomCode}&user=${encodeURIComponent(username)}`;-->
+<!--    }-->
+
+<!--    function openShop() {-->
+<!--    alert('🛒 SHOP\n\nShop page will open here.\n\n(Coming soon...)');-->
+<!--    }-->
+
+<!--    function openMyAccount() {-->
+<!--    alert(`👤 MY ACCOUNT\n\nName: ${username}\nCoins: ${coins}\n\n(Coming soon...)`);-->
+<!--    }-->
+
+<!--    function openSetting() {-->
+<!--    alert('⚙️ SETTINGS\n\nSettings page will open here.\n\n(Coming soon...)');-->
+<!--    }-->
+<!--    function openFriends() {-->
+<!--    window.location.href = "friends.html";-->
+<!--}-->
+
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Online Game - Home Page</title>
-
-    <link rel="stylesheet"
-          href="homepage.css">
+    <link rel="stylesheet" href="homepage.css">
 </head>
-
-
 <body class="home-game-body">
 
 <div class="home-game-container">
 
-
-    <!-- ===================================== -->
     <!-- TOP BAR -->
-    <!-- ===================================== -->
-
     <div class="home-top-bar">
-
-        <div class="player-info">
-
-            <span class="player-icon">●</span>
-
-            <span class="player-name" id="playerName">
-                Player
-            </span>
-
-        </div>
-
+        <span class="player-icon">🟢</span>
+        <span class="player-name" id="playerName">XXXXXXXXXX</span>
 
         <div class="top-bar-spacer"></div>
 
-
-        <div class="coin-area">
-
-            <span class="coin-icon">●</span>
-
-            <span class="coin-text" id="coinLabel">
-                0
-            </span>
-
-        </div>
-
-
-        <a id="friendsLink"
-           class="friends-button"
-           href="/friends.html">
+        <span class="coin-icon">●</span>
+        <span class="coin-text" id="coinLabel">0</span>
+        <button type="button" class="friends-button" onclick="openFriends()">
             FRIENDS
-        </a>
-
+        </button>
     </div>
 
+    <!-- LEFT MENU PANEL -->
+    <div class="home-left-panel">
+        <h1 class="home-title-label">AMONG US</h1>
 
-
-    <!-- ===================================== -->
-    <!-- MAIN CONTENT -->
-    <!-- ===================================== -->
-
-    <div class="home-main-content">
-
-
-        <!-- LEFT PANEL -->
-
-        <div class="home-left-panel">
-
-            <h1 class="home-title-label">
-                AMONG US
-            </h1>
-
-
-            <div class="home-menu-buttons">
-
-                <a id="playLink"
-                   class="home-menu-button"
-                   href="/play.html">
-                    PLAY
-                </a>
-
-
-                <a id="inventoryLink"
-                   class="home-menu-button"
-                   href="/inventory.html">
-                    INVENTORY
-                </a>
-
-
-                <button type="button"
-                        id="shopButton"
-                        class="home-menu-button">
-                    SHOP
-                </button>
-
-
-                <button type="button"
-                        id="accountButton"
-                        class="home-menu-button">
-                    MY ACCOUNT
-                </button>
-
-
-                <button type="button"
-                        id="settingsButton"
-                        class="home-menu-button">
-                    SETTING
-                </button>
-
-            </div>
-
-
-            <div class="home-version-label">
-                v18a (build num: 7240)
-            </div>
-
+        <div class="home-menu-buttons">
+            <button class="home-menu-button" onclick="openPlay()">PLAY</button>
+            <button class="home-menu-button" onclick="openInventory()">INVENTORY</button>
+            <button class="home-menu-button" onclick="openShop()">SHOP</button>
+            <button class="home-menu-button" onclick="openMyAccount()">MY ACCOUNT</button>
+            <button class="home-menu-button" onclick="openSetting()">SETTING</button>
         </div>
 
+        <div class="home-version-label">v18a (build num: 7240)</div>
+    </div>
 
+    <!-- RIGHT CONTENT PANEL (GIF Area) -->
+    <div class="home-right-panel">
+        <div class="character-gif-area">
+            <span class="placeholder-label">Character GIF Area</span>
 
-        <!-- RIGHT PANEL -->
-
-        <div class="home-right-panel">
-
-            <div class="character-gif-area">
-
-                <span class="placeholder-label">
-                    Character GIF Area
-                </span>
-
-            </div>
-
+            <!-- Character GIF ထည့်ချင်ပါက အောက်ပါ tag တွင် src လမ်းကြောင်း ပြင်၍ သုံးနိုင်ပါသည် -->
+            <!-- <img src="/Map/jellyb-removebg-preview.png" class="character-gif" alt="Character"> -->
         </div>
-
     </div>
 
 </div>
 
-
-
 <script>
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
-
-            console.log("HOME PAGE JS LOADED");
-
-
-            /* =====================================
-               USERNAME
-            ===================================== */
-
-            var params =
-                new URLSearchParams(
-                    window.location.search
-                );
-
-            var username =
-                params.get("user");
-
-
-            if (!username) {
-
-                username =
-                    sessionStorage.getItem(
-                        "username"
-                    );
-            }
-
-
-            if (!username ||
-                username.trim() === "") {
-
-                window.location.replace(
-                    "/login.html"
-                );
-
-                return;
-            }
-
-
-            sessionStorage.setItem(
-                "username",
-                username
-            );
-
-
-            /* =====================================
-               SHOW USERNAME
-            ===================================== */
-
-            document.getElementById(
-                "playerName"
-            ).textContent = username;
-
-
-
-            /* =====================================
-               COINS
-            ===================================== */
-
-            var coins =
-                params.get("coins");
-
-
-            if (!coins) {
-
-                coins =
-                    sessionStorage.getItem("coins");
-            }
-
-
-            if (!coins) {
-
-                coins = "0";
-            }
-
-
-            sessionStorage.setItem(
-                "coins",
-                coins
-            );
-
-
-            document.getElementById(
-                "coinLabel"
-            ).textContent = coins;
-
-
-
-            /* =====================================
-               ROOM CODE
-            ===================================== */
-
-            var roomCode =
-                sessionStorage.getItem("roomCode");
-
-
-            if (!roomCode) {
-
-                roomCode =
-                    "ROOM" +
-                    Math.floor(
-                        1000 +
-                        Math.random() * 9000
-                    );
-
-
-                sessionStorage.setItem(
-                    "roomCode",
-                    roomCode
-                );
-            }
-
-
-
-            /* =====================================
-               PLAY LINK
-            ===================================== */
-
-            document.getElementById(
-                "playLink"
-            ).href =
-                "/play.html?room=" +
-                encodeURIComponent(roomCode) +
-                "&user=" +
-                encodeURIComponent(username);
-
-
-
-            /* =====================================
-               INVENTORY LINK
-            ===================================== */
-
-            document.getElementById(
-                "inventoryLink"
-            ).href =
-                "/inventory.html?room=" +
-                encodeURIComponent(roomCode) +
-                "&user=" +
-                encodeURIComponent(username);
-
-
-
-            /* =====================================
-               FRIENDS LINK
-            ===================================== */
-
-            document.getElementById(
-                "friendsLink"
-            ).href =
-                "/friends.html?user=" +
-                encodeURIComponent(username);
-
-
-
-            /* =====================================
-               SHOP BUTTON
-            ===================================== */
-
-            document.getElementById(
-                "shopButton"
-            ).addEventListener(
-                "click",
-                function () {
-
-                    playClickSound();
-
-                    alert("SHOP\n\nComing soon...");
-                }
-            );
-
-
-
-            /* =====================================
-               MY ACCOUNT
-            ===================================== */
-
-            document.getElementById(
-                "accountButton"
-            ).addEventListener(
-                "click",
-                function () {
-
-                    playClickSound();
-
-
-                    var email =
-                        sessionStorage.getItem("email")
-                        || "No email";
-
-
-                    var friendCode =
-                        sessionStorage.getItem("friendCode")
-                        || "No friend code";
-
-
-                    alert(
-                        "MY ACCOUNT\n\n" +
-                        "Username: " + username +
-                        "\n\nEmail: " + email +
-                        "\n\nFriend Code: " + friendCode +
-                        "\n\nCoins: " + coins
-                    );
-                }
-            );
-
-
-
-            /* =====================================
-               SETTINGS  ← ဒီမှာ ပြင်ပြီး
-            ===================================== */
-
-            document.getElementById(
-                "settingsButton"
-            ).addEventListener(
-                "click",
-                function () {
-
-                    /* Click SFX */
-
-                    playClickSound();
-
-
-                    /* Music ခဏ ရပ် */
-
-                    if (typeof bgMusic !== "undefined" && bgMusic) {
-
-                        bgMusic.pause();
-                    }
-
-
-                    /* Settings page ကို သွား */
-
-                    window.location.href =
-                        "/settings.html?user=" +
-                        encodeURIComponent(username);
-                }
-            );
-
-
-
-            /* =====================================
-               CLICK SFX FOR LINKS
-            ===================================== */
-
-            document.getElementById(
-                "playLink"
-            ).addEventListener(
-                "click",
-                function () { playClickSound(); }
-            );
-
-
-            document.getElementById(
-                "inventoryLink"
-            ).addEventListener(
-                "click",
-                function () { playClickSound(); }
-            );
-
-
-            document.getElementById(
-                "friendsLink"
-            ).addEventListener(
-                "click",
-                function () { playClickSound(); }
-            );
-
-
-
-            /* =====================================
-               BACKGROUND MUSIC
-            ===================================== */
-
-            startBackgroundMusic();
-
-        }
-    );
-
-
-
-    /* ============================================================
-       BACKGROUND MUSIC
-    ============================================================ */
-
-    var bgMusic =
-        new Audio('/sounds/Horror.mp3');
-
-    bgMusic.loop = true;
-
-
-
-    function applyMusicVolume() {
-
-        var saved =
-            localStorage.getItem('gameSettings');
-
-
-        if (saved) {
-
-            try {
-
-                var s = JSON.parse(saved);
-
-                bgMusic.volume = s.music / 100;
-
-            }
-
-            catch (err) {
-
-                bgMusic.volume = 0.4;
-            }
-
-        }
-
-        else {
-
-            bgMusic.volume = 0.4;
+    // ===== 1. URL Parameters မှ User info ယူခြင်း =====
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get('user') || 'Player';
+    const coins = params.get('coins') || '0';
+
+    if (document.getElementById('playerName')) {
+        document.getElementById('playerName').innerText = username;
+    }
+    if (document.getElementById('coinLabel')) {
+        document.getElementById('coinLabel').innerText = coins;
+    }
+
+    // ===== 2. Button Actions =====
+
+    // PLAY Button နှိပ်ပါက WebController မှတစ်ဆင့် Map & Character ရှိသော player.html သို့ ပို့ပေးမည်
+    function openPlay() {
+        const roomCode = 'ROOM' + Math.floor(1000 + Math.random() * 9000);
+        const url = `/player?room=${roomCode}&user=${encodeURIComponent(username)}`;
+
+        if (confirm(`Room: ${roomCode}\n\nဒီ Room ထဲ ဝင်ဆော့မှာလား?`)) {
+            window.location.href = url;
         }
     }
 
-
-
-    /* ============================================================
-       CLICK SFX
-    ============================================================ */
-
-    function playClickSound() {
-
-        var sfx =
-            new Audio('/sounds/click.mp3');
-
-
-        var saved =
-            localStorage.getItem('gameSettings');
-
-        var vol = 0.65;
-
-
-        if (saved) {
-
-            try {
-
-                vol =
-                    JSON.parse(saved).sfx / 100;
-
-            }
-
-            catch (e) {}
-        }
-
-
-        sfx.volume = vol;
-
-        sfx.play().catch(function () {});
+    function openInventory() {
+        alert('📦 INVENTORY\n\nInventory page will open here.');
     }
 
-
-
-    /* ============================================================
-       START MUSIC
-    ============================================================ */
-
-    function startBackgroundMusic() {
-
-        applyMusicVolume();
-
-
-        bgMusic.play().catch(function (err) {
-
-            console.log("Music blocked:", err);
-
-
-            /* Autoplay block ဖြစ်ရင်
-               ပထမ click မှာ စမယ် */
-
-            document.addEventListener(
-                "click",
-                function () {
-
-                    bgMusic.play().catch(function () {});
-
-                },
-                { once: true }
-            );
-        });
+    function openShop() {
+        alert('🛒 SHOP\n\nShop page will open here.');
     }
 
+    function openMyAccount() {
+        alert(`👤 MY ACCOUNT\n\nName: ${username}\nCoins: ${coins}`);
+    }
+
+    function openSetting() {
+        alert('⚙️ SETTINGS\n\nSettings page will open here.');
+    }
+
+    function openFriends() {
+        window.location.href = "friends.html";
+    }
 </script>
 
 </body>
-
 </html>
