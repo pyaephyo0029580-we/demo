@@ -3,84 +3,416 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Create Account - MyGaming</title>
 
+
     <style>
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
+
         body {
+
             min-height: 100vh;
+
             display: flex;
             justify-content: center;
             align-items: center;
 
-            font-family: Arial, Helvetica, sans-serif;
+            padding: 25px;
 
-            background:
-                radial-gradient(
-                    circle at center,
-                    #183d87 0%,
-                    #0d2b67 38%,
-                    #081d49 68%,
-                    #041333 100%
-                );
+            font-family:
+                    Arial,
+                    Helvetica,
+                    sans-serif;
 
             color: white;
-            padding: 30px 15px;
+
+            overflow-x: hidden;
+
+            background:
+                    radial-gradient(
+                            circle at 75% 20%,
+                            rgba(49, 85, 255, 0.35),
+                            transparent 25%
+                    ),
+
+                    radial-gradient(
+                            circle at 15% 80%,
+                            rgba(44, 0, 110, 0.35),
+                            transparent 30%
+                    ),
+
+                    linear-gradient(
+                            145deg,
+                            #01040d 0%,
+                            #061331 40%,
+                            #080d26 70%,
+                            #02030a 100%
+                    );
         }
 
 
-        /* =========================
+
+        /* ==========================================
+           STAR BACKGROUND
+        ========================================== */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+            inset: 0;
+
+            pointer-events: none;
+
+            opacity: 0.55;
+
+            background-image:
+
+                    radial-gradient(
+                            circle,
+                            rgba(255,255,255,0.9) 1px,
+                            transparent 1px
+                    ),
+
+                    radial-gradient(
+                            circle,
+                            rgba(85,180,255,0.75) 1px,
+                            transparent 1px
+                    ),
+
+                    radial-gradient(
+                            circle,
+                            rgba(255,255,255,0.35) 1px,
+                            transparent 1px
+                    );
+
+
+            background-size:
+                    95px 95px,
+                    145px 145px,
+                    55px 55px;
+
+
+            background-position:
+                    10px 15px,
+                    40px 70px,
+                    15px 30px;
+        }
+
+
+
+        /* ==========================================
+           PLANET
+        ========================================== */
+
+        .planet {
+
+            position: fixed;
+
+            width: 420px;
+            height: 420px;
+
+            border-radius: 50%;
+
+            right: -130px;
+            top: -120px;
+
+            pointer-events: none;
+
+            opacity: 0.55;
+
+            background:
+
+                    radial-gradient(
+                            circle at 35% 30%,
+                            #738dff,
+                            #283f99 37%,
+                            #101c54 67%,
+                            #05091e 100%
+                    );
+
+
+            box-shadow:
+                    0 0 90px
+                    rgba(55, 100, 255, 0.30);
+        }
+
+
+
+        /* ==========================================
+           PAGE WRAPPER
+        ========================================== */
+
+        .page-wrapper {
+
+            position: relative;
+
+            width: 100%;
+            max-width: 1000px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            z-index: 2;
+        }
+
+
+
+        /* ==========================================
+           CHARACTER
+        ========================================== */
+
+        .character-box {
+
+            position: absolute;
+
+            left: 0;
+            bottom: 50px;
+
+            width: 270px;display: flex;
+            justify-content: center;
+            align-items: flex-end;
+
+            z-index: 4;
+        }
+
+
+        .character-box::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 230px;
+            height: 80px;
+
+            bottom: -10px;
+
+            border-radius: 50%;
+
+            background:
+                    radial-gradient(
+                            ellipse,
+                            rgba(0, 180, 255, 0.32),
+                            transparent 68%
+                    );
+
+            filter: blur(10px);
+        }
+
+
+        .character {
+
+            width: 220px;
+
+            position: relative;
+
+            z-index: 2;
+
+            object-fit: contain;
+
+            filter:
+
+                    drop-shadow(
+                            0 0 14px
+                            rgba(70, 200, 255, 0.55)
+                    )
+
+                    drop-shadow(
+                            0 0 28px
+                            rgba(80, 65, 255, 0.28)
+                    );
+
+
+            animation:
+                    characterFloat
+                    3.5s
+                    ease-in-out
+                    infinite;
+        }
+
+
+        @keyframes characterFloat {
+
+            0%,
+            100% {
+
+                transform:
+                        translateY(0);
+
+            }
+
+
+            50% {
+
+                transform:
+                        translateY(-12px);
+
+            }
+        }
+
+
+
+        /* ==========================================
            SIGNUP CARD
-           ========================= */
+        ========================================== */
 
         .signup-card {
 
-            width: 100%;
-            max-width: 430px;
+            position: relative;
 
-            padding: 38px 35px 32px;
+            width: 100%;
+            max-width: 500px;
+
+            padding:
+                    38px
+                    42px
+                    34px;
+
+            border-radius: 28px;
+
 
             background:
-                linear-gradient(
-                    145deg,
-                    rgba(44, 91, 190, 0.90),
-                    rgba(35, 73, 158, 0.83)
-                );
 
-            border-radius: 18px;
+                    linear-gradient(
+                            160deg,
+                            rgba(10, 39, 94, 0.92),
+                            rgba(5, 15, 48, 0.94)
+                    );
 
-            border: 1px solid
-                rgba(90, 157, 255, 0.35);
+
+            border:
+
+                    1px solid
+                    rgba(73, 182, 255, 0.65);
+
 
             box-shadow:
-                0 18px 45px
-                rgba(0, 0, 0, 0.35);
 
-            backdrop-filter: blur(8px);
+                    0 0 0 1px
+                    rgba(90, 90, 255, 0.13),
+
+                    0 0 38px
+                    rgba(0, 139, 255, 0.20),
+
+                    0 30px 80px
+                    rgba(0, 0, 0, 0.55);
+
+
+            backdrop-filter:
+                    blur(16px);
+
+            z-index: 3;
         }
 
 
-        /* =========================
+
+        .signup-card::before {
+
+            content: "";
+
+            position: absolute;
+
+            inset: -1px;
+
+            border-radius: 28px;
+
+            padding: 1px;
+
+
+            background:
+
+                    linear-gradient(
+                            135deg,
+                            rgba(85, 212, 255, 0.95),
+                            rgba(92, 78, 255, 0.28),
+                            rgba(44, 175, 255, 0.85)
+                    );
+
+
+            -webkit-mask:
+
+                    linear-gradient(
+                            #fff 0 0
+                    )
+                    content-box,
+
+                    linear-gradient(
+                            #fff 0 0
+                    );
+
+
+            -webkit-mask-composite:
+                    xor;
+
+            mask-composite:
+                    exclude;
+
+
+            pointer-events:
+                    none;
+        }
+
+
+
+        /* ==========================================
+           MINI CHARACTER
+        ========================================== */
+
+        .mini-character {
+
+            position: absolute;
+
+            top: -30px;
+            right: 22px;
+
+            width: 65px;
+
+            object-fit: contain;
+
+
+            filter:
+
+                    drop-shadow(
+                            0 0 11px
+                            rgba(85, 195, 255, 0.65)
+                    );
+        }
+
+
+
+        /* ==========================================
            TITLE
-           ========================= */
+        ========================================== */
 
-        .signup-card h1 {
+        .signup-card h1 {text-align: center;
 
-            text-align: center;
-
-            font-size: 34px;
+            font-size: 36px;
             font-weight: 800;
 
-            margin-bottom: 8px;
-
             color: white;
+
+            margin-bottom: 7px;
+
+
+            text-shadow:
+
+                    0 0 18px
+                    rgba(70, 195, 255, 0.18);
         }
 
 
@@ -88,12 +420,7 @@
 
             text-align: center;
 
-            color: rgba(
-                255,
-                255,
-                255,
-                0.78
-            );
+            color: #b8c8e7;
 
             font-size: 15px;
 
@@ -101,13 +428,14 @@
         }
 
 
-        /* =========================
+
+        /* ==========================================
            INPUT GROUP
-           ========================= */
+        ========================================== */
 
         .input-group {
 
-            margin-bottom: 16px;
+            margin-bottom: 17px;
         }
 
 
@@ -117,141 +445,231 @@
 
             margin-bottom: 7px;
 
+            color: white;
+
             font-size: 14px;
             font-weight: 700;
-
-            color: white;
         }
 
 
-        .input-group input {
 
-            width: 100%;
-            height: 48px;
-
-            border: none;
-
-            border-radius: 7px;
-
-            padding: 0 15px;
-
-            font-size: 15px;
-
-            color: #222;
-
-            background: white;
-
-            outline: none;
-
-            box-shadow:
-                inset 0 0 0 1px
-                rgba(0, 0, 0, 0.08);
-
-            transition:
-                box-shadow 0.2s,
-                transform 0.2s;
-        }
-
-
-        .input-group input::placeholder {
-
-            color: #8b95aa;
-        }
-
-
-        .input-group input:focus {
-
-            box-shadow:
-                0 0 0 3px
-                rgba(66, 198, 255, 0.35);
-
-            transform:
-                translateY(-1px);
-        }
-
-
-        /* =========================
-           PASSWORD
-           ========================= */
-
-        .password-wrapper {
+        .input-box {
 
             position: relative;
         }
 
 
-        .password-wrapper input {
 
-            padding-right: 65px;
-        }
-
-
-        .show-password {
+        .input-icon {
 
             position: absolute;
 
-            right: 14px;
+            left: 15px;
             top: 50%;
 
             transform:
-                translateY(-50%);
+                    translateY(-50%);
 
-            background: transparent;
+            color: #6ed2ff;
 
-            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-            color: #183267;
+            width: 23px;
+            height: 23px;
 
-            font-weight: bold;
-
-            cursor: pointer;
-
-            font-size: 13px;
+            pointer-events: none;
         }
 
 
-        /* =========================
+        .input-icon svg {
+
+            width: 21px;
+            height: 21px;
+        }
+
+
+
+        .input-group input {
+
+            width: 100%;
+
+            height: 52px;
+
+            padding:
+                    0
+                    60px
+                    0
+                    48px;
+
+            border-radius: 11px;
+
+            border:
+
+                    1px solid
+                    rgba(81, 170, 255, 0.70);
+
+            outline: none;
+
+            color: white;
+
+            font-size: 15px;
+
+
+            background:
+
+                    linear-gradient(
+                            90deg,
+                            rgba(20, 56, 119, 0.82),
+                            rgba(20, 44, 100, 0.72)
+                    );
+
+
+            transition:
+                    border-color 0.2s,
+                    box-shadow 0.2s;
+        }
+
+
+
+        .input-group input::placeholder {
+
+            color: #9bb0d4;
+        }
+
+
+
+        .input-group input:focus {
+
+            border-color:
+                    #40d9ff;
+
+
+            box-shadow:
+
+                    0 0 0 3px
+                    rgba(55, 200, 255, 0.12),
+
+                    0 0 18px
+                    rgba(45, 171, 255, 0.20);
+        }
+
+
+
+        /* ==========================================
+           EYE BUTTON
+        ========================================== */
+
+        .eye-button {
+
+            position: absolute;
+
+            right: 11px;
+            top: 50%;
+
+            transform:
+                    translateY(-50%);
+
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            border: none;
+
+            border-radius: 50%;
+
+            background: transparent;
+
+            color: #7ad9ff;
+
+            cursor: pointer;
+
+            transition:
+                    color 0.2s,
+                    background 0.2s,
+                    box-shadow 0.2s;
+        }
+
+
+        .eye-button svg {
+
+            width: 24px;
+            height: 24px;
+
+            pointer-events: none;
+        }
+
+
+        .eye-button:hover {
+
+            color: white;
+
+            background:
+
+                    rgba(
+                            55,
+                            188,
+                            255,
+                            0.12
+                    );
+
+
+            box-shadow:
+
+                    0 0 13px
+                    rgba(
+                            45,
+                            190,
+                            255,
+                            0.30
+                    );
+        }
+
+
+
+        /* ==========================================
            PASSWORD RULES
-           ========================= */
+        ========================================== */
 
         .password-rules {
 
-            list-style: none;
+            list-style: none;margin:
+                    10px
+                    0
+                    0
+                    7px;
 
-            padding: 0;
-
-            margin:
-                10px 0 4px 4px;
+            color: #b7c7e4;
 
             font-size: 12px;
 
-            line-height: 1.65;color:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.68
-                );
+            line-height: 1.7;
         }
 
 
         .password-rules li::before {
 
-            content: "•";
+            content: "●";
 
-            display: inline-block;
+            margin-right: 9px;
 
-            margin-right: 8px;
+            color: #20d0ff;
 
-            color: #7dcaff;
+            text-shadow:
+
+                    0 0 8px
+                    #16bfff;
         }
+
 
 
         .password-rules li.valid {
 
-            color: #71ffb1;
-
-            font-weight: 600;
+            color: #6dffb4;
         }
 
 
@@ -259,334 +677,592 @@
 
             content: "✓";
 
-            color: #71ffb1;
+            color: #6dffb4;
         }
 
 
-        /* =========================
-           BUTTON
-           ========================= */
+
+        /* ==========================================
+           SIGNUP BUTTON
+        ========================================== */
 
         #signupButton {
 
             width: 100%;
-            height: 48px;
+            height: 55px;
+
+            margin-top: 10px;
 
             border: none;
 
-            border-radius: 7px;
-
-            margin-top: 9px;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    #22b6f6,
-                    #42d4ff
-                );
+            border-radius: 14px;
 
             color: white;
 
-            font-size: 15px;
+            font-size: 17px;
             font-weight: 800;
+
+            letter-spacing: 0.8px;
 
             cursor: pointer;
 
+
+            background:
+
+                    linear-gradient(
+                            90deg,
+                            #08d2f8 0%,
+                            #168eff 52%,
+                            #6454ff 100%
+                    );
+
+
             box-shadow:
-                0 8px 20px
-                rgba(24, 183, 244, 0.28);
+
+                    0 0 22px
+                    rgba(0, 180, 255, 0.40),
+
+                    inset 0 1px 0
+                    rgba(255,255,255,0.42);
+
 
             transition:
-                transform 0.2s,
-                box-shadow 0.2s,
-                opacity 0.2s;
+                    transform 0.2s,
+                    box-shadow 0.2s,
+                    opacity 0.2s;
         }
+
 
 
         #signupButton:hover {
 
             transform:
-                translateY(-2px);
+                    translateY(-2px);
+
 
             box-shadow:
-                0 10px 26px
-                rgba(24, 183, 244, 0.38);
+
+                    0 0 31px
+                    rgba(0, 200, 255, 0.58),
+
+                    0 10px 27px
+                    rgba(0,0,0,0.30);
         }
 
-
-        #signupButton:active {
-
-            transform:
-                translateY(0);
-        }
 
 
         #signupButton:disabled {
 
-            opacity: 0.6;
+            opacity: 0.55;
 
             cursor:
-                not-allowed;
+                    not-allowed;
 
-            transform: none;
+            transform:
+                    none;
         }
 
 
-        /* =========================
+
+        /* ==========================================
            MESSAGE
-           ========================= */
+        ========================================== */
 
         #message {
 
             min-height: 20px;
 
-            margin-top: 15px;
+            margin-top: 13px;
 
             text-align: center;
 
             font-size: 13px;
-
             font-weight: 700;
         }
 
 
         .error {
 
-            color: #ffb5b5;
+            color: #ff9d9d;
         }
 
 
         .success {
 
-            color: #7dffb4;
+            color: #70ffb2;
         }
 
 
-        /* =========================
+
+        /* ==========================================
            LOGIN LINK
-           ========================= */
+        ========================================== */
 
         .login-text {
 
+            margin-top: 18px;
+
             text-align: center;
 
-            margin-top: 19px;
+            color: #b8c7e6;
 
             font-size: 14px;
-
-            color:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.88
-                );
         }
 
 
         .login-text a {
 
-            color: #58ddff;
-
-            text-decoration: none;
+            color: #35e0ff;
 
             font-weight: 800;
+
+            text-decoration: none;
         }
 
 
         .login-text a:hover {
 
-            text-decoration: underline;
+            text-shadow:
+
+                    0 0 10px
+                    #13d1ff;
         }
 
 
-        /* =========================
-           MOBILE
-           ========================= */
+
+        /* ==========================================
+           RESPONSIVE
+        ========================================== */
 
         @media (
-            max-width: 500px
+                max-width: 850px
+        ) {
+
+            .character-box {
+
+                display: none;
+            }
+
+        }
+
+
+
+        @media (
+                max-width: 550px
         ) {
 
             body {
 
-                padding: 18px;
+                padding: 15px;
             }
 
 
             .signup-card {
 
                 padding:
-                    30px 22px;
+                        30px
+                        22px
+                        27px;
 
-                border-radius: 15px;
+                border-radius:
+                        22px;
             }
 
 
             .signup-card h1 {
 
-                font-size: 29px;
+                font-size:
+                        30px;
             }
+
+
+            .planet {
+
+                width:
+                        270px;
+
+                height:
+                        270px;
+            }
+
         }
 
     </style>
+
 </head>
+
 
 
 <body>
 
 
-<div class="signup-card">
+<div class="planet"></div>
 
 
-    <h1>Create Account</h1>
 
+<div class="page-wrapper"><!-- ==========================================
+         MAIN CHARACTER
+    =========================================== -->
 
-    <p class="subtitle">
-        Create your MyGaming account
-    </p>
+    <div class="character-box">
 
-
-    <!-- =========================
-         USERNAME
-         ========================= -->
-
-    <div class="input-group">
-
-        <label for="username">
-            Username
-        </label>
-
-        <input
-                type="text"
-                id="username"
-                placeholder="Enter username"
-                maxlength="30"
-                autocomplete="username"
+        <img
+                src="/Image/ghost.png"
+                alt="Game Character"
+                class="character"
         >
 
     </div>
 
 
 
-    <!-- =========================
-         EMAIL
-         ========================= -->
+    <!-- ==========================================
+         SIGNUP CARD
+    =========================================== -->
 
-    <div class="input-group">
+    <div class="signup-card">
 
-        <label for="email">
-            Email
-        </label><input
-            type="email"
-            id="email"
-            placeholder="Enter email"
-            autocomplete="email"
-    >
 
-    </div>
+        <img
+                src="/Image/ghost.png"
+                alt=""
+                class="mini-character"
+        >
 
 
 
-    <!-- =========================
-         PASSWORD
-         ========================= -->
-
-    <div class="input-group">
-
-        <label for="password">
-            Password
-        </label>
+        <h1>
+            Create Account
+        </h1>
 
 
-        <div class="password-wrapper">
+        <div class="subtitle">
+
+            Create your MyGaming account
+
+        </div>
 
 
-            <input
-                    type="password"
-                    id="password"
-                    placeholder="Enter password"
-                    autocomplete="new-password"
-            >
+
+        <!-- ======================================
+             USERNAME
+        ======================================= -->
+
+        <div class="input-group">
 
 
-            <button
-                    type="button"
-                    class="show-password"
-                    id="showPasswordButton"
-            >
+            <label for="username">
 
-                Show
+                Username
 
-            </button>
+            </label>
+
+
+            <div class="input-box">
+
+
+                <span class="input-icon">
+
+                    <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                    >
+
+                        <circle
+                                cx="12"
+                                cy="8"
+                                r="4"
+                        />
+
+                        <path
+                                d="M4 21c0-4 3.6-7 8-7s8 3 8 7"
+                        />
+
+                    </svg>
+
+                </span>
+
+
+                <input
+                        type="text"
+                        id="username"
+                        placeholder="Enter username"
+                        maxlength="30"
+                        autocomplete="username"
+                >
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ======================================
+             EMAIL
+        ======================================= -->
+
+        <div class="input-group">
+
+
+            <label for="email">
+
+                Email
+
+            </label>
+
+
+            <div class="input-box">
+
+
+                <span class="input-icon">
+
+                    <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                    >
+
+                        <rect
+                                x="3"
+                                y="5"
+                                width="18"
+                                height="14"
+                                rx="2"
+                        />
+
+                        <path
+                                d="M3 7l9 6 9-6"
+                        />
+
+                    </svg>
+
+                </span>
+
+
+                <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter email"
+                        autocomplete="email"
+                >
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ======================================
+             PASSWORD
+        ======================================= -->
+
+        <div class="input-group">
+
+
+            <label for="password">
+
+                Password
+
+            </label>
+
+
+            <div class="input-box">
+
+
+                <span class="input-icon">
+
+                    <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                    >
+
+                        <rect
+                                x="5"
+                                y="10"
+                                width="14"
+                                height="10"
+                                rx="2"
+                        /><path
+                            d="M8 10V7a4 4 0 0 1 8 0v3"
+                    />
+
+                    </svg>
+
+                </span>
+
+
+
+                <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter password"
+                        autocomplete="new-password"
+                >
+
+
+
+                <button
+                        type="button"
+                        id="showPassword"
+                        class="eye-button"
+                        aria-label="Show password"
+                >
+
+
+                    <!-- EYE OPEN -->
+
+                    <svg
+                            class="eye-open"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                    >
+
+                        <path
+                                d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"
+                        />
+
+                        <circle
+                                cx="12"
+                                cy="12"
+                                r="3"
+                        />
+
+                    </svg>
+
+
+
+                    <!-- EYE CLOSED -->
+
+                    <svg
+                            class="eye-closed"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            style="display:none;"
+                    >
+
+                        <path
+                                d="M3 3l18 18"
+                        />
+
+                        <path
+                                d="M10.6 10.6a2 2 0 0 0 2.8 2.8"
+                        />
+
+                        <path
+                                d="M9.9 5.1A10.7 10.7 0 0 1 12 5c6.5 0 10 7 10 7a17.2 17.2 0 0 1-2.1 3.1"
+                        />
+
+                        <path
+                                d="M6.2 6.2C3.5 8.1 2 12 2 12s3.5 7 10 7a10.7 10.7 0 0 0 4.1-.8"
+                        />
+
+                    </svg>
+
+
+                </button>
+
+
+            </div>
+
+
+
+            <ul class="password-rules">
+
+
+                <li id="ruleLength">
+
+                    At least 8 characters
+
+                </li>
+
+
+                <li id="ruleUpper">
+
+                    At least 1 uppercase letter
+
+                </li>
+
+
+                <li id="ruleLower">
+
+                    At least 1 lowercase letter
+
+                </li>
+
+
+                <li id="ruleNumber">
+
+                    At least 1 number
+
+                </li>
+
+
+                <li id="ruleSpecial">
+
+                    At least 1 special character (@#$!%*?&)
+
+                </li>
+
+
+            </ul>
 
 
         </div>
 
 
 
-        <ul class="password-rules">
+        <!-- ======================================
+             CONFIRM PASSWORD
+        ======================================= -->
+
+        <div class="input-group">
 
 
-            <li id="lengthRule">
+            <label for="confirmPassword">
 
-                At least 8 characters
+                Confirm Password
 
-            </li>
-
-
-            <li id="uppercaseRule">
-
-                At least 1 uppercase letter
-
-            </li>
+            </label>
 
 
-            <li id="lowercaseRule">
-
-                At least 1 lowercase letter
-
-            </li>
+            <div class="input-box">
 
 
-            <li id="numberRule">
+                <span class="input-icon">
 
-                At least 1 number
+                    <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                    >
 
-            </li>
+                        <rect
+                                x="5"
+                                y="10"
+                                width="14"
+                                height="10"
+                                rx="2"
+                        />
 
+                        <path
+                                d="M8 10V7a4 4 0 0 1 8 0v3"
+                        />
 
-            <li id="specialRule">
+                    </svg>
 
-                At least 1 special character
-                (@#$!%*?&)
-
-            </li>
-
-
-        </ul>
-
-    </div>
-
-
-
-    <!-- =========================
-         CONFIRM PASSWORD
-         ========================= -->
-
-    <div class="input-group">
-
-        <label for="confirmPassword">
-
-            Confirm Password
-
-        </label>
-
-
-        <div class="password-wrapper">
-
-
-            <input
+                </span><input
                     type="password"
                     id="confirmPassword"
                     placeholder="Enter password again"
@@ -594,54 +1270,111 @@
             >
 
 
-            <button
-                    type="button"
-                    class="show-password"
-                    id="showConfirmPasswordButton"
-            >
 
-                Show
+                <button
+                        type="button"
+                        id="showConfirmPassword"
+                        class="eye-button"
+                        aria-label="Show confirm password"
+                >
 
-            </button>
 
+                    <!-- EYE OPEN -->
+
+                    <svg
+                            class="eye-open"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                    >
+
+                        <path
+                                d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"
+                        />
+
+                        <circle
+                                cx="12"
+                                cy="12"
+                                r="3"
+                        />
+
+                    </svg>
+
+
+
+                    <!-- EYE CLOSED -->
+
+                    <svg
+                            class="eye-closed"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            style="display:none;"
+                    >
+
+                        <path
+                                d="M3 3l18 18"
+                        />
+
+                        <path
+                                d="M10.6 10.6a2 2 0 0 0 2.8 2.8"
+                        />
+
+                        <path
+                                d="M9.9 5.1A10.7 10.7 0 0 1 12 5c6.5 0 10 7 10 7a17.2 17.2 0 0 1-2.1 3.1"
+                        />
+
+                        <path
+                                d="M6.2 6.2C3.5 8.1 2 12 2 12s3.5 7 10 7a10.7 10.7 0 0 0 4.1-.8"
+                        />
+
+                    </svg>
+
+
+                </button>
+
+
+            </div>
 
         </div>
 
+
+
+        <!-- ======================================
+             SIGN UP
+        ======================================= -->
+
+        <button
+                id="signupButton"
+                type="button"
+        >
+
+            SIGN UP →
+
+        </button>
+
+
+
+        <div id="message"></div>
+
+
+
+        <div class="login-text">
+
+            Already have an account?
+
+            <a href="/login.html">
+
+                Login
+
+            </a>
+
+        </div>
+
+
     </div>
-
-
-
-    <!-- =========================
-         SIGNUP BUTTON
-         ========================= -->
-
-    <button
-            type="button"
-            id="signupButton"
-    >
-
-        SIGN UP
-
-    </button>
-
-
-
-    <div id="message"></div>
-
-
-
-    <div class="login-text">
-
-        Already have an account?
-
-        <a href="/login.html">
-
-            Login
-
-        </a>
-
-    </div>
-
 
 </div>
 
@@ -649,9 +1382,11 @@
 
 <script>
 
-    /* =========================
+
+    /* ==========================================
        ELEMENTS
-       ========================= */
+    ========================================== */
+
 
     const usernameInput =
         document.getElementById(
@@ -690,130 +1425,167 @@
 
 
 
-    /* PASSWORD RULES */
-
-    const lengthRule =
+    const ruleLength =
         document.getElementById(
-            "lengthRule"
+            "ruleLength"
         );
 
 
-    const uppercaseRule =
+    const ruleUpper =
         document.getElementById(
-            "uppercaseRule"
+            "ruleUpper"
         );
 
 
-    const lowercaseRule =
+    const ruleLower =
         document.getElementById(
-            "lowercaseRule"
+            "ruleLower"
         );
 
 
-    const numberRule =
+    const ruleNumber =
         document.getElementById(
-            "numberRule"
+            "ruleNumber"
         );
 
 
-    const specialRule =
+    const ruleSpecial =
         document.getElementById(
-            "specialRule"
+            "ruleSpecial"
         );
 
 
 
-    /* =========================
+    /* ==========================================
        STRONG PASSWORD
-       ========================= */
+    ========================================== */
+
 
     function isStrongPassword(
         password
-    ) {return (
+    ) {
+
+        return (
+
             password.length >= 8
-            &&
-            /[A-Z]/.test(
+
+            &&/[A-Z]/.test(
                 password
             )
+
             &&
+
             /[a-z]/.test(
                 password
             )
+
             &&
+
             /\d/.test(
                 password
             )
+
             &&
+
             /[@#$!%*?&]/.test(
                 password
             )
+
         );
     }
 
 
 
-    /* =========================
-       LIVE PASSWORD CHECK
-       ========================= */
+    /* ==========================================
+       PASSWORD RULES
+    ========================================== */
+
 
     passwordInput.addEventListener(
+
         "input",
+
         function () {
+
 
             const password =
                 passwordInput.value;
 
 
+
             updateRule(
-                lengthRule,
+
+                ruleLength,
+
                 password.length >= 8
+
             );
 
 
+
             updateRule(
-                uppercaseRule,
+
+                ruleUpper,
+
                 /[A-Z]/.test(
                     password
                 )
+
             );
 
 
+
             updateRule(
-                lowercaseRule,
+
+                ruleLower,
+
                 /[a-z]/.test(
                     password
                 )
+
             );
 
 
+
             updateRule(
-                numberRule,
+
+                ruleNumber,
+
                 /\d/.test(
                     password
                 )
+
             );
 
 
+
             updateRule(
-                specialRule,
+
+                ruleSpecial,
+
                 /[@#$!%*?&]/.test(
                     password
                 )
+
             );
 
 
             clearMessage();
+
         }
+
     );
 
 
 
     function updateRule(
         element,
-        valid
+        condition
     ) {
 
-        if (valid) {
+        if (
+            condition
+        ) {
 
             element.classList.add(
                 "valid"
@@ -824,45 +1596,62 @@
             element.classList.remove(
                 "valid"
             );
+
         }
+
     }
 
 
 
-    /* =========================
-       SHOW PASSWORD
-       ========================= */
+    /* ==========================================
+       EYE BUTTON
+    ========================================== */
+
 
     document
         .getElementById(
-            "showPasswordButton"
+            "showPassword"
         )
         .addEventListener(
+
             "click",
+
             function () {
 
                 togglePassword(
+
                     passwordInput,
+
                     this
+
                 );
+
             }
+
         );
 
 
 
     document
         .getElementById(
-            "showConfirmPasswordButton"
+            "showConfirmPassword"
         )
         .addEventListener(
+
             "click",
+
             function () {
 
                 togglePassword(
+
                     confirmPasswordInput,
+
                     this
+
                 );
+
             }
+
         );
 
 
@@ -872,77 +1661,134 @@
         button
     ) {
 
+
+        const eyeOpen =
+
+            button.querySelector(
+                ".eye-open"
+            );
+
+
+        const eyeClosed =
+
+            button.querySelector(
+                ".eye-closed"
+            );
+
+
+
         if (
             input.type === "password"
         ) {
 
+
             input.type =
                 "text";
 
-            button.textContent =
-                "Hide";
+
+            eyeOpen.style.display =
+                "none";
+
+
+            eyeClosed.style.display =
+                "block";
+
+
+            button.setAttribute(
+
+                "aria-label",
+
+                "Hide password"
+
+            );
+
 
         } else {
+
 
             input.type =
                 "password";
 
-            button.textContent =
-                "Show";
+
+            eyeOpen.style.display =
+                "block";
+
+
+            eyeClosed.style.display =
+                "none";
+
+
+            button.setAttribute(
+
+                "aria-label",
+
+                "Show password"
+
+            );
+
         }
+
     }
 
 
 
-    /* =========================
-       EMAIL CHECK
-       ========================= */
+    /* ==========================================
+       EMAIL VALIDATION
+    ========================================== */
+
 
     function isValidEmail(
         email
     ) {
 
         return (
+
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/
                 .test(
                     email
                 )
+
         );
+
     }
 
 
 
-    /* =========================
-       SIGNUP BUTTON
-       ========================= */
+    /* ==========================================
+       SIGNUP
+    ========================================== */
+
 
     signupButton.addEventListener(
+
         "click",
+
         signup
+
     );
 
 
 
     confirmPasswordInput.addEventListener(
+
         "keydown",
+
         function (
             event
-        ) {
-
-            if (
-                event.key === "Enter"
+        ) {if (
+                event.key ===
+                "Enter"
             ) {
 
                 signup();
+
             }
+
         }
+
     );
 
 
-
-    /* =========================
-       SIGNUP FUNCTION
-       ========================= */
 
     async function signup() {
 
@@ -950,44 +1796,67 @@
         clearMessage();
 
 
+
         const username =
+
             usernameInput
                 .value
                 .trim();
 
 
+
         const email =
+
             emailInput
                 .value
                 .trim();
 
 
+
         const password =
+
             passwordInput
                 .value;
 
 
+
         const confirmPassword =
+
             confirmPasswordInput
                 .value;
 
 
 
-        /* EMPTY */if (
+        /* EMPTY */
+
+        if (
+
             username === ""
+
             ||
+
             email === ""
+
             ||
+
             password === ""
+
             ||
+
             confirmPassword === ""
+
         ) {
 
+
             showError(
+
                 "Please fill in all fields."
+
             );
 
+
             return;
+
         }
 
 
@@ -998,11 +1867,16 @@
             username.length < 3
         ) {
 
+
             showError(
+
                 "Username must be at least 3 characters."
+
             );
 
+
             return;
+
         }
 
 
@@ -1010,16 +1884,23 @@
         /* EMAIL */
 
         if (
+
             !isValidEmail(
                 email
             )
+
         ) {
 
+
             showError(
+
                 "Please enter a valid email address."
+
             );
 
+
             return;
+
         }
 
 
@@ -1027,16 +1908,23 @@
         /* PASSWORD */
 
         if (
+
             !isStrongPassword(
                 password
             )
+
         ) {
 
+
             showError(
-                "Password must have at least 8 characters, uppercase, lowercase, number and special character."
+
+                "Password must contain at least 8 characters, uppercase, lowercase, number and special character."
+
             );
 
+
             return;
+
         }
 
 
@@ -1044,16 +1932,22 @@
         /* CONFIRM PASSWORD */
 
         if (
-            password
-            !==
+
+            password !==
             confirmPassword
+
         ) {
 
+
             showError(
+
                 "Passwords do not match."
+
             );
 
+
             return;
+
         }
 
 
@@ -1071,8 +1965,11 @@
 
 
             const response =
+
                 await fetch(
+
                     "/api/auth/signup",
+
                     {
 
                         method:
@@ -1092,6 +1989,7 @@
 
 
                         body:
+
                             JSON.stringify(
                                 {
 
@@ -1108,11 +2006,13 @@
                             )
 
                     }
+
                 );
 
 
 
             const responseText =
+
                 await response.text();
 
 
@@ -1120,21 +2020,30 @@
             let data = {};
 
 
+
             try {
 
+
                 data =
+
                     JSON.parse(
                         responseText
                     );
+
 
             } catch (
                 error
             ) {
 
+
                 console.error(
+
                     "Server response:",
+
                     responseText
+
                 );
+
             }
 
 
@@ -1143,52 +2052,70 @@
                 !response.ok
             ) {
 
+
                 showError(
+
                     data.message
+
                     ||
+
                     "Sign up failed."
+
                 );
 
+
                 return;
+
             }
 
 
 
             if (
-                data.success
-                ===
+
+                data.success ===
                 true
+
             ) {
 
 
                 sessionStorage.setItem(
+
                     "verifyEmail",
+
                     email
+
                 );
+
 
 
                 showSuccess(
+
                     data.message
+
                     ||
+
                     "Verification code sent."
-                );
 
+                );setTimeout(
 
-
-                setTimeout(
                     function () {
 
 
                         window.location.href =
+
                             "/verifyemail.html?email="
+
                             +
+
                             encodeURIComponent(
                                 email
                             );
 
 
                     },
+
                     600
+
                 );
 
 
@@ -1196,23 +2123,33 @@
 
 
                 showError(
+
                     data.message
+
                     ||
+
                     "Sign up failed."
+
                 );
 
             }
 
 
+
         } catch (
             error
-        ) {console.error(
+        ) {
+
+
+            console.error(
                 error
             );
 
 
             showError(
+
                 "Cannot connect to the server."
+
             );
 
 
@@ -1224,7 +2161,7 @@
 
 
             signupButton.textContent =
-                "SIGN UP";
+                "SIGN UP →";
 
         }
 
@@ -1232,13 +2169,15 @@
 
 
 
-    /* =========================
+    /* ==========================================
        MESSAGE
-       ========================= */
+    ========================================== */
+
 
     function showError(
         text
     ) {
+
 
         message.textContent =
             text;
@@ -1246,6 +2185,7 @@
 
         message.className =
             "error";
+
     }
 
 
@@ -1254,17 +2194,20 @@
         text
     ) {
 
+
         message.textContent =
             text;
 
 
         message.className =
             "success";
+
     }
 
 
 
     function clearMessage() {
+
 
         message.textContent =
             "";
@@ -1272,7 +2215,9 @@
 
         message.className =
             "";
+
     }
+
 
 </script>
 
