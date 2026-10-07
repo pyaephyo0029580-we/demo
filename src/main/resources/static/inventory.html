@@ -766,7 +766,39 @@
 
     }
 
+    /* ============================================================
+       CLICK SFX (Inventory Page အတွက် အသံထည့်ခြင်း)
+    ============================================================ */
 
+    function playClickSound() {
+        // သင့် folder ထဲက အသံဖိုင်
+        var sfx = new Audio('/sounds/MouseClick.mp3');
+
+        var saved = localStorage.getItem('gameSettings');
+        var vol = 0.65;
+
+        if (saved) {
+            try {
+                vol = JSON.parse(saved).sfx / 100;
+            } catch (e) {}
+        }
+
+        sfx.volume = vol;
+        sfx.currentTime = 0; // အသံကို အစကနေ ပြန်စဖို့
+        sfx.play().catch(function () {});
+    }
+
+    // ခလုတ်တွေ နှိပ်လိုက်တိုင်း အသံထွက်အောင် စောင့်နားထောင်ခြင်း
+    document.addEventListener('click', function (event) {
+        // Back ခလုတ်၊ Tab ခလုတ်တွေ၊ အရောင် Box တွေ၊ ခုတ် Box တွေ နှိပ်ရင် အသံထွက်မယ်
+        if (event.target.closest('.inv-back-btn') ||
+            event.target.closest('.inv-nav-tab') ||
+            event.target.closest('.inv-color-btn') ||
+            event.target.closest('.inv-hat-btn')) {
+
+            playClickSound();
+        }
+    });
 
     /* ============================================================
        INITIAL LOAD
