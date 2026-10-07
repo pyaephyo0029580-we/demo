@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Homepage - Browser-based UI Launcher
- * JavaFX FXML ကို လုံးဝ မသုံးတော့ဘူး။
+
  * ခလုတ်တိုင်းက Browser မှာ HTML page ကို ဖွင့်ပေးတယ်။
  */
 @Component
