@@ -1,380 +1,920 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Create Account - MyGaming</title>
 
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #f3f5f9;
-            font-family: Arial, sans-serif;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    #183d87 0%,
+                    #0d2b67 38%,
+                    #081d49 68%,
+                    #041333 100%
+                );
+
+            color: white;
+            padding: 30px 15px;
         }
 
-        .container {
+
+        /* =========================
+           SIGNUP CARD
+           ========================= */
+
+        .signup-card {
+
             width: 100%;
             max-width: 430px;
-            padding: 35px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+
+            padding: 38px 35px 32px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(44, 91, 190, 0.90),
+                    rgba(35, 73, 158, 0.83)
+                );
+
+            border-radius: 18px;
+
+            border: 1px solid
+                rgba(90, 157, 255, 0.35);
+
+            box-shadow:
+                0 18px 45px
+                rgba(0, 0, 0, 0.35);
+
+            backdrop-filter: blur(8px);
         }
 
-        h1 {
+
+        /* =========================
+           TITLE
+           ========================= */
+
+        .signup-card h1 {
+
             text-align: center;
-            margin: 0 0 8px;
+
+            font-size: 34px;
+            font-weight: 800;
+
+            margin-bottom: 8px;
+
+            color: white;
         }
+
 
         .subtitle {
+
             text-align: center;
-            color: #777;
-            margin-bottom: 25px;
+
+            color: rgba(
+                255,
+                255,
+                255,
+                0.78
+            );
+
+            font-size: 15px;
+
+            margin-bottom: 28px;
         }
 
+
+        /* =========================
+           INPUT GROUP
+           ========================= */
+
         .input-group {
+
             margin-bottom: 16px;
         }
 
-        label {
+
+        .input-group label {
+
             display: block;
-            font-size: 14px;
-            font-weight: bold;
+
             margin-bottom: 7px;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            color: white;
         }
 
-        input {
+
+        .input-group input {
+
             width: 100%;
             height: 48px;
-            padding: 0 14px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            outline: none;
+
+            border: none;
+
+            border-radius: 7px;
+
+            padding: 0 15px;
+
             font-size: 15px;
+
+            color: #222;
+
+            background: white;
+
+            outline: none;
+
+            box-shadow:
+                inset 0 0 0 1px
+                rgba(0, 0, 0, 0.08);
+
+            transition:
+                box-shadow 0.2s,
+                transform 0.2s;
         }
 
-        input:focus {
-            border-color: #555;
+
+        .input-group input::placeholder {
+
+            color: #8b95aa;
         }
+
+
+        .input-group input:focus {
+
+            box-shadow:
+                0 0 0 3px
+                rgba(66, 198, 255, 0.35);
+
+            transform:
+                translateY(-1px);
+        }
+
+
+        /* =========================
+           PASSWORD
+           ========================= */
 
         .password-wrapper {
+
             position: relative;
         }
 
+
         .password-wrapper input {
+
             padding-right: 65px;
         }
 
-        .show-btn {
+
+        .show-password {
+
             position: absolute;
-            right: 12px;
+
+            right: 14px;
             top: 50%;
-            transform: translateY(-50%);
-            border: none;
+
+            transform:
+                translateY(-50%);
+
             background: transparent;
-            font-size: 13px;
+
+            border: none;
+
+            color: #183267;
+
             font-weight: bold;
+
             cursor: pointer;
+
+            font-size: 13px;
         }
+
+
+        /* =========================
+           PASSWORD RULES
+           ========================= */
 
         .password-rules {
-            margin: 8px 0 0;
-            padding-left: 20px;
-            color: #777;
+
+            list-style: none;
+
+            padding: 0;
+
+            margin:
+                10px 0 4px 4px;
+
             font-size: 12px;
-            line-height: 1.7;
+
+            line-height: 1.65;color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.68
+                );
         }
 
-        .valid {
-            color: #159447;
-            font-weight: bold;
+
+        .password-rules li::before {
+
+            content: "•";
+
+            display: inline-block;
+
+            margin-right: 8px;
+
+            color: #7dcaff;
         }
+
+
+        .password-rules li.valid {
+
+            color: #71ffb1;
+
+            font-weight: 600;
+        }
+
+
+        .password-rules li.valid::before {
+
+            content: "✓";
+
+            color: #71ffb1;
+        }
+
+
+        /* =========================
+           BUTTON
+           ========================= */
 
         #signupButton {
+
             width: 100%;
-            height: 50px;
-            margin-top: 8px;
+            height: 48px;
+
             border: none;
-            border-radius: 11px;
-            background: #222;
+
+            border-radius: 7px;
+
+            margin-top: 9px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #22b6f6,
+                    #42d4ff
+                );
+
             color: white;
-            font-size: 16px;
-            font-weight: bold;
+
+            font-size: 15px;
+            font-weight: 800;
+
             cursor: pointer;
+
+            box-shadow:
+                0 8px 20px
+                rgba(24, 183, 244, 0.28);
+
+            transition:
+                transform 0.2s,
+                box-shadow 0.2s,
+                opacity 0.2s;
         }
+
+
+        #signupButton:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 10px 26px
+                rgba(24, 183, 244, 0.38);
+        }
+
+
+        #signupButton:active {
+
+            transform:
+                translateY(0);
+        }
+
 
         #signupButton:disabled {
+
             opacity: 0.6;
-            cursor: not-allowed;
+
+            cursor:
+                not-allowed;
+
+            transform: none;
         }
+
+
+        /* =========================
+           MESSAGE
+           ========================= */
 
         #message {
-            min-height: 22px;
-            text-align: center;
+
+            min-height: 20px;
+
             margin-top: 15px;
-            font-size: 14px;
-            font-weight: bold;
+
+            text-align: center;
+
+            font-size: 13px;
+
+            font-weight: 700;
         }
+
 
         .error {
-            color: #d93025;
+
+            color: #ffb5b5;
         }
+
 
         .success {
-            color: #159447;
+
+            color: #7dffb4;
         }
 
-        .login-link {
-            margin-top: 20px;
+
+        /* =========================
+           LOGIN LINK
+           ========================= */
+
+        .login-text {
+
             text-align: center;
-            color: #666;
+
+            margin-top: 19px;
+
             font-size: 14px;
+
+            color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.88
+                );
         }
 
-        .login-link a {
-            color: #222;
-            font-weight: bold;
+
+        .login-text a {
+
+            color: #58ddff;
+
             text-decoration: none;
+
+            font-weight: 800;
         }
+
+
+        .login-text a:hover {
+
+            text-decoration: underline;
+        }
+
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (
+            max-width: 500px
+        ) {
+
+            body {
+
+                padding: 18px;
+            }
+
+
+            .signup-card {
+
+                padding:
+                    30px 22px;
+
+                border-radius: 15px;
+            }
+
+
+            .signup-card h1 {
+
+                font-size: 29px;
+            }
+        }
+
     </style>
 </head>
 
+
 <body>
 
-<div class="container">
+
+<div class="signup-card">
+
 
     <h1>Create Account</h1>
-    <div class="subtitle">Create your MyGaming account</div>
+
+
+    <p class="subtitle">
+        Create your MyGaming account
+    </p>
+
+
+    <!-- =========================
+         USERNAME
+         ========================= -->
 
     <div class="input-group">
-        <label for="username">Username</label>
+
+        <label for="username">
+            Username
+        </label>
 
         <input
-                id="username"
                 type="text"
+                id="username"
                 placeholder="Enter username"
                 maxlength="30"
                 autocomplete="username"
         >
+
     </div>
 
-    <div class="input-group">
-        <label for="email">Email</label>
 
-        <input
-                id="email"
-                type="email"
-                placeholder="Enter email"
-                autocomplete="email"
-        >
+
+    <!-- =========================
+         EMAIL
+         ========================= -->
+
+    <div class="input-group">
+
+        <label for="email">
+            Email
+        </label><input
+            type="email"
+            id="email"
+            placeholder="Enter email"
+            autocomplete="email"
+    >
+
     </div>
 
-    <div class="input-group">
-        <label for="password">Password</label>
 
-        <div class="password-wrapper"><input
-                id="password"
-                type="password"
-                placeholder="Enter password"
-                autocomplete="new-password"
-        >
 
-            <button
-                    id="showPassword"
-                    class="show-btn"
-                    type="button"
-            >
-                Show
-            </button>
-
-        </div>
-
-        <ul class="password-rules">
-            <li id="ruleLength">At least 8 characters</li>
-            <li id="ruleUpper">At least 1 uppercase letter</li>
-            <li id="ruleLower">At least 1 lowercase letter</li>
-            <li id="ruleNumber">At least 1 number</li>
-            <li id="ruleSpecial">At least 1 special character (@#$!%*?&)</li>
-        </ul>
-    </div>
+    <!-- =========================
+         PASSWORD
+         ========================= -->
 
     <div class="input-group">
-        <label for="confirmPassword">Confirm Password</label>
+
+        <label for="password">
+            Password
+        </label>
+
 
         <div class="password-wrapper">
 
+
             <input
-                    id="confirmPassword"
                     type="password"
+                    id="password"
+                    placeholder="Enter password"
+                    autocomplete="new-password"
+            >
+
+
+            <button
+                    type="button"
+                    class="show-password"
+                    id="showPasswordButton"
+            >
+
+                Show
+
+            </button>
+
+
+        </div>
+
+
+
+        <ul class="password-rules">
+
+
+            <li id="lengthRule">
+
+                At least 8 characters
+
+            </li>
+
+
+            <li id="uppercaseRule">
+
+                At least 1 uppercase letter
+
+            </li>
+
+
+            <li id="lowercaseRule">
+
+                At least 1 lowercase letter
+
+            </li>
+
+
+            <li id="numberRule">
+
+                At least 1 number
+
+            </li>
+
+
+            <li id="specialRule">
+
+                At least 1 special character
+                (@#$!%*?&)
+
+            </li>
+
+
+        </ul>
+
+    </div>
+
+
+
+    <!-- =========================
+         CONFIRM PASSWORD
+         ========================= -->
+
+    <div class="input-group">
+
+        <label for="confirmPassword">
+
+            Confirm Password
+
+        </label>
+
+
+        <div class="password-wrapper">
+
+
+            <input
+                    type="password"
+                    id="confirmPassword"
                     placeholder="Enter password again"
                     autocomplete="new-password"
             >
 
+
             <button
-                    id="showConfirmPassword"
-                    class="show-btn"
                     type="button"
+                    class="show-password"
+                    id="showConfirmPasswordButton"
             >
+
                 Show
+
             </button>
 
+
         </div>
+
     </div>
 
-    <button id="signupButton" type="button">
-        Sign Up
+
+
+    <!-- =========================
+         SIGNUP BUTTON
+         ========================= -->
+
+    <button
+            type="button"
+            id="signupButton"
+    >
+
+        SIGN UP
+
     </button>
+
+
 
     <div id="message"></div>
 
-    <div class="login-link">
+
+
+    <div class="login-text">
+
         Already have an account?
-        <a href="/login.html">Login</a>
+
+        <a href="/login.html">
+
+            Login
+
+        </a>
+
     </div>
+
 
 </div>
 
 
+
 <script>
 
+    /* =========================
+       ELEMENTS
+       ========================= */
+
     const usernameInput =
-        document.getElementById("username");
+        document.getElementById(
+            "username"
+        );
+
 
     const emailInput =
-        document.getElementById("email");
+        document.getElementById(
+            "email"
+        );
+
 
     const passwordInput =
-        document.getElementById("password");
+        document.getElementById(
+            "password"
+        );
+
 
     const confirmPasswordInput =
-        document.getElementById("confirmPassword");
+        document.getElementById(
+            "confirmPassword"
+        );
+
 
     const signupButton =
-        document.getElementById("signupButton");
+        document.getElementById(
+            "signupButton"
+        );
+
 
     const message =
-        document.getElementById("message");
+        document.getElementById(
+            "message"
+        );
 
 
-    const ruleLength =
-        document.getElementById("ruleLength");
 
-    const ruleUpper =
-        document.getElementById("ruleUpper");
+    /* PASSWORD RULES */
 
-    const ruleLower =
-        document.getElementById("ruleLower");
-
-    const ruleNumber =
-        document.getElementById("ruleNumber");
-
-    const ruleSpecial =
-        document.getElementById("ruleSpecial");
+    const lengthRule =
+        document.getElementById(
+            "lengthRule"
+        );
 
 
-    function isStrongPassword(password) {
+    const uppercaseRule =
+        document.getElementById(
+            "uppercaseRule"
+        );
+
+
+    const lowercaseRule =
+        document.getElementById(
+            "lowercaseRule"
+        );
+
+
+    const numberRule =
+        document.getElementById(
+            "numberRule"
+        );
+
+
+    const specialRule =
+        document.getElementById(
+            "specialRule"
+        );
+
+
+
+    /* =========================
+       STRONG PASSWORD
+       ========================= */
+
+    function isStrongPassword(
+        password
+    ) {return (
+            password.length >= 8
+            &&
+            /[A-Z]/.test(
+                password
+            )
+            &&
+            /[a-z]/.test(
+                password
+            )
+            &&
+            /\d/.test(
+                password
+            )
+            &&
+            /[@#$!%*?&]/.test(
+                password
+            )
+        );
+    }
+
+
+
+    /* =========================
+       LIVE PASSWORD CHECK
+       ========================= */
+
+    passwordInput.addEventListener(
+        "input",
+        function () {
+
+            const password =
+                passwordInput.value;
+
+
+            updateRule(
+                lengthRule,
+                password.length >= 8
+            );
+
+
+            updateRule(
+                uppercaseRule,
+                /[A-Z]/.test(
+                    password
+                )
+            );
+
+
+            updateRule(
+                lowercaseRule,
+                /[a-z]/.test(
+                    password
+                )
+            );
+
+
+            updateRule(
+                numberRule,
+                /\d/.test(
+                    password
+                )
+            );
+
+
+            updateRule(
+                specialRule,
+                /[@#$!%*?&]/.test(
+                    password
+                )
+            );
+
+
+            clearMessage();
+        }
+    );
+
+
+
+    function updateRule(
+        element,
+        valid
+    ) {
+
+        if (valid) {
+
+            element.classList.add(
+                "valid"
+            );
+
+        } else {
+
+            element.classList.remove(
+                "valid"
+            );
+        }
+    }
+
+
+
+    /* =========================
+       SHOW PASSWORD
+       ========================= */
+
+    document
+        .getElementById(
+            "showPasswordButton"
+        )
+        .addEventListener(
+            "click",
+            function () {
+
+                togglePassword(
+                    passwordInput,
+                    this
+                );
+            }
+        );
+
+
+
+    document
+        .getElementById(
+            "showConfirmPasswordButton"
+        )
+        .addEventListener(
+            "click",
+            function () {
+
+                togglePassword(
+                    confirmPasswordInput,
+                    this
+                );
+            }
+        );
+
+
+
+    function togglePassword(
+        input,
+        button
+    ) {
+
+        if (
+            input.type === "password"
+        ) {
+
+            input.type =
+                "text";
+
+            button.textContent =
+                "Hide";
+
+        } else {
+
+            input.type =
+                "password";
+
+            button.textContent =
+                "Show";
+        }
+    }
+
+
+
+    /* =========================
+       EMAIL CHECK
+       ========================= */
+
+    function isValidEmail(
+        email
+    ) {
 
         return (
-            password.length >= 8 &&
-            /[A-Z]/.test(password) &&
-            /[a-z]/.test(password) &&
-            /\d/.test(password) &&
-            /[@#$!%*?&]/.test(password)
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                .test(
+                    email
+                )
         );
     }
 
 
-    function updateRule(element, condition) {
 
-        if (condition) {
-            element.classList.add("valid");
-        } else {
-            element.classList.remove("valid");
-        }
-    }
-
-
-    passwordInput.addEventListener("input", function () {
-
-        const password = passwordInput.value;
-
-        updateRule(
-            ruleLength,
-            password.length >= 8
-        );
-
-        updateRule(
-            ruleUpper,
-            /[A-Z]/.test(password)
-        );
-
-        updateRule(
-            ruleLower,
-            /[a-z]/.test(password)
-        );
-
-        updateRule(
-            ruleNumber,
-            /\d/.test(password)
-        );
-
-        updateRule(
-            ruleSpecial,
-            /[@#$!%*?&]/.test(password)
-        );
-
-        clearMessage();
-    });
-
-
-    document
-        .getElementById("showPassword")
-        .addEventListener("click", function () {
-
-            togglePassword(
-                passwordInput,
-                this
-            );
-        });
-
-
-    document
-        .getElementById("showConfirmPassword")
-        .addEventListener("click", function () {
-
-            togglePassword(
-                confirmPasswordInput,
-                this
-            );
-        });
-
-
-    function togglePassword(input, button) {
-
-        if (input.type === "password") {
-
-            input.type = "text";
-            button.textContent = "Hide";
-
-        } else {input.type = "password";
-            button.textContent = "Show";
-        }
-    }
-
-
-    function isValidEmail(email) {
-
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
+    /* =========================
+       SIGNUP BUTTON
+       ========================= */
 
     signupButton.addEventListener(
         "click",
@@ -382,38 +922,64 @@
     );
 
 
+
     confirmPasswordInput.addEventListener(
         "keydown",
-        function (event) {
+        function (
+            event
+        ) {
 
-            if (event.key === "Enter") {
+            if (
+                event.key === "Enter"
+            ) {
+
                 signup();
             }
         }
     );
 
 
+
+    /* =========================
+       SIGNUP FUNCTION
+       ========================= */
+
     async function signup() {
+
 
         clearMessage();
 
+
         const username =
-            usernameInput.value.trim();
+            usernameInput
+                .value
+                .trim();
+
 
         const email =
-            emailInput.value.trim();
+            emailInput
+                .value
+                .trim();
+
 
         const password =
-            passwordInput.value;
+            passwordInput
+                .value;
+
 
         const confirmPassword =
-            confirmPasswordInput.value;
+            confirmPasswordInput
+                .value;
 
 
-        if (
-            username === "" ||
-            email === "" ||
-            password === "" ||
+
+        /* EMPTY */if (
+            username === ""
+            ||
+            email === ""
+            ||
+            password === ""
+            ||
             confirmPassword === ""
         ) {
 
@@ -425,7 +991,12 @@
         }
 
 
-        if (username.length < 3) {
+
+        /* USERNAME */
+
+        if (
+            username.length < 3
+        ) {
 
             showError(
                 "Username must be at least 3 characters."
@@ -435,7 +1006,14 @@
         }
 
 
-        if (!isValidEmail(email)) {
+
+        /* EMAIL */
+
+        if (
+            !isValidEmail(
+                email
+            )
+        ) {
 
             showError(
                 "Please enter a valid email address."
@@ -445,17 +1023,31 @@
         }
 
 
-        if (!isStrongPassword(password)) {
+
+        /* PASSWORD */
+
+        if (
+            !isStrongPassword(
+                password
+            )
+        ) {
 
             showError(
-                "Password must contain at least 8 characters, uppercase, lowercase, number and special character."
+                "Password must have at least 8 characters, uppercase, lowercase, number and special character."
             );
 
             return;
         }
 
 
-        if (password !== confirmPassword) {
+
+        /* CONFIRM PASSWORD */
+
+        if (
+            password
+            !==
+            confirmPassword
+        ) {
 
             showError(
                 "Passwords do not match."
@@ -465,45 +1057,80 @@
         }
 
 
-        signupButton.disabled = true;
+
+        signupButton.disabled =
+            true;
+
+
         signupButton.textContent =
-            "Creating Account...";
+            "CREATING ACCOUNT...";
+
 
 
         try {
+
 
             const response =
                 await fetch(
                     "/api/auth/signup",
                     {
-                        method: "POST",
+
+                        method:
+                            "POST",
+
 
                         headers: {
+
                             "Content-Type":
                                 "application/json"
+
                         },
+
 
                         credentials:
                             "same-origin",
 
-                        body: JSON.stringify({
-                            username: username,
-                            email: email,
-                            password: password
-                        })
+
+                        body:
+                            JSON.stringify(
+                                {
+
+                                    username:
+                                        username,
+
+                                    email:
+                                        email,
+
+                                    password:
+                                        password
+
+                                }
+                            )
+
                     }
                 );
+
 
 
             const responseText =
                 await response.text();
 
 
+
             let data = {};
 
+
             try {
-                data = JSON.parse(responseText);
-            } catch (e) {
+
+                data =
+                    JSON.parse(
+                        responseText
+                    );
+
+            } catch (
+                error
+            ) {
+
                 console.error(
                     "Server response:",
                     responseText
@@ -511,10 +1138,14 @@
             }
 
 
-            if (!response.ok) {
+
+            if (
+                !response.ok
+            ) {
 
                 showError(
-                    data.message ||
+                    data.message
+                    ||
                     "Sign up failed."
                 );
 
@@ -522,7 +1153,13 @@
             }
 
 
-            if (data.success === true) {
+
+            if (
+                data.success
+                ===
+                true
+            ) {
+
 
                 sessionStorage.setItem(
                     "verifyEmail",
@@ -531,66 +1168,115 @@
 
 
                 showSuccess(
-                    data.message ||
+                    data.message
+                    ||
                     "Verification code sent."
                 );
 
 
-                setTimeout(function () {
 
-                    window.location.href =
-                        "/verifyemail.html?email="
-                        +
-                        encodeURIComponent(email);
+                setTimeout(
+                    function () {
 
-                }, 600);
+
+                        window.location.href =
+                            "/verifyemail.html?email="
+                            +
+                            encodeURIComponent(
+                                email
+                            );
+
+
+                    },
+                    600
+                );
+
 
             } else {
 
+
                 showError(
-                    data.message ||
+                    data.message
+                    ||
                     "Sign up failed."
                 );
+
             }
 
 
-        } catch (error) {
+        } catch (
+            error
+        ) {console.error(
+                error
+            );
 
-            console.error(error);
 
             showError(
                 "Cannot connect to the server."
             );
 
+
         } finally {
 
-            signupButton.disabled = false;
+
+            signupButton.disabled =
+                false;
+
 
             signupButton.textContent =
-                "Sign Up";
+                "SIGN UP";
+
         }
+
     }
 
 
-    function showError(text) {message.textContent = text;
-        message.className = "error";
+
+    /* =========================
+       MESSAGE
+       ========================= */
+
+    function showError(
+        text
+    ) {
+
+        message.textContent =
+            text;
+
+
+        message.className =
+            "error";
     }
 
 
-    function showSuccess(text) {
 
-        message.textContent = text;
-        message.className = "success";
+    function showSuccess(
+        text
+    ) {
+
+        message.textContent =
+            text;
+
+
+        message.className =
+            "success";
     }
+
 
 
     function clearMessage() {
 
-        message.textContent = "";
-        message.className = "";
+        message.textContent =
+            "";
+
+
+        message.className =
+            "";
     }
 
 </script>
 
+
 </body>
+
 </html>
