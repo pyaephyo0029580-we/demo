@@ -3,12 +3,13 @@ package com.example.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-
+import com.example.demo.model.PlayerMessage;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -156,5 +157,11 @@ public class GameController {
         spawnData.put("y", 410);
         spawnData.put("characterType", "Hero");
         return spawnData;
+    }
+    // Multiplayer Player Move Endpoint
+    @MessageMapping("/move")
+    @SendTo("/topic/players")
+    public PlayerMessage handlePlayerMove(PlayerMessage message) {
+        return message;
     }
 }
