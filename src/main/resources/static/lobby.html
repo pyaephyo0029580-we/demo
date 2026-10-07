@@ -1,0 +1,1133 @@
+<!DOCTYPE >
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Game Lobby</title>
+
+
+    <!-- ==========================================
+         SockJS
+         ========================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+
+
+    <!-- ==========================================
+         STOMP
+         ========================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+
+    <style>
+
+        /* ==========================================
+           BODY
+           ========================================== */
+
+        body {
+
+            background-color: #0d1117;
+
+            color: #ffffff;
+
+            font-family: Arial, sans-serif;
+
+            margin: 0;
+
+            height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+        }
+
+
+        /* ==========================================
+           MAIN CONTAINER
+           ========================================== */
+
+        .container {
+
+            width: 1000px;
+
+            min-height: 650px;
+
+            position: relative;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+        }
+
+
+        /* ==========================================
+           LOBBY BOX
+           ========================================== */
+
+        .lobby-box {
+
+            width: 600px;
+
+            min-height: 500px;
+
+            background-color: #161b22;
+
+            border: 1px solid #30363d;
+
+            border-radius: 14px;
+
+            padding: 35px;
+
+            box-sizing: border-box;
+
+            box-shadow:
+                0 8px 24px rgba(0,0,0,0.6);
+
+        }
+
+
+        /* ==========================================
+           TITLE
+           ========================================== */
+
+        .title {
+
+            text-align: center;
+
+            margin-top: 0;
+
+            margin-bottom: 25px;
+
+            color: #f0f6fc;
+
+            font-size: 28px;
+
+        }
+
+
+        /* ==========================================
+           ROOM CODE
+           ========================================== */
+
+        .room-section {
+
+            text-align: center;
+
+            margin-bottom: 30px;
+
+        }
+
+
+        .room-label {
+
+            color: #8b949e;
+
+            font-size: 13px;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .room-code {
+
+            display: inline-block;
+
+            background-color: #0d1117;
+
+            border: 1px solid #30363d;
+
+            border-radius: 8px;
+
+            padding: 12px 25px;
+
+            color: #58a6ff;
+
+            font-size: 28px;
+
+            font-weight: bold;
+
+            letter-spacing: 4px;
+
+        }
+
+
+        /* ==========================================
+           PLAYER SECTION
+           ========================================== */
+
+        .players-title {
+
+            color: #f0f6fc;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            margin-bottom: 12px;
+
+        }
+
+
+        .players-list {
+
+            background-color: #0d1117;
+
+            border: 1px solid #30363d;
+
+            border-radius: 8px;
+
+            min-height: 180px;
+
+            padding: 10px;
+
+            box-sizing: border-box;
+
+        }
+
+
+        /* ==========================================
+           PLAYER ITEM
+           ========================================== */
+
+        .player {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            background-color: #161b22;
+
+            border: 1px solid #30363d;
+
+            border-radius: 7px;
+
+            padding: 12px 15px;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .player:last-child {
+
+            margin-bottom: 0;
+
+        }
+
+
+        .player-name {
+
+            font-size: 15px;
+
+            color: #ffffff;
+
+        }
+
+
+        .host {
+
+            color: #f2cc60;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+        }
+
+
+        /* ==========================================
+           EMPTY MESSAGE
+           ========================================== */
+
+        .empty-message {
+
+            text-align: center;
+
+            color: #8b949e;
+
+            padding: 50px 10px;
+
+        }
+
+
+        /* ==========================================
+           BOTTOM BUTTONS
+           ========================================== */
+
+        .buttons {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 15px;
+
+            margin-top: 30px;
+
+        }
+
+
+        .btn {
+
+            width: 180px;
+
+            height: 48px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+        }
+
+
+        .btn:hover {
+
+            opacity: 0.9;
+
+            transform: translateY(-1px);
+
+        }
+
+
+        .btn-start {
+
+            background-color: #238636;
+
+        }
+
+
+        .btn-start:disabled {
+
+            background-color: #30363d;
+
+            color: #8b949e;
+
+            cursor: not-allowed;
+
+            transform: none;
+
+            opacity: 0.7;
+
+        }
+
+
+        .btn-leave {
+
+            background-color: #da3633;
+
+        }
+
+
+        /* ==========================================
+           STATUS
+           ========================================== */
+
+        .status {
+
+            text-align: center;
+
+            color: #8b949e;
+
+            font-size: 13px;
+
+            min-height: 18px;
+
+            margin-top: 18px;
+
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <div class="lobby-box">
+
+
+        <!-- ======================================
+             TITLE
+             ====================================== -->
+
+        <h1 class="title">
+
+            GAME LOBBY
+
+        </h1>
+
+
+        <!-- ======================================
+             ROOM CODE
+             ====================================== -->
+
+        <div class="room-section">
+
+            <div class="room-label">
+
+                ROOM CODE
+
+            </div>
+
+
+            <div
+                    id="roomCode"
+                    class="room-code">
+
+                ------
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================
+             PLAYERS
+             ====================================== -->
+
+        <div class="players-title">
+
+            PLAYERS
+
+        </div>
+
+
+        <div
+                id="playersList"
+                class="players-list">
+
+            <div class="empty-message">
+
+                Waiting for players...
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================
+             BUTTONS
+             ====================================== -->
+
+        <div class="buttons">
+
+
+            <button
+                    id="startButton"
+                    class="btn btn-start"
+                    onclick="startGame()">
+
+                START GAME
+
+            </button>
+
+
+            <button
+                    class="btn btn-leave"
+                    onclick="leaveLobby()">
+
+                LEAVE
+
+            </button>
+
+
+        </div>
+
+
+        <!-- ======================================
+             STATUS
+             ====================================== -->
+
+        <div
+                id="status"
+                class="status">
+
+            Connecting...
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+    // =====================================================
+    // GLOBAL VARIABLES
+    // =====================================================
+
+    let stompClient = null;
+
+
+    let roomCode =
+        sessionStorage.getItem("roomCode");
+
+
+    let username =
+        sessionStorage.getItem("username");
+
+
+    let host =
+        sessionStorage.getItem("host");
+
+
+    // =====================================================
+    // PAGE LOAD
+    // =====================================================
+
+    window.addEventListener(
+        "load",
+        function() {
+
+            console.log(
+                "Username:",
+                username
+            );
+
+
+            console.log(
+                "Room Code:",
+                roomCode
+            );
+
+
+            console.log(
+                "Host:",
+                host
+            );
+
+
+            // ---------------------------------------------
+            // Check Room Information
+            // ---------------------------------------------
+
+            if (!roomCode || !username) {
+
+                alert(
+                    "Room information is missing."
+                );
+
+                window.location.href =
+                    "play.html";
+
+                return;
+
+            }
+
+
+            // ---------------------------------------------
+            // Display Room Code
+            // ---------------------------------------------
+
+            document.getElementById(
+                "roomCode"
+            ).textContent =
+                roomCode;
+
+
+            // ---------------------------------------------
+            // Check Host
+            // ---------------------------------------------
+
+            updateStartButton();
+
+
+            // ---------------------------------------------
+            // Connect
+            // ---------------------------------------------
+
+            connectToLobby();
+
+        }
+    );
+
+
+    // =====================================================
+    // CONNECT TO WEBSOCKET
+    // =====================================================
+
+    function connectToLobby() {
+
+
+        setStatus(
+            "Connecting to lobby..."
+        );
+
+
+        // ---------------------------------------------
+        // SockJS
+        // ---------------------------------------------
+
+        const socket =
+            new SockJS("/game-websocket");
+
+
+        // ---------------------------------------------
+        // STOMP
+        // ---------------------------------------------
+
+        stompClient =
+            Stomp.over(socket);
+
+
+        stompClient.debug = null;
+
+
+        // ---------------------------------------------
+        // Connect
+        // ---------------------------------------------
+
+        stompClient.connect(
+
+            {},
+
+            function(frame) {
+
+                console.log(
+                    "Lobby connected:",
+                    frame
+                );
+
+
+                setStatus(
+                    "Waiting for players..."
+                );
+
+
+                // ======================================
+                // Subscribe Room Players
+                // ======================================
+
+                stompClient.subscribe(
+
+                    "/topic/room/" + roomCode,
+
+                    function(message) {
+
+                        try {
+
+                            const data =
+                                JSON.parse(
+                                    message.body
+                                );
+
+
+                            console.log(
+                                "Room update:",
+                                data
+                            );
+
+
+                            updateLobby(
+                                data
+                            );
+
+                        }
+                        catch(error) {
+
+                            console.error(
+                                "Room data error:",
+                                error
+                            );
+
+                        }
+
+                    }
+
+                );
+
+
+                // ======================================
+                // Subscribe Game Start
+                // ======================================
+
+                stompClient.subscribe(
+
+                    "/topic/room/" +
+                    roomCode +
+                    "/game-start",
+
+                    function(message) {
+
+                        try {
+
+                            const data =
+                                JSON.parse(
+                                    message.body
+                                );
+
+
+                            console.log(
+                                "GAME START:",
+                                data
+                            );
+
+
+                            handleGameStart(
+                                data
+                            );
+
+                        }
+                        catch(error) {
+
+                            console.error(
+                                "Game start error:",
+                                error
+                            );
+
+                        }
+
+                    }
+
+                );
+
+            },
+
+
+            function(error) {
+
+                console.error(
+                    "Lobby WebSocket error:",
+                    error
+                );
+
+
+                setStatus(
+                    "Cannot connect to server."
+                );
+
+            }
+
+        );
+
+    }
+
+
+    // =====================================================
+    // UPDATE LOBBY
+    // =====================================================
+
+    function updateLobby(data) {
+
+
+        // ---------------------------------------------
+        // Update Room Code
+        // ---------------------------------------------
+
+        if (data.roomCode) {
+
+            roomCode =
+                data.roomCode;
+
+            document.getElementById(
+                "roomCode"
+            ).textContent =
+                roomCode;
+
+        }
+
+
+        // ---------------------------------------------
+        // Update Host
+        // ---------------------------------------------
+
+        if (data.host) {
+
+            host =
+                data.host;
+
+            sessionStorage.setItem(
+                "host",
+                host
+            );
+
+        }
+
+
+        // ---------------------------------------------
+        // Update Players
+        // ---------------------------------------------
+
+        const players =
+            data.players || [];
+
+
+        displayPlayers(
+            players
+        );
+
+
+        // ---------------------------------------------
+        // Update Start Button
+        // ---------------------------------------------
+
+        updateStartButton();
+
+
+        setStatus(
+            players.length +
+            " player(s) in lobby."
+        );
+
+    }
+
+
+    // =====================================================
+    // DISPLAY PLAYERS
+    // =====================================================
+
+    function displayPlayers(players) {
+
+
+        const playersList =
+            document.getElementById(
+                "playersList"
+            );
+
+
+        playersList.innerHTML = "";
+
+
+        if (players.length === 0) {
+
+            playersList.innerHTML =
+                `
+                <div class="empty-message">
+                    Waiting for players...
+                </div>
+                `;
+
+            return;
+
+        }
+
+
+        players.forEach(
+            function(playerName) {
+
+
+                const playerDiv =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                playerDiv.className =
+                    "player";
+
+
+                // -----------------------------------------
+                // Player Name
+                // -----------------------------------------
+
+                const nameDiv =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                nameDiv.className =
+                    "player-name";
+
+
+                nameDiv.textContent =
+                    playerName;
+
+
+                // -----------------------------------------
+                // Host Label
+                // -----------------------------------------
+
+                const hostDiv =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                if (playerName === host) {
+
+                    hostDiv.className =
+                        "host";
+
+                    hostDiv.textContent =
+                        "👑 HOST";
+
+                }
+
+
+                // -----------------------------------------
+                // Add
+                // -----------------------------------------
+
+                playerDiv.appendChild(
+                    nameDiv
+                );
+
+
+                playerDiv.appendChild(
+                    hostDiv
+                );
+
+
+                playersList.appendChild(
+                    playerDiv
+                );
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // START BUTTON
+    // =====================================================
+
+    function updateStartButton() {
+
+
+        const startButton =
+            document.getElementById(
+                "startButton"
+            );
+
+
+        /*
+         * Only Host can start.
+         */
+
+        if (username === host) {
+
+            startButton.disabled =
+                false;
+
+            startButton.textContent =
+                "START GAME";
+
+        }
+        else {
+
+            startButton.disabled =
+                true;
+
+            startButton.textContent =
+                "WAITING FOR HOST";
+
+        }
+
+    }
+
+
+    // =====================================================
+    // START GAME
+    // =====================================================
+
+    function startGame() {
+
+
+        // ---------------------------------------------
+        // Check Host
+        // ---------------------------------------------
+
+        if (username !== host) {
+
+            alert(
+                "Only the host can start the game."
+            );
+
+            return;
+
+        }
+
+
+        // ---------------------------------------------
+        // Check Connection
+        // ---------------------------------------------
+
+        if (!stompClient) {
+
+            alert(
+                "Not connected to server."
+            );
+
+            return;
+
+        }
+
+
+        setStatus(
+            "Starting game..."
+        );
+
+
+        // ---------------------------------------------
+        // Send Start Game
+        // ---------------------------------------------
+
+        stompClient.send(
+
+            "/app/start-game",
+
+            {},
+
+            JSON.stringify({
+
+                username:
+                    username,
+
+                roomCode:
+                    roomCode
+
+            })
+
+        );
+
+    }
+
+
+    // =====================================================
+    // GAME START EVENT
+    // =====================================================
+
+    function handleGameStart(data) {
+
+
+        console.log(
+            "Game started:",
+            data
+        );
+
+
+        setStatus(
+            "Game starting..."
+        );
+
+
+        /*
+         * IMPORTANT:
+         *
+         * For now we do NOT launch Unity.
+         *
+         * Next step:
+         *
+         * Lobby
+         *    ↓
+         * GAME_START
+         *    ↓
+         * Unity Room 1
+         *
+         */
+
+
+        alert(
+            "GAME STARTED!\n\n" +
+            "Room: " +
+            roomCode
+        );
+
+
+        /*
+         * Unity connection will be added here.
+         */
+
+    }
+
+
+    // =====================================================
+    // LEAVE LOBBY
+    // =====================================================
+
+    function leaveLobby() {
+
+
+        if (stompClient) {
+
+            stompClient.disconnect(
+                function() {
+
+                    console.log(
+                        "Disconnected from lobby."
+                    );
+
+                }
+            );
+
+        }
+
+
+        sessionStorage.removeItem(
+            "roomCode"
+        );
+
+
+        sessionStorage.removeItem(
+            "host"
+        );
+
+
+        sessionStorage.removeItem(
+            "username"
+        );
+
+
+        window.location.href =
+            "play.html";
+
+    }
+
+
+    // =====================================================
+    // STATUS
+    // =====================================================
+
+    function setStatus(message) {
+
+        document.getElementById(
+            "status"
+        ).textContent =
+            message;
+
+    }
+
+
+</script>
+
+
+</body>
+
+</html>
+
