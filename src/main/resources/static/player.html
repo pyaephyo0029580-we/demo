@@ -1,0 +1,445 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Hospital JSON Map - Player Movement & Collision</title>-->
+<!--    <style>-->
+<!--        body {-->
+<!--            margin: 0;-->
+<!--            background: #111;-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            align-items: center;-->
+<!--            height: 100vh;-->
+<!--        }-->
+<!--        canvas {-->
+<!--            border: 2px solid #555;-->
+<!--            background: #000;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<canvas id="gameCanvas" width="800" height="600"></canvas>-->
+
+<!--<script>-->
+<!--    const canvas = document.getElementById('gameCanvas');-->
+<!--    const ctx = canvas.getContext('2d');-->
+
+<!--    // 1. Tileset Image နှင့် Player Image များကို Load လုပ်ခြင်း-->
+<!--    const tilesetImg = new Image();-->
+<!--    tilesetImg.src = '/Map/hospital.png'; // သင့် static/Map/ ထဲရှိ Tileset PNG ပုံဖိုင်နာမည် ပေးပါ-->
+
+<!--    const playerImg = new Image();-->
+<!--    playerImg.src = '/Map/jellyb-removebg-preview.png';-->
+
+<!--    // Player Data (X, Y ကို Spawn Point မှ အလိုအလျောက် အစားထိုးပါမည်)-->
+<!--    const player = {-->
+<!--        x: 0, y: 0,-->
+<!--        width: 32, height: 32, // Bounding box အရွယ်အစား (Collision အတွက်)-->
+<!--        speed: 4,-->
+<!--        frameX: 0, frameY: 0,-->
+<!--        spriteWidth: 64, spriteHeight: 64,-->
+<!--        moving: false-->
+<!--    };-->
+
+<!--    let mapData = null;-->
+<!--    let mapWidth = 0;-->
+<!--    let mapHeight = 0;-->
+<!--    let tileSize = 32;-->
+<!--    let tileLayers = [];-->
+<!--    let collisionBoxes = []; // Collision လေးထောင့်ကွက်များ သိမ်းဆည်းရန်-->
+
+<!--    // 2. hospital.json ဖိုင်ကို Fetch လုပ်ပြီး Map Data နှင့် Collision Data ဖတ်ယူခြင်း-->
+<!--    fetch('/Map/hospital.json')-->
+<!--        .then(response => response.json())-->
+<!--        .then(data => {-->
+<!--            mapData = data;-->
+<!--            mapWidth = data.width;-->
+<!--            mapHeight = data.height;-->
+<!--            tileSize = data.tilewidth;-->
+
+<!--            // Tile Layers များကို သီးသန့် ခွဲထုတ်ခြင်း-->
+<!--            tileLayers = data.layers.filter(layer => layer.type === 'tilelayer');-->
+
+<!--            // Object Layer များထဲမှ PlayerSpawn နှင့် Collision Boxes များကို ရှာခြင်း-->
+<!--            data.layers.forEach(layer => {-->
+<!--                if (layer.type === 'objectgroup') {-->
+<!--                    // Collision လေးထောင့်ကွက်များကို ယူခြင်း-->
+<!--                    if (layer.name === 'Collision' || layer.name === 'Objects') {-->
+<!--                        layer.objects.forEach(obj => {-->
+<!--                            if (obj.width && obj.height) { // Rectangle ဖြစ်ပါက-->
+<!--                                collisionBoxes.push(obj);-->
+<!--                            }-->
+<!--                            // PlayerSpawn Point ဖြစ်ပါက Player Position သတ်မှတ်ခြင်း-->
+<!--                            if (obj.name === 'PlayerSpawn') {-->
+<!--                                player.x = obj.x;-->
+<!--                                player.y = obj.y;-->
+<!--                            }-->
+<!--                        });-->
+<!--                    }-->
+<!--                }-->
+<!--            });-->
+
+<!--            // Map ရရှိပါက Game Loop စတင်မည်-->
+<!--            gameLoop();-->
+<!--        })-->
+<!--        .catch(err => console.error("JSON Map ဖတ်၍ မရပါ:", err));-->
+
+<!--    // Keyboard Control-->
+<!--    const keys = {};-->
+<!--    window.addEventListener('keydown', e => keys[e.key] = true);-->
+<!--    window.addEventListener('keyup', e => delete keys[e.key]);-->
+
+<!--    // AABB Collision Detection (တိုက်မိမှု စစ်ဆေးသည့် Function)-->
+<!--    function checkCollision(newX, newY) {-->
+<!--        for (let box of collisionBoxes) {-->
+<!--            if (-->
+<!--                newX < box.x + box.width &&-->
+<!--                newX + player.width > box.x &&-->
+<!--                newY < box.y + box.height &&-->
+<!--                newY + player.height > box.y-->
+<!--            ) {-->
+<!--                return true; // တိုက်မိပါက true ပြန်ပေးမည်-->
+<!--            }-->
+<!--        }-->
+<!--        return false;-->
+<!--    }-->
+
+<!--    function updatePlayer() {-->
+<!--        player.moving = false;-->
+<!--        let nextX = player.x;-->
+<!--        let nextY = player.y;-->
+
+<!--        if (keys['ArrowUp']  keys['w']  keys['W']) { nextY -= player.speed; player.frameY = 3; player.moving = true; }-->
+<!--        if (keys['ArrowDown']  keys['s']  keys['S']) { nextY += player.speed; player.frameY = 0; player.moving = true; }if (keys['ArrowLeft']  keys['a']  keys['A']) { nextX -= player.speed; player.frameY = 1; player.moving = true; }-->
+<!--        if (keys['ArrowRight']  keys['d']  keys['D']) { nextX += player.speed; player.frameY = 2; player.moving = true; }-->
+
+<!--        // မတိုက်မိမှသာ Player Position ကို ရွှေ့မည်-->
+<!--        if (!checkCollision(nextX, player.y)) {-->
+<!--            player.x = nextX;-->
+<!--        }-->
+<!--        if (!checkCollision(player.x, nextY)) {-->
+<!--            player.y = nextY;-->
+<!--        }-->
+<!--    }-->
+
+<!--    // 3. Tiled Map ကို Canvas ပေါ်တွင် Render ဆွဲပေးခြင်း-->
+<!--    function drawMap() {-->
+<!--        if (!mapData || !tilesetImg.complete) return;-->
+
+<!--        tileLayers.forEach(layer => {-->
+<!--            const data = layer.data;-->
+<!--            for (let i = 0; i < data.length; i++) {-->
+<!--                const tileId = data[i];-->
+<!--                if (tileId > 0) {-->
+<!--                    const col = i % mapWidth;-->
+<!--                    const row = Math.floor(i / mapWidth);-->
+
+<!--                    const x = col * tileSize;-->
+<!--                    const y = row * tileSize;-->
+
+<!--                    const tilesetCols = Math.floor(tilesetImg.width / tileSize) || 1;-->
+<!--                    const tileIndex = tileId - 1;-->
+<!--                    const sx = (tileIndex % tilesetCols) * tileSize;-->
+<!--                    const sy = Math.floor(tileIndex / tilesetCols) * tileSize;-->
+
+<!--                    ctx.drawImage(tilesetImg, sx, sy, tileSize, tileSize, x, y, tileSize, tileSize);-->
+<!--                }-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
+
+<!--    function drawPlayer() {-->
+<!--        if (playerImg.complete) {-->
+<!--            ctx.drawImage(-->
+<!--                playerImg,-->
+<!--                player.frameX * player.spriteWidth, player.frameY * player.spriteHeight,-->
+<!--                player.spriteWidth, player.spriteHeight,-->
+<!--                player.x, player.y, player.width, player.height-->
+<!--            );-->
+<!--        }-->
+<!--    }-->
+
+<!--    function gameLoop() {-->
+<!--        ctx.clearRect(0, 0, canvas.width, canvas.height);-->
+<!--        drawMap();    // Dynamic JSON Map ဆွဲပေးမည်-->
+<!--        updatePlayer();-->
+<!--        drawPlayer(); // Player ဆွဲပေးမည်-->
+<!--        requestAnimationFrame(gameLoop);-->
+<!--    }-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital JSON Map - Multiplayer Game</title>
+    <style>
+        body {
+            margin: 0;
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas {
+            border: 2px solid #555;
+            background: #000;
+        }
+    </style>
+    <!-- SockJS နှင့် STOMP Library များ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // WebSocket & Player ID
+    const playerId = "player_" + Math.floor(Math.random() * 10000);
+    const otherPlayers = {};
+    let stompClient = null;
+
+    // Image များ Load လုပ်ခြင်း
+    const tilesetImg = new Image();
+    tilesetImg.src = '/Map/hospital.png';
+
+    const playerImg = new Image();
+    playerImg.src = '/Map/jellyb-removebg-preview.png';
+
+    // Player Data
+    const player = {
+        x: 0, y: 0,
+        width: 32, height: 32,
+        speed: 4,
+        frameX: 0, frameY: 0,
+        spriteWidth: 64, spriteHeight: 64,
+        moving: false
+    };
+
+    // Animation Variables
+    let frameCounter = 0;
+    const frameSpeed = 8;
+    const maxFrames = 4;
+
+    // Camera Object
+    const camera = {
+        x: 0, y: 0,
+        width: canvas.width,
+        height: canvas.height
+    };
+
+    let mapData = null;
+    let mapWidth = 0;
+    let mapHeight = 0;
+    let tileSize = 32;
+
+    let bottomLayer = null;
+    let topLayer = null;
+    let collisionBoxes = [];
+
+    // Thine WebSocketConfig ထဲက /game-websocket endpoint ကို တိုက်ရိုက် ချိတ်ဆက်ခြင်း
+    function connectWebSocket() {
+        const socket = new SockJS('/game-websocket');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
+
+        stompClient.connect({}, function (frame) {
+            console.log('WebSocket Connected!');
+
+            stompClient.subscribe('/topic/players', function (msg) {
+                const data = JSON.parse(msg.body);
+                if (data.id !== playerId) {
+                    otherPlayers[data.id] = data;
+                }
+            });
+        });
+    }
+
+    function sendPosition() {
+        if (stompClient && stompClient.connected) {
+            stompClient.send("/app/move", {}, JSON.stringify({
+                id: playerId,
+                x: player.x,
+                y: player.y,
+                frameX: player.frameX,
+                frameY: player.frameY
+            }));
+        }
+    }
+
+    // Map JSON ဖတ်ယူခြင်း
+    fetch('/Map/hospital.json')
+        .then(response => response.json())
+        .then(data => {
+            mapData = data;
+            mapWidth = data.width;
+            mapHeight = data.height;
+            tileSize = data.tilewidth;
+
+            data.layers.forEach(layer => {
+                if (layer.type === 'tilelayer') {
+                    if (layer.name === 'Bottom Tile Layer') {
+                        bottomLayer = layer;
+                    } else if (layer.name === 'Tile layer') {
+                        topLayer = layer;
+                    }
+                } else if (layer.type === 'objectgroup') {
+                    layer.objects.forEach(obj => {
+                        if (obj.width && obj.height) {
+                            collisionBoxes.push(obj);
+                        }
+                        if (obj.name === 'PlayerSpawn') {
+                            player.x = obj.x;
+                            player.y = obj.y;
+                        }
+                    });
+                }
+            });
+
+            connectWebSocket();
+            gameLoop();
+        })
+        .catch(err => console.error("JSON Map ဖတ်၍ မရပါ:", err));
+
+    // Keyboard Control
+    const keys = {};
+    window.addEventListener('keydown', e => keys[e.key] = true);
+    window.addEventListener('keyup', e => delete keys[e.key]);
+
+    // Collision Detection
+    function checkCollision(newX, newY) {
+        for (let box of collisionBoxes) {
+            if (
+                newX < box.x + box.width &&
+                newX + player.width > box.x &&
+                newY < box.y + box.height &&
+                newY + player.height > box.y
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function updatePlayer() {
+        player.moving = false;
+        let nextX = player.x;
+        let nextY = player.y;
+
+        if (keys['ArrowUp']  keys['w']  keys['W']) { nextY -= player.speed; player.frameY = 3; player.moving = true; }
+        if (keys['ArrowDown']  keys['s']  keys['S']) { nextY += player.speed; player.frameY = 0; player.moving = true; }
+        if (keys['ArrowLeft']  keys['a']  keys['A']) { nextX -= player.speed; player.frameY = 1; player.moving = true; }
+        if (keys['ArrowRight']  keys['d']  keys['D']) { nextX += player.speed; player.frameY = 2; player.moving = true; }
+
+        if (!checkCollision(nextX, player.y)) {
+            player.x = nextX;
+        }
+        if (!checkCollision(player.x, nextY)) {
+            player.y = nextY;
+        }
+
+        if (player.moving) {
+            frameCounter++;
+            if (frameCounter % frameSpeed === 0) {
+                player.frameX = (player.frameX + 1) % maxFrames;
+            }
+            sendPosition();
+        } else {
+            player.frameX = 0;
+            frameCounter = 0;
+        }
+    }
+
+    // Camera Logic
+    function updateCamera() {
+        if (!mapData) return;
+
+        camera.x = (player.x + player.width / 2) - camera.width / 2;
+        camera.y = (player.y + player.height / 2) - camera.height / 2;
+
+        const maxCameraX = (mapWidth * tileSize) - camera.width;
+        const maxCameraY = (mapHeight * tileSize) - camera.height;
+
+        camera.x = Math.max(0, Math.min(camera.x, maxCameraX));
+        camera.y = Math.max(0, Math.min(camera.y, maxCameraY));
+    }
+
+    function drawSingleLayer(layer) {
+        if (!layer || !tilesetImg.complete) return;
+
+        const data = layer.data;
+        for (let i = 0; i < data.length; i++) {
+            const tileId = data[i];
+            if (tileId > 0) {
+                const col = i % mapWidth;
+                const row = Math.floor(i / mapWidth);
+
+                const x = col * tileSize;
+                const y = row * tileSize;
+
+                const tilesetCols = Math.floor(tilesetImg.width / tileSize) || 1;
+                const tileIndex = tileId - 1;
+                const sx = (tileIndex % tilesetCols) * tileSize;
+                const sy = Math.floor(tileIndex / tilesetCols) * tileSize;
+
+                ctx.drawImage(tilesetImg, sx, sy, tileSize, tileSize, x, y, tileSize, tileSize);
+            }
+        }
+    }
+
+    function drawPlayer() {
+        if (playerImg.complete) {
+            ctx.drawImage(
+                playerImg,
+                player.frameX * player.spriteWidth, player.frameY * player.spriteHeight,
+                player.spriteWidth, player.spriteHeight,
+                player.x, player.y, player.width, player.height
+            );
+        }
+    }
+
+    function drawOtherPlayers() {
+        if (!playerImg.complete) return;
+
+        for (let id in otherPlayers) {
+            const p = otherPlayers[id];
+            ctx.drawImage(
+                playerImg,
+                p.frameX * player.spriteWidth, p.frameY * player.spriteHeight,
+                player.spriteWidth, player.spriteHeight,
+                p.x, p.y, player.width, player.height
+            );
+        }
+    }
+
+    function gameLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        updatePlayer();
+        updateCamera();
+
+        ctx.save();
+        ctx.translate(-camera.x, -camera.y);
+
+        drawSingleLayer(bottomLayer);
+        drawPlayer();drawOtherPlayers();
+        drawSingleLayer(topLayer);
+
+        ctx.restore();
+
+        requestAnimationFrame(gameLoop);
+    }
+</script>
+</body>
+</html>
