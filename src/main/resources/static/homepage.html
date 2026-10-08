@@ -301,7 +301,7 @@
 
 
             /* =====================================
-               SHOP BUTTON
+               SHOP BUTTON (Connected to shop.html)
             ===================================== */
 
             document.getElementById(
@@ -312,7 +312,11 @@
 
                     playClickSound();
 
-                    alert("SHOP\n\nComing soon...");
+                    window.location.href =
+                        "/shop.html?user=" +
+                        encodeURIComponent(username) +
+                        "&coins=" +
+                        coins;
                 }
             );
 
@@ -354,7 +358,7 @@
 
 
             /* =====================================
-               SETTINGS  ← ဒီမှာ ပြင်ပြီး
+               SETTINGS
             ===================================== */
 
             document.getElementById(
