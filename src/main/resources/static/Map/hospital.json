@@ -1,7 +1,84 @@
 { "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"json",
+         "target":"hospital.tmj"
+        }
+    },
  "height":50,
  "infinite":false,
  "layers":[
+        {
+         "draworder":"topdown",
+         "id":9,
+         "name":"minitest1",
+         "objects":[
+                {
+                 "height":24.6617812852311,
+                 "id":29,
+                 "name":"Taskbutton",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":45.0958286358512,
+                 "x":389.656144306652,
+                 "y":219.842164599775
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":12,
+         "name":"minitest2",
+         "objects":[
+                {
+                 "height":24.6617812852311,
+                 "id":30,
+                 "name":"Taskbutton2",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":23.9571589627959,
+                 "x":263.528748590755,
+                 "y":537.626832018038
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":13,
+         "name":"minitest3",
+         "objects":[
+                {
+                 "height":29.5941375422773,
+                 "id":31,
+                 "name":"Taskbutton3",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":15.5016910935739,
+                 "x":644.729425028185,
+                 "y":228.297632468997
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
         {
          "draworder":"topdown",
          "id":4,
@@ -335,8 +412,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":6,
- "nextobjectid":25,
+ "nextlayerid":14,
+ "nextobjectid":32,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",
