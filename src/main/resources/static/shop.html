@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shop - My Online Game</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .shop-container {
+            width: 100vw;
+            height: 100vh;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            position: relative;
+        }
+
+        /* Top Bar / Tabs */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #30363d;
+            background-color: #21262d;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #8b949e;
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: 20px;
+            font-weight: bold;
+        }
+        .back-btn:hover { color: white; }
+
+        .tab-btn {
+            background-color: #30363d;
+            color: #8b949e;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 10px;
+            text-transform: uppercase;
+        }
+
+        .tab-btn.active {
+            background-color: #238636;
+            color: white;
+        }
+
+        .currency-display {
+            margin-left: auto;
+            background: #0d1117;
+            padding: 6px 15px;
+            border-radius: 20px;
+            border: 1px solid #30363d;
+            color: #e3b341;
+            font-weight: bold;
+        }
+
+        /* Main Content Layout */
+        .content-area {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 65px);
+        }
+
+        /* Left Side: Items Grid */
+        .left-panel {
+            width: 60%;
+            padding: 30px;
+            overflow-y: auto;
+            border-right: 1px solid #30363d;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            align-content: start;
+        }
+
+        .item-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .item-card.selected {
+            border-color: #58a6ff;
+            transform: scale(1.02);
+        }
+
+        .item-preview-img {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 5px;
+        }
+
+        .item-preview-img img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .price-tag {
+            background-color: #e6edf3;
+            color: #24292f;
+            width: 100%;
+            border-radius: 6px;
+            padding: 4px 0;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Right Side: Big Preview & Buy Panel */
+        .right-panel {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-color: #161b22;
+        }
+
+        /* Blank Photo Template for Big Preview */
+        .preview-box {
+            width: 180px;
+            height: 180px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        .preview-box img {
+            max-width: 85%;
+            max-height: 85%;
+            object-fit: contain;
+        }
+
+        .item-name {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .item-price {
+            color: #e3b341;
+            font-size: 20px;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .buy-btn {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .buy-btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+<div class="shop-container">
+    <!-- Top Bar with Back Button & Tabs -->
+    <div class="top-bar">
+        <button class="back-btn" onclick="goBack()" title="Back to Homepage">✕</button>
+        <button class="tab-btn active" onclick="switchCategory('hats')">Hats</button>
+        <button class="tab-btn" onclick="switchCategory('skins')">Skins</button>
+        <div class="currency-display" id="coinDisplay">🪙 0</div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="content-area">
+        <!-- Left Panel: Grid with Blank Templates -->
+        <div class="left-panel" id="shopGrid"></div>
+
+        <!-- Right Panel: Blank Photo Preview & Buy Option -->
+        <div class="right-panel">
+            <div class="preview-box" id="previewContainer">
+                <img id="previewImage" src="" alt="Preview" onerror="this.outerHTML='<span style=\'font-size:60px;\'>📦</span>'">
+            </div>
+            <div class="item-name" id="itemName">Select Item</div>
+            <div class="item-price" id="itemPrice">🪙 500</div>
+            <button class="buy-btn" onclick="buyItem()">BUY</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get('user') || 'Player';
+    let coins = parseInt(urlParams.get('coins') || '0');
+
+    document.getElementById('coinDisplay').innerText = `🪙 ${coins}`;
+
+    const shopItems = {
+        hats: [
+            { id: 1, name: "Hat 1", image: "images/hats/hat1.png", price: 500 },
+            { id: 2, name: "Hat 2", image: "images/hats/hat2.png", price: 500 },
+            { id: 3, name: "Hat 3", image: "images/hats/hat3.png", price: 500 },
+            { id: 4, name: "Hat 4", image: "images/hats/hat4.png", price: 500 },
+            { id: 5, name: "Hat 5", image: "images/hats/hat5.png", price: 500 },
+            { id: 6, name: "Hat 6", image: "images/hats/hat6.png", price: 500 }
+        ],
+        skins: [
+            { id: 101, name: "Skin 1", image: "images/skins/skin1.png", price: 800 },
+            { id: 102, name: "Skin 2", image: "images/skins/skin2.png", price: 800 }
+        ]
+    };
+
+    let currentCategory = 'hats';
+    let selectedItem = shopItems.hats[0];
+
+    function renderShopGrid() {
+        const grid = document.getElementById('shopGrid');
+        grid.innerHTML = '';
+
+        shopItems[currentCategory].forEach(item => {
+            const card = document.createElement('div');
+            card.className = `item-card ${selectedItem.id === item.id ? 'selected' : ''}`;
+
+            card.innerHTML = `
+                <div class="item-preview-img">
+                    <img src="${item.image}" alt="${item.name}" onerror="this.outerHTML='<span style=\'font-size:35px;\'>📦</span>'">
+                </div>
+                <div class="price-tag">
+                    <span>🪙</span> ${item.price}
+                </div>
+            `;
+
+            card.onclick = () => {
+                selectedItem = item;
+                renderShopGrid();
+                updatePreview();
+            };
+
+            grid.appendChild(card);
+        });
+    }
+
+    function updatePreview() {
+        const previewContainer = document.getElementById('previewContainer');
+        previewContainer.innerHTML = `<img id="previewImage" src="${selectedItem.image}" alt="${selectedItem.name}" onerror="this.outerHTML='<span style=\'font-size:60px;\'>📦</span>'">`;
+
+        document.getElementById('itemName').innerText = selectedItem.name;
+        document.getElementById('itemPrice').innerText = `🪙 ${selectedItem.price}`;
+    }
+
+    function switchCategory(category) {
+        currentCategory = category;
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        selectedItem = shopItems[category][0];
+        renderShopGrid();
+        updatePreview();
+    }
+
+    function buyItem() {
+        if(coins >= selectedItem.price) {
+            coins -= selectedItem.price;
+            document.getElementById('coinDisplay').innerText = `🪙 ${coins}`;
+            alert(`Successfully purchased ${selectedItem.name}!`);
+        } else {
+            alert("Not enough coins!");
+        }
+    }
+
+    function goBack() {
+        window.location.href = `/homepage.html?user=${encodeURIComponent(username)}&coins=${coins}`;
+    }
+
+    // Initial Load
+    renderShopGrid();
+    updatePreview();
+</script>
+
+</body>
+</html>
