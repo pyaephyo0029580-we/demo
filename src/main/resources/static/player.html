@@ -1,178 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--    <title>Hospital JSON Map - Player Movement & Collision</title>-->
-<!--    <style>-->
-<!--        body {-->
-<!--            margin: 0;-->
-<!--            background: #111;-->
-<!--            display: flex;-->
-<!--            justify-content: center;-->
-<!--            align-items: center;-->
-<!--            height: 100vh;-->
-<!--        }-->
-<!--        canvas {-->
-<!--            border: 2px solid #555;-->
-<!--            background: #000;-->
-<!--        }-->
-<!--    </style>-->
-<!--</head>-->
-<!--<body>-->
-
-<!--<canvas id="gameCanvas" width="800" height="600"></canvas>-->
-
-<!--<script>-->
-<!--    const canvas = document.getElementById('gameCanvas');-->
-<!--    const ctx = canvas.getContext('2d');-->
-
-<!--    // 1. Tileset Image နှင့် Player Image များကို Load လုပ်ခြင်း-->
-<!--    const tilesetImg = new Image();-->
-<!--    tilesetImg.src = '/Map/hospital.png'; // သင့် static/Map/ ထဲရှိ Tileset PNG ပုံဖိုင်နာမည် ပေးပါ-->
-
-<!--    const playerImg = new Image();-->
-<!--    playerImg.src = '/Map/jellyb-removebg-preview.png';-->
-
-<!--    // Player Data (X, Y ကို Spawn Point မှ အလိုအလျောက် အစားထိုးပါမည်)-->
-<!--    const player = {-->
-<!--        x: 0, y: 0,-->
-<!--        width: 32, height: 32, // Bounding box အရွယ်အစား (Collision အတွက်)-->
-<!--        speed: 4,-->
-<!--        frameX: 0, frameY: 0,-->
-<!--        spriteWidth: 64, spriteHeight: 64,-->
-<!--        moving: false-->
-<!--    };-->
-
-<!--    let mapData = null;-->
-<!--    let mapWidth = 0;-->
-<!--    let mapHeight = 0;-->
-<!--    let tileSize = 32;-->
-<!--    let tileLayers = [];-->
-<!--    let collisionBoxes = []; // Collision လေးထောင့်ကွက်များ သိမ်းဆည်းရန်-->
-
-<!--    // 2. hospital.json ဖိုင်ကို Fetch လုပ်ပြီး Map Data နှင့် Collision Data ဖတ်ယူခြင်း-->
-<!--    fetch('/Map/hospital.json')-->
-<!--        .then(response => response.json())-->
-<!--        .then(data => {-->
-<!--            mapData = data;-->
-<!--            mapWidth = data.width;-->
-<!--            mapHeight = data.height;-->
-<!--            tileSize = data.tilewidth;-->
-
-<!--            // Tile Layers များကို သီးသန့် ခွဲထုတ်ခြင်း-->
-<!--            tileLayers = data.layers.filter(layer => layer.type === 'tilelayer');-->
-
-<!--            // Object Layer များထဲမှ PlayerSpawn နှင့် Collision Boxes များကို ရှာခြင်း-->
-<!--            data.layers.forEach(layer => {-->
-<!--                if (layer.type === 'objectgroup') {-->
-<!--                    // Collision လေးထောင့်ကွက်များကို ယူခြင်း-->
-<!--                    if (layer.name === 'Collision' || layer.name === 'Objects') {-->
-<!--                        layer.objects.forEach(obj => {-->
-<!--                            if (obj.width && obj.height) { // Rectangle ဖြစ်ပါက-->
-<!--                                collisionBoxes.push(obj);-->
-<!--                            }-->
-<!--                            // PlayerSpawn Point ဖြစ်ပါက Player Position သတ်မှတ်ခြင်း-->
-<!--                            if (obj.name === 'PlayerSpawn') {-->
-<!--                                player.x = obj.x;-->
-<!--                                player.y = obj.y;-->
-<!--                            }-->
-<!--                        });-->
-<!--                    }-->
-<!--                }-->
-<!--            });-->
-
-<!--            // Map ရရှိပါက Game Loop စတင်မည်-->
-<!--            gameLoop();-->
-<!--        })-->
-<!--        .catch(err => console.error("JSON Map ဖတ်၍ မရပါ:", err));-->
-
-<!--    // Keyboard Control-->
-<!--    const keys = {};-->
-<!--    window.addEventListener('keydown', e => keys[e.key] = true);-->
-<!--    window.addEventListener('keyup', e => delete keys[e.key]);-->
-
-<!--    // AABB Collision Detection (တိုက်မိမှု စစ်ဆေးသည့် Function)-->
-<!--    function checkCollision(newX, newY) {-->
-<!--        for (let box of collisionBoxes) {-->
-<!--            if (-->
-<!--                newX < box.x + box.width &&-->
-<!--                newX + player.width > box.x &&-->
-<!--                newY < box.y + box.height &&-->
-<!--                newY + player.height > box.y-->
-<!--            ) {-->
-<!--                return true; // တိုက်မိပါက true ပြန်ပေးမည်-->
-<!--            }-->
-<!--        }-->
-<!--        return false;-->
-<!--    }-->
-
-<!--    function updatePlayer() {-->
-<!--        player.moving = false;-->
-<!--        let nextX = player.x;-->
-<!--        let nextY = player.y;-->
-
-<!--        if (keys['ArrowUp']  keys['w']  keys['W']) { nextY -= player.speed; player.frameY = 3; player.moving = true; }-->
-<!--        if (keys['ArrowDown']  keys['s']  keys['S']) { nextY += player.speed; player.frameY = 0; player.moving = true; }if (keys['ArrowLeft']  keys['a']  keys['A']) { nextX -= player.speed; player.frameY = 1; player.moving = true; }-->
-<!--        if (keys['ArrowRight']  keys['d']  keys['D']) { nextX += player.speed; player.frameY = 2; player.moving = true; }-->
-
-<!--        // မတိုက်မိမှသာ Player Position ကို ရွှေ့မည်-->
-<!--        if (!checkCollision(nextX, player.y)) {-->
-<!--            player.x = nextX;-->
-<!--        }-->
-<!--        if (!checkCollision(player.x, nextY)) {-->
-<!--            player.y = nextY;-->
-<!--        }-->
-<!--    }-->
-
-<!--    // 3. Tiled Map ကို Canvas ပေါ်တွင် Render ဆွဲပေးခြင်း-->
-<!--    function drawMap() {-->
-<!--        if (!mapData || !tilesetImg.complete) return;-->
-
-<!--        tileLayers.forEach(layer => {-->
-<!--            const data = layer.data;-->
-<!--            for (let i = 0; i < data.length; i++) {-->
-<!--                const tileId = data[i];-->
-<!--                if (tileId > 0) {-->
-<!--                    const col = i % mapWidth;-->
-<!--                    const row = Math.floor(i / mapWidth);-->
-
-<!--                    const x = col * tileSize;-->
-<!--                    const y = row * tileSize;-->
-
-<!--                    const tilesetCols = Math.floor(tilesetImg.width / tileSize) || 1;-->
-<!--                    const tileIndex = tileId - 1;-->
-<!--                    const sx = (tileIndex % tilesetCols) * tileSize;-->
-<!--                    const sy = Math.floor(tileIndex / tilesetCols) * tileSize;-->
-
-<!--                    ctx.drawImage(tilesetImg, sx, sy, tileSize, tileSize, x, y, tileSize, tileSize);-->
-<!--                }-->
-<!--            }-->
-<!--        });-->
-<!--    }-->
-
-<!--    function drawPlayer() {-->
-<!--        if (playerImg.complete) {-->
-<!--            ctx.drawImage(-->
-<!--                playerImg,-->
-<!--                player.frameX * player.spriteWidth, player.frameY * player.spriteHeight,-->
-<!--                player.spriteWidth, player.spriteHeight,-->
-<!--                player.x, player.y, player.width, player.height-->
-<!--            );-->
-<!--        }-->
-<!--    }-->
-
-<!--    function gameLoop() {-->
-<!--        ctx.clearRect(0, 0, canvas.width, canvas.height);-->
-<!--        drawMap();    // Dynamic JSON Map ဆွဲပေးမည်-->
-<!--        updatePlayer();-->
-<!--        drawPlayer(); // Player ဆွဲပေးမည်-->
-<!--        requestAnimationFrame(gameLoop);-->
-<!--    }-->
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -200,6 +25,13 @@
 <body>
 
 <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+<!-- Task Mini-game UI Modal (Test Pop-up အဖြစ် ပေါ်လာမည့် UI) -->
+<div id="taskModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1a2e; border: 3px solid #00fff5; padding: 25px; color: white; text-align: center; border-radius: 12px; z-index: 1000; min-width: 320px; box-shadow: 0 0 20px rgba(0,255,245,0.4);">
+    <div id="taskModalContent"></div>
+    <br>
+    <button onclick="closeTaskModal()" style="background: #ff4757; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px;">Close (ESC)</button>
+</div>
 
 <script>
     const canvas = document.getElementById('gameCanvas');
@@ -248,7 +80,13 @@
     let topLayer = null;
     let collisionBoxes = [];
 
-    // Thine WebSocketConfig ထဲက /game-websocket endpoint ကို တိုက်ရိုက် ချိတ်ဆက်ခြင်း
+    // --- Task / Mini-game Variables ---
+    let taskObjects = [];
+    let nearTask = null;
+    let isTaskOpen = false;
+    let targetR = 180, targetG = 130, targetB = 220; // Color Matching Variables
+
+    // WebSocket ချိတ်ဆက်ခြင်း
     function connectWebSocket() {
         const socket = new SockJS('/game-websocket');
         stompClient = Stomp.over(socket);
@@ -297,11 +135,17 @@
                 } else if (layer.type === 'objectgroup') {
                     layer.objects.forEach(obj => {
                         if (obj.width && obj.height) {
-                            collisionBoxes.push(obj);
+                            if (layer.name === 'Collision' || layer.name === 'Objects') {
+                                collisionBoxes.push(obj);
+                            }
                         }
                         if (obj.name === 'PlayerSpawn') {
                             player.x = obj.x;
                             player.y = obj.y;
+                        }
+                        // Task1, Task2, Task3 Object များကို ဖတ်ယူခြင်း
+                        if (obj.name && obj.name.toLowerCase().includes('task')) {
+                            taskObjects.push(obj);
                         }
                     });
                 }
@@ -312,9 +156,20 @@
         })
         .catch(err => console.error("JSON Map ဖတ်၍ မရပါ:", err));
 
-    // Keyboard Control
+    // Keyboard Controls
     const keys = {};
-    window.addEventListener('keydown', e => keys[e.key] = true);
+    window.addEventListener('keydown', e => {
+        keys[e.key] = true;
+
+        // E key နှိပ်ရင် Task စတင်မည်
+        if ((e.key === 'e' || e.key === 'E') && nearTask && !isTaskOpen) {
+            openTaskModal();
+        }
+        // ESC နှိပ်ရင် Task ပိတ်မည်
+        if (e.key === 'Escape' && isTaskOpen) {
+            closeTaskModal();
+        }
+    });
     window.addEventListener('keyup', e => delete keys[e.key]);
 
     // Collision Detection
@@ -375,6 +230,154 @@
         camera.y = Math.max(0, Math.min(camera.y, maxCameraY));
     }
 
+    // --- TEST 3 ခုအတွက် LOGIC များ ---
+    function checkTaskProximity() {
+        nearTask = null;
+        const interactDistance = 45;
+
+        for (let task of taskObjects) {
+            let dx = (player.x + player.width / 2) - (task.x + task.width / 2);
+            let dy = (player.y + player.height / 2) - (task.y + task.height / 2);
+            let distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < interactDistance) {nearTask = task;
+                break;
+            }
+        }
+    }
+
+    function drawTaskPrompt() {
+        if (nearTask && !isTaskOpen) {
+            ctx.fillStyle = "#ffff00";
+            ctx.font = "bold 16px Arial";
+            ctx.fillText("Press [E] to start " + nearTask.name, nearTask.x - 25, nearTask.y - 10);
+        }
+    }
+
+    // Task နာမည်ပေါ်မူတည်ပြီး မတူညီသော Test ၃ ခု ပွင့်လာမည်
+    function openTaskModal() {
+        isTaskOpen = true;
+        const content = document.getElementById('taskModalContent');
+
+        // TASK 1: COLOR MATCHING TASK (ပုံထဲက Mini-game)
+        if (nearTask.name.toLowerCase() === 'task1') {
+            targetR = Math.floor(Math.random() * 200) + 55;
+            targetG = Math.floor(Math.random() * 200) + 55;
+            targetB = Math.floor(Math.random() * 200) + 55;
+
+            content.innerHTML = `
+                <h3 style="color: #00fff5; margin: 0 0 10px 0;">Mix the colors to match the target.</h3>
+
+                <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 15px;">
+                    <div>
+                        <span style="font-size: 14px; font-weight: bold;">Target:</span><br>
+                        <div id="targetCircle" style="width: 70px; height: 70px; border-radius: 50%; background-color: rgb(${targetR}, ${targetG}, ${targetB}); margin: 5px auto; border: 2px solid #fff;"></div>
+                    </div>
+                    <div>
+                        <span style="font-size: 14px; font-weight: bold;">Your Mix:</span><br>
+                        <div id="mixedCircle" style="width: 100px; height: 100px; border-radius: 50%; background-color: rgb(0,0,0); margin: 5px auto; border: 2px solid #fff;"></div>
+                    </div>
+                </div>
+
+                <div style="text-align: left; width: 80%; margin: 0 auto; font-size: 14px;">
+                    <label>Red</label>
+                    <input type="range" id="redSlider" min="0" max="255" value="0" oninput="updateColorMix()" style="width: 100%; margin-bottom: 8px;">
+
+                    <label>Green</label>
+                    <input type="range" id="greenSlider" min="0" max="255" value="0" oninput="updateColorMix()" style="width: 100%; margin-bottom: 8px;">
+
+                    <label>Blue</label>
+                    <input type="range" id="blueSlider" min="0" max="255" value="0" oninput="updateColorMix()" style="width: 100%; margin-bottom: 15px;">
+                </div>
+
+                <button onclick="checkColorMatch()" style="background: #00fff5; color: #000; font-weight: bold; padding: 10px 25px; border: none; border-radius: 5px; cursor: pointer; width: 80%;">MIX</button>
+                <div id="colorStatus" style="margin-top: 10px; font-size: 13px; color: #ff4757;">Not close enough. Keep mixing!</div>
+            `;
+
+            setTimeout(updateColorMix, 50);
+        }
+        // TASK 2: QUIZ
+        else if (nearTask.name.toLowerCase() === 'task2') {
+            content.innerHTML = `
+                <h2 style="color: #00fff5; margin-top: 0;">Task 2: Medical Emergency Quiz</h2>
+                <p>အရေးပေါ် လူနာတင်ယာဥ် (Ambulance) ခေါ်ဆိုရန် နံပါတ်မှာ မည်သည်နည်း။</p>
+                <div style="margin-top: 15px;">
+                    <button onclick="finishTask(false)" style="padding: 10px 20px; margin: 5px; cursor: pointer;">192</button>
+                    <button onclick="finishTask(true)" style="padding: 10px 20px; margin: 5px; cursor: pointer;">199</button>
+                    <button onclick="finishTask(false)" style="padding: 10px 20px; margin: 5px; cursor: pointer;">119</button>
+                </div>
+            `;
+        }
+        // TASK 3: PASSCODE
+        else if (nearTask.name.toLowerCase() === 'task3') {
+            content.innerHTML = `
+                <h2 style="color: #00fff5; margin-top: 0;">Task 3: Security Passcode</h2>
+                <p>တံခါးဖွင့်ရန် Passcode <b>'1234'</b> ကို ရိုက်ထည့်ပါ:</p><input type="password" id="passInput" style="padding: 8px; font-size: 16px; text-align: center; width: 120px; margin: 10px;" maxlength="4">
+                <br>
+                <button onclick="checkTask3Password()" style="padding: 8px 16px; margin-top: 10px; cursor: pointer; background: #00ff88; border: none; border-radius: 5px; font-weight: bold;">Submit</button>
+            `;
+        }
+
+        document.getElementById('taskModal').style.display = 'block';
+    }
+
+    // --- COLOR MATCHING HELPER FUNCTIONS ---
+    function updateColorMix() {
+        const r = document.getElementById('redSlider')?.value || 0;
+        const g = document.getElementById('greenSlider')?.value || 0;
+        const b = document.getElementById('blueSlider')?.value || 0;
+
+        const mixedCircle = document.getElementById('mixedCircle');
+        if (mixedCircle) {
+            mixedCircle.style.backgroundColor = rgb(${r}, ${g}, ${b});
+        }
+    }
+
+    function checkColorMatch() {
+        const r = parseInt(document.getElementById('redSlider').value);
+        const g = parseInt(document.getElementById('greenSlider').value);
+        const b = parseInt(document.getElementById('blueSlider').value);
+
+        const diffR = Math.abs(r - targetR);
+        const diffG = Math.abs(g - targetG);
+        const diffB = Math.abs(b - targetB);
+
+        if (diffR < 40 && diffG < 40 && diffB < 40) {
+            document.getElementById('colorStatus').style.color = '#00ff88';
+            document.getElementById('colorStatus').innerText = "Perfect Match!";
+            setTimeout(() => {
+                finishTask(true);
+            }, 500);
+        } else {
+            document.getElementById('colorStatus').style.color = '#ff4757';
+            document.getElementById('colorStatus').innerText = "Not close enough. Keep mixing!";
+        }
+    }
+
+    function checkTask3Password() {
+        const val = document.getElementById('passInput').value;
+        if (val === '1234') {
+            finishTask(true);
+        } else {
+            alert("Incorrect Passcode! Try again.");
+        }
+    }
+
+    function finishTask(success) {
+        if (success) {
+            alert("🎉 Mission Completed: " + nearTask.name);
+            closeTaskModal();
+        } else {
+            alert("❌ Task Failed! Please try again.");
+        }
+    }
+
+    function closeTaskModal() {
+        isTaskOpen = false;
+        document.getElementById('taskModal').style.display = 'none';
+    }
+
+    // Drawing Functions
     function drawSingleLayer(layer) {
         if (!layer || !tilesetImg.complete) return;
 
@@ -420,21 +423,29 @@
                 player.spriteWidth, player.spriteHeight,
                 p.x, p.y, player.width, player.height
             );
-        }
-    }
+        }}
 
+    // --- MAIN GAME LOOP ---
     function gameLoop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        updatePlayer();
+        // Task ပွင့်မနေမှသာ လမ်းလျှောက်၍ ရမည်
+        if (!isTaskOpen) {
+            updatePlayer();
+        }
         updateCamera();
 
         ctx.save();
         ctx.translate(-camera.x, -camera.y);
 
         drawSingleLayer(bottomLayer);
-        drawPlayer();drawOtherPlayers();
+        drawPlayer();
+        drawOtherPlayers();
         drawSingleLayer(topLayer);
+
+        // Task Interactivity စစ်ဆေးခြင်း
+        checkTaskProximity();
+        drawTaskPrompt();
 
         ctx.restore();
 
