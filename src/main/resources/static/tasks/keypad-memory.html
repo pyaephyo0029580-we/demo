@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keypad Memory</title>
+
+    <style>
+        *{box-sizing:border-box}
+
+        body{
+            margin:0;
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-family:Arial,sans-serif;
+            color:white;
+            background:linear-gradient(135deg,#040817,#142456);
+        }
+
+        .game{
+            width:480px;
+            max-width:95%;
+            padding:30px;
+            background:#081a43;
+            border:2px solid #3bd7ff;
+            border-radius:24px;
+            text-align:center;
+        }
+
+        #screen{
+            min-height:80px;
+            margin:25px 0;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:#051229;
+            border:2px solid #356dae;
+            border-radius:14px;
+            font-size:38px;
+            letter-spacing:12px;
+            color:#67eaff;
+        }
+
+        .keypad{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:10px;
+        }
+
+        .key{
+            height:65px;
+            border:none;
+            border-radius:12px;
+            background:#173c78;
+            color:white;
+            font-size:24px;
+            cursor:pointer;
+        }
+
+        .key:hover{
+            background:#23539d;
+        }
+
+        #clear{
+            background:#a53e55;
+        }
+
+        #enter{
+            background:#228b68;
+        }
+
+        #message{
+            min-height:35px;
+            margin-top:20px;
+            font-size:21px;
+            font-weight:bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <h1>🔢 Keypad Memory</h1>
+
+    <p>
+        Remember the number and enter it using the keypad.
+    </p>
+
+    <div>
+        Round:
+        <span id="round">1</span> / 3
+    </div>
+
+    <div id="screen">READY</div>
+
+    <div class="keypad" id="keypad">
+
+        <button class="key" data-number="1">1</button>
+        <button class="key" data-number="2">2</button>
+        <button class="key" data-number="3">3</button>
+
+        <button class="key" data-number="4">4</button>
+        <button class="key" data-number="5">5</button>
+        <button class="key" data-number="6">6</button>
+
+        <button class="key" data-number="7">7</button>
+        <button class="key" data-number="8">8</button>
+        <button class="key" data-number="9">9</button>
+
+        <button class="key" id="clear">CLEAR</button>
+        <button class="key" data-number="0">0</button>
+        <button class="key" id="enter">ENTER</button>
+
+    </div>
+
+    <div id="message"></div>
+
+</div>
+
+<script>
+
+    const screen =
+        document.getElementById("screen");
+
+    const roundText =
+        document.getElementById("round");
+
+    const message =
+        document.getElementById("message");
+
+    const numberButtons =
+        document.querySelectorAll("[data-number]");
+
+    let round = 1;
+
+    let sequence = "";
+
+    let entered = "";
+
+    let acceptingInput = false;
+
+
+    function generateSequence(){
+
+        sequence = "";
+
+        const length =
+            3 + round;
+
+        for(let i=0;i<length;i++){
+
+            sequence +=
+                Math.floor(Math.random()*10);
+        }
+
+        entered = "";
+
+        acceptingInput = false;
+
+        screen.textContent =
+            sequence;
+
+        message.textContent =
+            "Remember this number...";
+
+        message.style.color =
+            "#ffd66a";
+
+
+        setTimeout(()=>{
+
+            screen.textContent =
+                "••••";
+
+            message.textContent =
+                "Enter the number.";
+
+            acceptingInput = true;
+
+        },2000);
+    }
+
+
+    numberButtons.forEach(button=>{
+
+        button.addEventListener("click",()=>{
+
+            if(!acceptingInput) return;
+
+            entered +=
+                button.dataset.number;
+
+            screen.textContent =
+                entered;
+        });
+
+    });
+
+
+    document.getElementById("clear")
+    .addEventListener("click",()=>{
+
+        if(!acceptingInput) return;
+
+        entered = "";
+
+        screen.textContent =
+            "••••";
+    });
+
+
+    document.getElementById("enter")
+    .addEventListener("click",()=>{
+
+        if(!acceptingInput) return;
+
+        if(entered === sequence){
+
+            acceptingInput = false;
+
+            if(round >= 3){
+
+                screen.textContent =
+                    "✓";
+
+                message.textContent =
+                    "✓ TASK COMPLETE";
+
+                message.style.color =
+                    "#65ffae";
+
+                return;
+            }
+
+            message.textContent =
+                "✓ Correct!";
+
+            message.style.color =
+                "#65ffae";
+
+            round++;
+
+            roundText.textContent =
+                round;setTimeout(
+            generateSequence,
+            900
+        );
+
+    }else{
+
+        entered = "";
+
+        screen.textContent =
+            "••••";
+
+        message.textContent =
+            "✕ Wrong — try again.";
+
+        message.style.color =
+            "#ff7272";
+    }
+
+});
+
+
+setTimeout(
+    generateSequence,
+    700
+);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blink Memory</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial;
+        color: white;
+        background: linear-gradient(135deg, #030817, #132356);
+    }
+
+    .game {
+        width: 500px;
+        max-width: 95%;
+        padding: 30px;
+        border: 2px solid #34d4ff;
+        border-radius: 22px;
+        background: #091a45;
+    }
+
+    #grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .tile {
+        aspect-ratio: 1;
+        border: none;
+        border-radius: 14px;
+        background: #18386e;
+        cursor: pointer;
+    }
+
+    .tile.active {
+        background: #61e9ff;
+        box-shadow: 0 0 20px #61e9ff;
+    }
+
+    .tile.correct {
+        background: #62ffae;
+    }
+
+    #message {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    button#start {
+        width: 100%;
+        height: 46px;
+        margin-top: 20px;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="game">
+
+  <h1>🧠 Blink Memory</h1>
+
+  <p>
+    Watch the glowing tiles,
+    then tap them in the same order.
+  </p>
+
+  <div id="grid"></div>
+
+  <button id="start">
+    START
+  </button>
+
+  <div id="message"></div>
+
+</div>
+
+<script>
+
+  const grid =
+      document.getElementById("grid");
+
+  const startButton =
+      document.getElementById("start");
+
+  const message =
+      document.getElementById("message");
+
+  const tiles = [];
+
+  let sequence = [];
+  let userIndex = 0;
+
+  for (let i = 0; i < 9; i++) {
+
+      const tile =
+          document.createElement("button");
+
+      tile.className =
+          "tile";
+
+      tile.dataset.index =
+          i;
+
+      tile.addEventListener(
+          "click",
+          function () {
+
+              handleUserClick(i);
+          }
+      );
+
+      grid.appendChild(tile);
+
+      tiles.push(tile);
+  }
+
+  function createSequence() {
+
+      sequence = [];
+
+      for (let i = 0; i < 4; i++) {
+
+          sequence.push(
+              Math.floor(
+                  Math.random() * 9
+              )
+          );
+      }
+  }
+
+  async function playSequence() {
+
+      userIndex = 0;
+
+      for (
+          const index of sequence
+      ) {
+
+          tiles[index]
+              .classList.add("active");
+
+          await wait(550);
+
+          tiles[index]
+              .classList.remove("active");
+
+          await wait(200);
+      }
+  }
+
+  function wait(ms) {
+
+      return new Promise(
+          resolve =>
+              setTimeout(resolve, ms)
+      );
+  }
+
+  function handleUserClick(index) {
+
+      if (
+          index !==
+          sequence[userIndex]
+      ) {
+
+          message.textContent =
+              "Wrong! Try again.";
+
+          message.style.color =
+              "#ff7c7c";
+
+          return;
+      }
+
+      tiles[index]
+          .classList.add("correct");
+
+      setTimeout(
+          function () {
+
+              tiles[index]
+                  .classList.remove(
+                      "correct"
+                  );
+          },
+          250
+      );
+
+      userIndex++;
+
+      if (
+          userIndex ===
+          sequence.length
+      ) {
+
+          message.textContent =
+              "✓ TASK COMPLETE";message.style.color =
+                "#64ffae";
+        }
+    }
+
+    startButton.addEventListener(
+        "click",
+        async function () {
+
+            message.textContent = "";
+
+            createSequence();
+
+            await playSequence();
+        }
+    );
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock Paper Scissors</title>
+
+  <style>
+    *{
+        box-sizing:border-box;
+    }
+
+    body{
+        margin:0;
+        min-height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-family:Arial,sans-serif;
+        color:white;
+        background:linear-gradient(135deg,#040817,#142456);
+    }
+
+    .game{
+        width:620px;
+        max-width:95%;
+        padding:30px;
+        border:2px solid #3bd7ff;
+        border-radius:24px;
+        background:#081a43;
+        text-align:center;
+    }
+
+    .score{
+        display:flex;
+        justify-content:space-around;
+        margin:20px 0;
+        font-size:20px;
+    }
+
+    .battle{
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:50px;
+        margin:30px 0;
+    }
+
+    .choice-display{
+        font-size:75px;
+    }
+
+    .buttons{
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:12px;
+    }
+
+    .choice{
+        height:90px;
+        border:none;
+        border-radius:15px;
+        font-size:42px;
+        cursor:pointer;
+        background:#173a75;
+    }
+
+    .choice:hover{
+        transform:scale(1.05);
+    }
+
+    #message{
+        min-height:40px;
+        margin-top:20px;
+        font-size:22px;
+        font-weight:bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="game">
+
+  <h1>✊ Rock Paper Scissors</h1>
+
+  <p>
+    Beat the computer.
+    First to 3 wins.
+  </p>
+
+  <div class="score">
+
+    <div>
+      You:
+      <span id="playerScore">0</span>
+    </div>
+
+    <div>
+      Computer:
+      <span id="computerScore">0</span>
+    </div>
+
+  </div>
+
+  <div class="battle">
+
+    <div>
+      <div>You</div>
+      <div
+              class="choice-display"
+              id="playerChoice"
+      >
+        ❔
+      </div>
+    </div>
+
+    <div>VS</div>
+
+    <div>
+      <div>Computer</div>
+      <div
+              class="choice-display"
+              id="computerChoice"
+      >
+        ❔
+      </div>
+    </div>
+
+  </div>
+
+  <div class="buttons">
+
+    <button
+            class="choice"
+            data-choice="rock"
+    >
+      ✊
+    </button>
+
+    <button
+            class="choice"
+            data-choice="paper"
+    >
+      ✋
+    </button>
+
+    <button
+            class="choice"
+            data-choice="scissors"
+    >
+      ✌️
+    </button>
+
+  </div>
+
+  <div id="message"></div>
+
+</div>
+
+<script>
+
+  const icons = {
+      rock:"✊",
+      paper:"✋",
+      scissors:"✌️"
+  };
+
+  const choices =
+      ["rock","paper","scissors"];
+
+  const playerChoice =
+      document.getElementById("playerChoice");
+
+  const computerChoice =
+      document.getElementById("computerChoice");
+
+  const playerScoreText =
+      document.getElementById("playerScore");
+
+  const computerScoreText =
+      document.getElementById("computerScore");
+
+  const message =
+      document.getElementById("message");
+
+  const buttons =
+      document.querySelectorAll(".choice");
+
+  let playerScore = 0;
+  let computerScore = 0;
+  let complete = false;
+
+
+  function play(player){
+
+      if(complete) return;
+
+
+      const computer =
+          choices[
+              Math.floor(
+                  Math.random()*3
+              )
+          ];
+
+
+      playerChoice.textContent =
+          icons[player];
+
+      computerChoice.textContent =
+          icons[computer];
+
+
+      if(player === computer){
+
+          message.textContent =
+              "DRAW";
+
+          message.style.color =
+              "#ffd56b";
+
+          return;
+      }
+
+
+      const playerWins =
+          (
+              player === "rock" &&
+              computer === "scissors"
+          )
+          ||
+          (
+              player === "paper" &&
+              computer === "rock"
+          )
+          ||
+          (
+              player === "scissors" &&
+              computer === "paper"
+          );
+
+
+      if(playerWins){
+
+          playerScore++;
+
+          playerScoreText.textContent =
+              playerScore;
+
+          message.textContent =
+              "✓ You win this round";
+
+          message.style.color =
+              "#65ffae";
+
+      }else{
+
+          computerScore++;
+
+          computerScoreText.textContent =
+              computerScore;
+
+          message.textContent =
+              "Computer wins this round";
+
+          message.style.color =
+              "#ff7272";
+      }
+
+
+      if(playerScore >= 3){
+
+          complete = true;
+
+          message.textContent =
+              "🏆 YOU WIN — TASK COMPLETE";
+
+          message.style.color =
+              "#65ffae";
+
+          buttons.forEach(
+              b=>b.disabled=true
+          );
+
+      }else if(computerScore >= 3){message.textContent =
+            "✕ COMPUTER WON — TRY AGAIN";
+
+        message.style.color =
+            "#ff7272";
+
+
+        setTimeout(()=>{
+
+            playerScore = 0;
+            computerScore = 0;
+
+            playerScoreText.textContent =
+                "0";
+
+            computerScoreText.textContent =
+                "0";
+
+            playerChoice.textContent =
+                "❔";
+
+            computerChoice.textContent =
+                "❔";
+
+            message.textContent =
+                "";
+
+        },1200);
+    }
+}
+
+
+buttons.forEach(button=>{
+
+    button.addEventListener(
+        "click",
+        ()=>play(
+            button.dataset.choice
+        )
+    );
+
+});
+
+</script>
+
+</body>
+</html>

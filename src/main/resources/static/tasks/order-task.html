@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Order Task</title>
+
+  <style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+
+        margin: 0;
+
+        min-height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-family: Arial;
+
+        color: white;
+
+        background:
+            linear-gradient(
+                135deg,
+                #030817,
+                #101844
+            );
+    }
+
+
+    .task {
+
+        width: 700px;
+        max-width: 95%;
+
+        padding: 30px;
+
+        border-radius: 25px;
+
+        background:
+            rgba(
+                10,
+                30,
+                70,
+                0.95
+            );
+
+        border:
+            2px solid #37cfff;
+    }
+
+
+    h1 {
+        margin-top: 0;
+    }
+
+
+    .target {
+
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+
+        margin:
+            25px 0;
+
+        font-size: 40px;
+    }
+
+
+    .items {
+
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+
+        margin:
+            20px 0;
+    }
+
+
+    .item {
+
+        width: 90px;
+        height: 90px;
+
+        border-radius: 15px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 42px;
+
+        cursor: pointer;
+
+        background:
+            #143e81;
+
+        border:
+            2px solid #358cff;
+    }
+
+
+    .item.selected {
+
+        border-color:
+            #51ffbf;
+
+        box-shadow:
+            0 0 18px #51ffbf;
+    }
+
+
+    .slots {
+
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+
+        margin-top: 25px;
+    }
+
+
+    .slot {
+
+        width: 90px;
+        height: 90px;
+
+        border:
+            2px dashed
+            #5476ad;
+
+        border-radius:
+            15px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 40px;
+    }
+
+
+    #result {
+
+        text-align: center;
+
+        margin-top: 20px;
+
+        color: #62ffab;
+
+        font-size: 22px;
+
+        font-weight: bold;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<div class="task">
+
+  <h1>
+    📦 Order Task
+  </h1>
+
+  <p>
+    Arrange the items in the correct order.
+  </p>
+
+
+  <div class="target">
+
+    📘 ➜ 🧪 ➜ 💎 ➜ 🔑
+
+  </div>
+
+
+  <div
+          class="items"
+          id="items"
+  ></div>
+
+
+  <div
+          class="slots"
+          id="slots"
+  ></div>
+
+
+  <div id="result"></div>
+
+</div>
+
+
+<script>
+
+  const correctOrder =
+      [
+          "📘",
+          "🧪",
+          "💎",
+          "🔑"
+      ];
+
+
+  let items =
+      [
+          "🔑",
+          "💎",
+          "📘",
+          "🧪"
+      ];
+
+
+  const selectedOrder = [];
+
+
+  const itemsContainer =
+      document.getElementById(
+          "items"
+      );
+
+
+  const slotsContainer =
+      document.getElementById(
+          "slots"
+      );
+
+
+  const result =
+      document.getElementById(
+          "result"
+      );
+
+
+
+  function drawItems() {
+
+      itemsContainer.innerHTML =
+          "";
+
+
+      items.forEach(
+          function (
+              symbol,
+              index
+          ) {
+
+              const element =
+                  document.createElement(
+                      "div"
+                  );
+
+
+              element.className =
+                  "item";
+
+
+              element.textContent =
+                  symbol;element.addEventListener(
+                    "click",
+                    function () {
+
+                        chooseItem(
+                            symbol,
+                            index
+                        );
+
+                    }
+                );
+
+
+                itemsContainer
+                    .appendChild(
+                        element
+                    );
+
+            }
+        );
+
+    }
+
+
+
+    function drawSlots() {
+
+        slotsContainer.innerHTML =
+            "";
+
+
+        for (
+            let i = 0;
+            i < 4;
+            i++
+        ) {
+
+
+            const slot =
+                document.createElement(
+                    "div"
+                );
+
+
+            slot.className =
+                "slot";
+
+
+            slot.textContent =
+                selectedOrder[i]
+                ||
+                (i + 1);
+
+
+            slotsContainer.appendChild(
+                slot
+            );
+
+        }
+
+    }
+
+
+
+    function chooseItem(
+        symbol,
+        index
+    ) {
+
+
+        if (
+            selectedOrder.length >= 4
+        ) {
+
+            return;
+
+        }
+
+
+        selectedOrder.push(
+            symbol
+        );
+
+
+        items.splice(
+            index,
+            1
+        );
+
+
+        drawItems();
+
+        drawSlots();
+
+
+
+        if (
+            selectedOrder.length === 4
+        ) {
+
+            checkAnswer();
+
+        }
+
+    }
+
+
+
+    function checkAnswer() {
+
+
+        const correct =
+
+            selectedOrder.every(
+
+                function (
+                    value,
+                    index
+                ) {
+
+                    return (
+
+                        value ===
+                        correctOrder[index]
+
+                    );
+
+                }
+
+            );
+
+
+
+        if (
+            correct
+        ) {
+
+            result.textContent =
+                "✓ TASK COMPLETE";
+
+        } else {
+
+            result.textContent =
+                "Wrong order. Try again.";
+
+            result.style.color =
+                "#ff7c7c";
+
+
+            setTimeout(
+                function () {
+
+                    selectedOrder.length =
+                        0;
+
+
+                    items = [
+                        "🔑",
+                        "💎",
+                        "📘",
+                        "🧪"
+                    ];
+
+
+                    result.textContent =
+                        "";
+
+
+                    result.style.color =
+                        "#62ffab";
+
+
+                    drawItems();
+
+                    drawSlots();
+
+                },
+                1300
+            );
+
+        }
+
+    }
+
+
+
+    drawItems();
+
+    drawSlots();
+
+</script>
+
+
+</body>
+
+</html>

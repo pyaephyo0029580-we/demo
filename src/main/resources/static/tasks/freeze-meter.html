@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freeze Meter</title>
+
+  <style>
+    body{
+        margin:0;
+        min-height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        background:linear-gradient(135deg,#04101f,#102b55);
+        font-family:Arial;
+        color:white;
+    }
+    .game{
+        width:600px;
+        max-width:94%;
+        padding:30px;
+        border:2px solid #44d9ff;
+        border-radius:25px;
+        background:#081c42;
+        text-align:center;
+    }
+    .meter{
+        position:relative;
+        width:100%;
+        height:55px;
+        margin:35px 0;
+        border-radius:20px;
+        background:linear-gradient(90deg,#28bbff,#64ffb3,#ff6a6a);
+        overflow:hidden;
+    }
+    .safe{
+        position:absolute;
+        left:42%;
+        width:16%;
+        height:100%;
+        border:3px solid white;
+    }
+    #needle{
+        position:absolute;
+        width:8px;
+        height:100%;
+        background:white;
+        left:20%;
+        box-shadow:0 0 12px white;
+    }
+    .controls{
+        display:flex;
+        gap:15px;
+    }
+    button{
+        flex:1;
+        height:50px;
+        border:none;
+        border-radius:12px;
+        font-weight:bold;
+        font-size:16px;
+        cursor:pointer;
+    }
+    #message{
+        margin-top:20px;
+        font-size:22px;
+        font-weight:bold;
+    }
+  </style>
+</head>
+
+<body>
+<div class="game">
+
+  <h1>❄ Freeze Meter</h1>
+  <p>Keep the temperature inside the green zone for 3 seconds.</p>
+
+  <div class="meter">
+    <div class="safe"></div>
+    <div id="needle"></div>
+  </div>
+
+  <div>
+    Temperature:
+    <span id="value">20</span>°
+  </div>
+
+  <div class="controls">
+    <button id="cool">❄ COOL</button>
+    <button id="heat">🔥 HEAT</button>
+  </div>
+
+  <div id="message"></div>
+
+</div>
+
+<script>
+
+  let temp = 20;
+  let safeTime = 0;
+  let complete = false;
+
+  const needle = document.getElementById("needle");
+  const value = document.getElementById("value");
+  const message = document.getElementById("message");
+
+  function update(){
+      temp = Math.max(0,Math.min(100,temp));
+
+      needle.style.left = temp + "%";
+      value.textContent = temp;
+
+      if(temp >= 42 && temp <= 58){
+          safeTime++;
+
+          message.textContent =
+              "Stable: " + safeTime + " / 3";
+
+          message.style.color="#63ffad";
+
+          if(safeTime >= 3){
+              complete = true;
+              message.textContent="✓ TASK COMPLETE";
+          }
+      }else{
+          safeTime = 0;
+          message.textContent="Adjust temperature";
+          message.style.color="#ffd464";
+      }
+  }
+
+  document.getElementById("cool").onclick = ()=>{
+      if(!complete){
+          temp -= 6;
+          update();
+      }
+  };
+
+  document.getElementById("heat").onclick = ()=>{
+      if(!complete){
+          temp += 6;
+          update();
+      }
+  };
+
+  setInterval(()=>{
+      if(!complete){
+          temp += Math.random()>0.5 ? 2 : -2;
+          update();
+      }
+  },1000);
+
+  update();
+
+</script>
+</body>
+</html>

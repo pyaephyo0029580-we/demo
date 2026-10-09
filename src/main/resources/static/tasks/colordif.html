@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Color Difference Challenge</title>
+
+  <style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-family: Arial, sans-serif;
+        color: white;
+
+        background:
+                radial-gradient(
+                        circle at 50% 20%,
+                        #203c80,
+                        transparent 35%
+                ),
+                linear-gradient(
+                        135deg,
+                        #040817,
+                        #101b46
+                );
+    }
+
+    .game {
+        width: 500px;
+        max-width: 95%;
+
+        padding: 30px;
+
+        border-radius: 25px;
+
+        background:
+                rgba(9, 25, 62, 0.96);
+
+        border:
+                2px solid #36caff;
+
+        box-shadow:
+                0 0 35px
+                rgba(54, 202, 255, 0.25);
+    }
+
+    .top {
+        text-align: center;
+    }
+
+    #title {
+        margin: 0;
+
+        color: #ff6688;
+
+        font-size: 32px;
+        font-weight: 900;
+    }
+
+    .instruction {
+        margin-top: 10px;
+
+        color: #d5e5ff;
+
+        font-size: 16px;
+    }
+
+    .stats {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+
+        margin: 22px 0 15px;
+
+        padding: 12px 15px;
+
+        border-radius: 12px;
+
+        background:
+                rgba(255, 255, 255, 0.07);
+    }
+
+    .stat {
+        font-weight: bold;
+    }
+
+    #progressCount {
+        color: #74ffad;
+    }
+
+    #timer {
+        color: #6de4ff;
+    }
+
+    #score {
+        color: #ffd86b;
+    }
+
+    /* GRID */
+
+    #grid {
+        display: grid;
+
+        grid-template-columns:
+                repeat(5, 1fr);
+
+        gap: 8px;
+
+        width: 100%;
+        aspect-ratio: 1 / 1;
+
+        margin-top: 15px;
+    }
+
+    .tile {
+        border: none;
+
+        border-radius: 7px;
+
+        cursor: pointer;
+
+        transition:
+                transform 0.12s,
+                box-shadow 0.12s;
+
+        outline: none;
+    }
+
+    .tile:hover {
+        transform: scale(1.035);
+    }
+
+    .tile:active {
+        transform: scale(0.95);
+    }
+
+    /* MESSAGE */
+
+    #message {
+        min-height: 35px;
+
+        text-align: center;
+
+        margin-top: 20px;
+
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    .correct {
+        color: #69ffae;
+    }
+
+    .wrong {
+        color: #ff6c78;
+    }
+
+    .complete {
+        color: #69ffae;
+
+        font-size: 28px;
+
+        text-shadow:
+                0 0 15px
+                rgba(105,255,174,0.5);
+    }
+
+    /* PROGRESS BAR */
+
+    .progress {
+        height: 12px;
+
+        margin-top: 18px;
+
+        border-radius: 20px;
+
+        overflow: hidden;
+
+        background:
+                rgba(255,255,255,0.12);
+    }
+
+    #progressFill {
+        height: 100%;
+
+        width: 0%;
+
+        background:
+                linear-gradient(
+                        90deg,
+                        #1bd8ff,
+                        #6cffae
+                );
+
+        transition:
+                width 0.3s;
+    }
+
+    /* RESTART */
+
+    #restart {
+        display: none;
+
+        width: 100%;
+        height: 48px;
+
+        margin-top: 18px;
+
+        border: none;
+        border-radius: 10px;background:
+                    linear-gradient(
+                            90deg,
+                            #18cfff,
+                            #6372ff
+                    );
+
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        @media (max-width: 500px) {
+
+            .game {
+                padding: 20px;
+            }
+
+            #grid {
+                gap: 5px;
+            }
+
+            .stats {
+                font-size: 13px;
+            }
+        }
+
+  </style>
+</head>
+
+<body>
+
+<div class="game">
+
+  <div class="top">
+
+    <h1 id="title">
+      COLOR CHALLENGE
+    </h1>
+
+    <div class="instruction">
+      Find the slightly different square.
+      Complete 5 rounds before time runs out.
+    </div>
+
+  </div>
+
+
+  <div class="stats">
+
+    <div class="stat">
+      Task:
+      <span id="progressCount">
+                0 / 5
+            </span>
+    </div>
+
+    <div class="stat">
+      Score:
+      <span id="score">
+                0
+            </span>
+    </div>
+
+    <div class="stat">
+      Time:
+      <span id="timer">
+                01:00
+            </span>
+    </div>
+
+  </div>
+
+
+  <div id="grid"></div>
+
+
+  <div id="message"></div>
+
+
+  <div class="progress">
+
+    <div id="progressFill"></div>
+
+  </div>
+
+
+  <button
+          id="restart"
+          type="button"
+  >
+    PLAY AGAIN
+  </button>
+
+</div>
+
+
+<script>
+
+  const TOTAL_TASKS = 5;
+
+  const grid =
+      document.getElementById("grid");
+
+  const progressCount =
+      document.getElementById("progressCount");
+
+  const scoreText =
+      document.getElementById("score");
+
+  const timerText =
+      document.getElementById("timer");
+
+  const message =
+      document.getElementById("message");
+
+  const progressFill =
+      document.getElementById("progressFill");
+
+  const restartButton =
+      document.getElementById("restart");
+
+
+  let completedTasks = 0;
+
+  let score = 0;
+
+  let seconds = 60;
+
+  let correctIndex = 0;
+
+  let gameRunning = true;
+
+  let timerInterval;
+
+
+  /* =========================
+     RANDOM
+  ========================= */
+
+  function random(min, max) {
+
+      return Math.floor(
+          Math.random() *
+          (max - min + 1)
+      ) + min;
+  }
+
+
+  /* =========================
+     FORMAT TIME
+  ========================= */
+
+  function formatTime(totalSeconds) {
+
+      const minutes =
+          Math.floor(totalSeconds / 60);
+
+      const remainingSeconds =
+          totalSeconds % 60;
+
+      return (
+          String(minutes).padStart(2, "0")
+          +
+          ":"
+          +
+          String(remainingSeconds).padStart(2, "0")
+      );
+  }
+
+
+  /* =========================
+     CREATE ROUND
+  ========================= */
+
+  function createRound() {
+
+      if (
+          completedTasks >=
+          TOTAL_TASKS
+      ) {
+
+          completeTask();
+          return;
+      }
+
+      gameRunning = true;
+
+      message.textContent = "";
+      message.className = "";
+
+      grid.innerHTML = "";
+
+
+      /* 5 x 5 GRID */
+
+      const size = 5;
+
+      const total =
+          size * size;
+
+
+      correctIndex =
+          random(
+              0,
+              total - 1
+          );
+
+
+      const baseR =
+          random(100, 210);
+
+      const baseG =
+          random(90, 200);
+
+      const baseB =
+          random(90, 200);
+
+
+      /*
+          Each completed task makes it
+          a little harder.
+      */
+
+      let difference =
+          28 -
+          (completedTasks * 4);
+
+
+      if (
+          difference < 10
+      ) {
+
+          difference = 10;
+      }
+
+
+      for (
+          let i = 0;
+          i < total;
+          i++
+      ) {const tile =
+                document.createElement(
+                    "button"
+                );
+
+
+            tile.type =
+                "button";
+
+
+            tile.className =
+                "tile";
+
+
+            let r =
+                baseR;
+
+            let g =
+                baseG;
+
+            let b =
+                baseB;
+
+
+            if (
+                i === correctIndex
+            ) {
+
+                r =
+                    Math.min(
+                        255,
+                        baseR + difference
+                    );
+
+                g =
+                    Math.min(
+                        255,
+                        baseG + difference
+                    );
+
+                b =
+                    Math.min(
+                        255,
+                        baseB + difference
+                    );
+            }
+
+
+            tile.style.backgroundColor =
+
+                "rgb(" +
+                r +
+                "," +
+                g +
+                "," +
+                b +
+                ")";
+
+
+            tile.dataset.index =
+                i;
+
+
+            tile.addEventListener(
+                "click",
+                function () {
+
+                    checkTile(
+                        Number(
+                            tile.dataset.index
+                        ),
+                        tile
+                    );
+
+                }
+            );
+
+
+            grid.appendChild(
+                tile
+            );
+        }
+    }
+
+
+    /* =========================
+       CHECK TILE
+    ========================= */
+
+    function checkTile(
+        index,
+        tile
+    ) {
+
+        if (
+            !gameRunning
+        ) {
+
+            return;
+        }
+
+
+        /* CORRECT */
+
+        if (
+            index ===
+            correctIndex
+        ) {
+
+            gameRunning = false;
+
+
+            completedTasks++;
+
+
+            score += 100;
+
+
+            scoreText.textContent =
+                score;
+
+
+            progressCount.textContent =
+
+                completedTasks
+                +
+                " / "
+                +
+                TOTAL_TASKS;
+
+
+            const progressPercentage =
+
+                (
+                    completedTasks /
+                    TOTAL_TASKS
+                )
+                *
+                100;
+
+
+            progressFill.style.width =
+
+                progressPercentage
+                +
+                "%";
+
+
+            tile.style.outline =
+                "3px solid #65ffad";
+
+
+            tile.style.boxShadow =
+                "0 0 25px #65ffad";
+
+
+            message.textContent =
+
+                "✓ CORRECT! "
+                +
+                completedTasks
+                +
+                " / "
+                +
+                TOTAL_TASKS;
+
+
+            message.className =
+                "correct";
+
+
+            if (
+                completedTasks >=
+                TOTAL_TASKS
+            ) {
+
+                setTimeout(
+                    completeTask,
+                    500
+                );
+
+            } else {
+
+                setTimeout(
+                    createRound,
+                    550
+                );
+            }
+
+        }
+
+
+        /* WRONG */
+
+        else {
+
+            score =
+                Math.max(
+                    0,
+                    score - 20
+                );
+
+
+            scoreText.textContent =
+                score;
+
+
+            message.textContent =
+                "✕ Wrong square — try again!";
+
+
+            message.className =
+                "wrong";
+
+
+            tile.animate(
+
+                [
+                    {
+                        transform:
+                            "translateX(0)"
+                    },
+
+                    {
+                        transform:
+                            "translateX(-6px)"
+                    },
+
+                    {
+                        transform:
+                            "translateX(6px)"
+                    },{
+                        transform:
+                            "translateX(0)"
+                    }
+                ],
+
+                {
+                    duration:
+                        250
+                }
+
+            );
+        }
+    }
+
+
+    /* =========================
+       1 MINUTE TIMER
+    ========================= */
+
+    function startTimer() {
+
+        clearInterval(
+            timerInterval
+        );
+
+
+        timerText.textContent =
+            formatTime(seconds);
+
+
+        timerInterval =
+            setInterval(
+                function () {
+
+                    seconds--;
+
+
+                    timerText.textContent =
+                        formatTime(
+                            seconds
+                        );
+
+
+                    if (
+                        seconds <= 0
+                    ) {
+
+                        timeUp();
+                    }
+
+                },
+                1000
+            );
+    }
+
+
+    /* =========================
+       TASK COMPLETE
+    ========================= */
+
+    function completeTask() {
+
+        clearInterval(
+            timerInterval
+        );
+
+
+        gameRunning =
+            false;
+
+
+        disableTiles();
+
+
+        message.innerHTML =
+
+            "✓ TASK COMPLETE<br>"
+            +
+            "Score: "
+            +
+            score;
+
+
+        message.className =
+            "complete";
+
+
+        progressFill.style.width =
+            "100%";
+
+
+        restartButton.style.display =
+            "block";
+    }
+
+
+    /* =========================
+       TIME UP
+    ========================= */
+
+    function timeUp() {
+
+        clearInterval(
+            timerInterval
+        );
+
+
+        seconds = 0;
+
+
+        timerText.textContent =
+            "00:00";
+
+
+        gameRunning =
+            false;
+
+
+        disableTiles();
+
+
+        message.innerHTML =
+
+            "TIME UP!<br>"
+            +
+            "Completed: "
+            +
+            completedTasks
+            +
+            " / "
+            +
+            TOTAL_TASKS;
+
+
+        message.className =
+            "wrong";
+
+
+        restartButton.style.display =
+            "block";
+    }
+
+
+    /* =========================
+       DISABLE GRID
+    ========================= */
+
+    function disableTiles() {
+
+        const tiles =
+            document.querySelectorAll(
+                ".tile"
+            );
+
+
+        tiles.forEach(
+            function (tile) {
+
+                tile.disabled =
+                    true;
+
+            }
+        );
+    }
+
+
+    /* =========================
+       RESTART
+    ========================= */
+
+    restartButton.addEventListener(
+        "click",
+        function () {
+
+            completedTasks =
+                0;
+
+
+            score =
+                0;
+
+
+            seconds =
+                60;
+
+
+            gameRunning =
+                true;
+
+
+            scoreText.textContent =
+                "0";
+
+
+            progressCount.textContent =
+                "0 / 5";
+
+
+            timerText.textContent =
+                "01:00";
+
+
+            progressFill.style.width =
+                "0%";
+
+
+            message.textContent =
+                "";
+
+
+            restartButton.style.display =
+                "none";
+
+
+            createRound();
+
+
+            startTimer();
+
+        }
+    );
+
+
+    /* =========================
+       START GAME
+    ========================= */
+
+    createRound();
+
+    startTimer();
+
+</script>
+
+</body>
+</html>

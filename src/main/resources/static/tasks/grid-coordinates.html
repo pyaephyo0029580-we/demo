@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Coordinates</title>
+
+    <style>
+        *{box-sizing:border-box}
+
+        body{
+            margin:0;
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-family:Arial,sans-serif;
+            color:white;
+            background:linear-gradient(135deg,#040817,#142456);
+        }
+
+        .game{
+            width:600px;
+            max-width:95%;
+            padding:30px;
+            text-align:center;
+            background:#081a43;
+            border:2px solid #3bd7ff;
+            border-radius:24px;
+        }
+
+        #target{
+            font-size:40px;
+            color:#65ffae;
+            margin:20px 0;
+            font-weight:bold;
+        }
+
+        .board{
+            display:grid;
+            grid-template-columns:40px repeat(5,1fr);
+            gap:6px;
+        }
+
+        .cell,
+        .label{
+            aspect-ratio:1;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            border-radius:8px;
+        }
+
+        .cell{
+            border:none;
+            background:#17376d;
+            color:white;
+            cursor:pointer;
+            font-weight:bold;
+        }
+
+        .cell:hover{
+            background:#245197;
+        }
+
+        .label{
+            font-weight:bold;
+            color:#75dcff;
+        }
+
+        #message{
+            min-height:32px;
+            margin-top:18px;
+            font-size:22px;
+            font-weight:bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <h1>🗺 Grid Coordinates</h1>
+
+    <p>Select the correct coordinate.</p>
+
+    <div>
+        Score:
+        <span id="score">0</span>/5
+    </div>
+
+    <div id="target">
+        A1
+    </div>
+
+    <div class="board" id="board"></div>
+
+    <div id="message"></div>
+
+</div>
+
+<script>
+
+    const letters =
+        ["A","B","C","D","E"];
+
+    const board =
+        document.getElementById("board");
+
+    const targetText =
+        document.getElementById("target");
+
+    const scoreText =
+        document.getElementById("score");
+
+    const message =
+        document.getElementById("message");
+
+    let target = "";
+    let score = 0;
+    let complete = false;
+
+
+    function buildBoard(){
+
+        board.innerHTML = "";
+
+        const empty =
+            document.createElement("div");
+
+        board.appendChild(empty);
+
+
+        letters.forEach(letter=>{
+
+            const label =
+                document.createElement("div");
+
+            label.className =
+                "label";
+
+            label.textContent =
+                letter;
+
+            board.appendChild(label);
+        });
+
+
+        for(let row=1;row<=5;row++){
+
+            const rowLabel =
+                document.createElement("div");
+
+            rowLabel.className =
+                "label";
+
+            rowLabel.textContent =
+                row;
+
+            board.appendChild(rowLabel);
+
+
+            letters.forEach(letter=>{
+
+                const coordinate =
+                    letter + row;
+
+                const cell =
+                    document.createElement("button");
+
+                cell.className =
+                    "cell";
+
+                cell.textContent =
+                    "";
+
+                cell.dataset.coordinate =
+                    coordinate;
+
+                cell.onclick=()=>{
+
+                    if(complete) return;
+
+                    checkCoordinate(
+                        coordinate,
+                        cell
+                    );
+                };
+
+                board.appendChild(cell);
+            });
+        }
+    }
+
+
+    function newTarget(){
+
+        const letter =
+            letters[
+                Math.floor(
+                    Math.random()*letters.length
+                )
+            ];
+
+        const number =
+            Math.floor(
+                Math.random()*5
+            ) + 1;
+
+        target =
+            letter + number;
+
+        targetText.textContent =
+            target;
+
+        message.textContent =
+            "";
+    }
+
+
+    function checkCoordinate(
+        coordinate,
+        cell
+    ){
+
+        if(coordinate === target){
+
+            score++;
+
+            scoreText.textContent =
+                score;
+
+            cell.style.background =
+                "#48d98e";
+
+            message.textContent =
+                "✓ Correct";
+
+            message.style.color =
+                "#65ffae";
+
+            if(score >= 5){
+
+                complete = true;
+
+                targetText.textContent =
+                    "COMPLETE";
+
+                message.textContent =
+                    "✓ TASK COMPLETE";
+
+                return;
+            }
+
+            setTimeout(()=>{
+
+                cell.style.background =
+                    "";
+
+                newTarget();
+
+            },500);
+
+        }else{cell.style.background =
+            "#c84d61";
+
+        message.textContent =
+            "✕ Wrong coordinate";
+
+        message.style.color =
+            "#ff7272";
+
+        setTimeout(()=>{
+
+            cell.style.background =
+                "";
+
+        },300);
+    }
+}
+
+
+buildBoard();
+newTarget();
+
+</script>
+
+</body>
+</html>

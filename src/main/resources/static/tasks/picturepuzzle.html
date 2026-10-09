@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Picture Puzzle</title>
+
+  <style>
+    *{
+        box-sizing:border-box;
+    }
+
+    body{
+        margin:0;
+        min-height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-family:Arial,sans-serif;
+        color:white;
+        background:linear-gradient(135deg,#040817,#142456);
+    }
+
+    .game{
+        width:560px;
+        max-width:95%;
+        padding:30px;
+        border:2px solid #39d8ff;
+        border-radius:24px;
+        background:#081a43;
+        text-align:center;
+    }
+
+    .board{
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:6px;
+        width:390px;
+        max-width:100%;
+        aspect-ratio:1;
+        margin:25px auto;
+    }
+
+    .tile{
+        border:none;
+        border-radius:12px;
+        background:#17366d;
+        color:white;
+        font-size:30px;
+        font-weight:bold;
+        cursor:pointer;
+        transition:.15s;
+    }
+
+    .tile:hover{
+        transform:scale(.96);
+    }
+
+    .empty{
+        background:rgba(255,255,255,.05);
+        cursor:default;
+    }
+
+    #message{
+        min-height:35px;
+        margin-top:18px;
+        font-size:22px;
+        font-weight:bold;
+    }
+
+    #shuffle{
+        width:100%;
+        height:48px;
+        border:none;
+        border-radius:12px;
+        font-weight:bold;
+        cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="game">
+
+  <h1>🧩 Picture Puzzle</h1>
+
+  <p>
+    Move the tiles and arrange them from 1 to 8.
+  </p>
+
+  <div class="board" id="board"></div>
+
+  <button id="shuffle">
+    SHUFFLE
+  </button>
+
+  <div id="message"></div>
+
+</div>
+
+<script>
+
+  const board =
+      document.getElementById("board");
+
+  const message =
+      document.getElementById("message");
+
+  const shuffleButton =
+      document.getElementById("shuffle");
+
+  let tiles = [
+      1,2,3,
+      4,5,6,
+      7,8,0
+  ];
+
+
+  function draw(){
+
+      board.innerHTML = "";
+
+      tiles.forEach((value,index)=>{
+
+          const tile =
+              document.createElement("button");
+
+          tile.className =
+              "tile";
+
+          if(value === 0){
+
+              tile.classList.add("empty");
+              tile.disabled = true;
+
+          }else{
+
+              tile.textContent =
+                  value;
+
+              tile.addEventListener(
+                  "click",
+                  ()=>moveTile(index)
+              );
+          }
+
+          board.appendChild(tile);
+      });
+  }
+
+
+  function moveTile(index){
+
+      const emptyIndex =
+          tiles.indexOf(0);
+
+      const row =
+          Math.floor(index/3);
+
+      const col =
+          index%3;
+
+      const emptyRow =
+          Math.floor(emptyIndex/3);
+
+      const emptyCol =
+          emptyIndex%3;
+
+
+      const adjacent =
+          Math.abs(row-emptyRow)
+          +
+          Math.abs(col-emptyCol)
+          ===
+          1;
+
+
+      if(!adjacent){
+          return;
+      }
+
+
+      [
+          tiles[index],
+          tiles[emptyIndex]
+      ] = [
+          tiles[emptyIndex],
+          tiles[index]
+      ];
+
+
+      draw();
+      checkWin();
+  }
+
+
+  function shuffle(){
+
+      for(let i=0;i<150;i++){
+
+          const emptyIndex =
+              tiles.indexOf(0);
+
+          const row =
+              Math.floor(emptyIndex/3);
+
+          const col =
+              emptyIndex%3;
+
+          const possible = [];
+
+
+          if(row>0)
+              possible.push(emptyIndex-3);
+
+          if(row<2)
+              possible.push(emptyIndex+3);
+
+          if(col>0)
+              possible.push(emptyIndex-1);
+
+          if(col<2)
+              possible.push(emptyIndex+1);
+
+
+          const moveIndex =
+              possible[
+                  Math.floor(
+                      Math.random()*possible.length
+                  )
+              ];
+
+
+          [
+              tiles[emptyIndex],
+              tiles[moveIndex]
+          ] = [
+              tiles[moveIndex],
+              tiles[emptyIndex]
+          ];
+      }
+
+
+      message.textContent = "";
+      draw();
+  }
+
+
+  function checkWin(){
+
+      const solved =
+          [1,2,3,4,5,6,7,8,0];
+
+      const correct =
+          tiles.every(
+              (value,index)=>
+                  value === solved[index]
+          );
+
+
+      if(correct){
+
+          message.textContent =
+              "✓ TASK COMPLETE";
+
+          message.style.color =
+              "#65ffae";
+      }
+  }shuffleButton.addEventListener(
+    "click",
+    shuffle
+);
+
+
+shuffle();
+
+</script>
+
+</body>
+</html>

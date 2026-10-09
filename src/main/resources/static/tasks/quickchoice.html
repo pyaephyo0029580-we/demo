@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Quick Choice</title>
+
+  <style>
+    body{
+        margin:0;
+        min-height:100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:#06091b;
+        color:white;
+        font-family:Arial;
+    }
+    .game{
+        width:550px;
+        max-width:94%;
+        padding:30px;
+        text-align:center;
+        background:#0b1d47;
+        border:2px solid #42d8ff;
+        border-radius:24px;
+    }
+    #word{
+        font-size:60px;
+        margin:40px 0;
+        font-weight:bold;
+    }
+    .choices{
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+        gap:12px;
+    }
+    .choice{
+        height:55px;
+        border:none;
+        border-radius:12px;
+        font-weight:bold;
+        cursor:pointer;
+    }
+    #message{
+        margin-top:20px;
+        font-size:22px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="game">
+
+  <h1>⚡ Quick Choice</h1>
+
+  <p>
+    Choose the COLOR of the word,
+    not what the word says.
+  </p>
+
+  <div id="word"></div>
+
+  <div class="choices" id="choices"></div>
+
+  <div>
+    Correct:
+    <span id="score">0</span>/5
+  </div>
+
+  <div id="message"></div>
+
+</div>
+
+<script>
+
+  const colors=[
+  {name:"RED",value:"#ff5555"},
+  {name:"BLUE",value:"#4ca2ff"},
+  {name:"GREEN",value:"#54e895"},
+  {name:"YELLOW",value:"#ffe15e"}
+  ];
+
+  let correct=0;
+  let answer=null;
+
+  const word=
+      document.getElementById("word");
+
+  const choices=
+      document.getElementById("choices");
+
+  const score=
+      document.getElementById("score");
+
+  const message=
+      document.getElementById("message");
+
+  function newRound(){
+
+      if(correct>=5){
+
+          message.textContent=
+              "✓ TASK COMPLETE";
+
+          message.style.color=
+              "#64ffae";
+
+          choices.innerHTML="";
+          return;
+      }
+
+      const textColor=
+          colors[
+              Math.floor(
+                  Math.random()*colors.length
+              )
+          ];
+
+      let wordText=
+          colors[
+              Math.floor(
+                  Math.random()*colors.length
+              )
+          ];
+
+      word.textContent=
+          wordText.name;
+
+      word.style.color=
+          textColor.value;
+
+      answer=
+          textColor.name;
+
+      choices.innerHTML="";
+
+      colors.forEach(c=>{
+
+          const btn=
+              document.createElement("button");
+
+          btn.className="choice";
+          btn.textContent=c.name;
+
+          btn.onclick=()=>{
+
+              if(c.name===answer){
+
+                  correct++;
+
+                  score.textContent=
+                      correct;
+
+                  message.textContent=
+                      "✓ Correct";
+
+                  message.style.color=
+                      "#64ffae";
+
+                  setTimeout(
+                      newRound,
+                      400
+                  );
+
+              }else{
+
+                  message.textContent=
+                      "✕ Wrong";
+
+                  message.style.color=
+                      "#ff7272";
+              }
+          };
+
+          choices.appendChild(btn);
+      });
+  }
+
+  newRound();
+
+</script>
+
+</body>
+</html>
