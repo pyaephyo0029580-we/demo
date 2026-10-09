@@ -5,10 +5,12 @@ package com.example.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
@@ -31,6 +33,17 @@ public class WebSocketEventListener {
         int count = activeUsers.decrementAndGet(); // တစ်ယောက် ထွက်သွားရင် ၁ လျော့မည်
         if (count < 0) count = 0;
         broadcastActiveUsers(count);
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        String playerId = (String) headerAccessor.getSessionAttributes().get("playerId");
+
+        if (playerId != null) {
+            Map<String, String> leaveData = new HashMap<>();
+            leaveData.put("id", playerId);
+            leaveData.put("action", "LEAVE");
+
+            // ကျန်တဲ့ ကစားသမားများဆီ ထွက်သွားသူ၏ ID ပို့ပေးခြင်း
+            messagingTemplate.convertAndSend("/topic/players", leaveData);
+        }
     }
 
     // ချိတ်ဆက်ထားသူ အရေအတွက်ကို Subscribe လုပ်ထားသူအားလုံးဆီ ပို့ပေးခြင်း
@@ -38,4 +51,5 @@ public class WebSocketEventListener {
         messagingTemplate.convertAndSend("/topic/users", count);
         System.out.println("Active Users Count: " + count);
     }
+
 }

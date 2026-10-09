@@ -2,7 +2,9 @@ package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
@@ -145,5 +147,17 @@ public class GameController {
         Map<String, Object> response = new HashMap<>();
         response.put("voteCounts", voteCounts);
         messagingTemplate.convertAndSend("/topic/votes", response);
+    }
+    @MessageMapping("/task-complete/{roomId}")
+    @SendTo("/topic/room/{roomId}/task-status")
+    public Map<String, Object> syncTaskCompletion
+            (@DestinationVariable String roomId, Map<String, Object> taskData) {
+        return taskData;
+    }
+    @MessageMapping("/move/{roomId}")
+    @SendTo("/topic/room/{roomId}")
+    public Map<String, Object> movePlayer
+            (@DestinationVariable String roomId, Map<String, Object> playerData) {
+        return playerData;
     }
 }

@@ -1,25 +1,49 @@
-const canvas = document.getElementById('gameCanvas'); const ctx = canvas.getContext('2d');
+const canvas = document.getElementById('gameCanvas');
+ const ctx = canvas.getContext('2d');
 // WebSocket & Player ID const playerId = "player_" + Math.floor(Math.random() * 10000); const otherPlayers = {}; let stompClient = null;
 // Image များ Load လုပ်ခြင်း const tilesetImg = new Image(); tilesetImg.src = '/Map/hospital.png';
 const playerImg = new Image(); playerImg.src = '/Map/jellyb-removebg-preview.png';
 // Player Data const player = { x: 0, y: 0, width: 32, height: 32, speed: 4, frameX: 0, frameY: 0, spriteWidth: 64, spriteHeight: 64, moving: false };
 // Animation Variables let frameCounter = 0; const frameSpeed = 8; const maxFrames = 4;
 // Camera Object const camera = { x: 0, y: 0, width: canvas.width, height: canvas.height };
-let mapData = null; let mapWidth = 0; let mapHeight = 0; let tileSize = 32;
-let bottomLayer = null; let topLayer = null; let collisionBoxes = [];
+let mapData = null; let mapWidth = 0;
+ let mapHeight = 0; let tileSize = 32;
+let bottomLayer = null;
+let topLayer = null;
+let collisionBoxes = [];
 // --- Task / Mini-game Variables --- let taskObjects = []; let nearTask = null; let isTaskOpen = false; let targetR = 180, targetG = 130, targetB = 220;
-// WebSocket ချိတ်ဆက်ခြင်း function connectWebSocket() { const socket = new SockJS('/game-websocket'); stompClient = Stomp.over(socket); stompClient.debug = null;
+// WebSocket ချိတ်ဆက်ခြင်း (Task Sync & Disconnect ပါဝင်သော Version) function connectWebSocket() { const socket = new SockJS('/game-websocket'); stompClient = Stomp.over(socket); stompClient.debug = null;
 stompClient.connect({}, function (frame) {
     console.log('WebSocket Connected!');
 
-    stompClient.subscribe('/topic/players', function (msg) {
+    // 1. Player များ လှုပ်ရှားမှု နှင့် ထွက်သွားမှု စင့်ခ်လုပ်ခြင်း
+    stompClient.subscribe('/topic/players', function (msg) { const data = JSON.parse(msg.body);
+    // ထွက်သွားကြောင်း မက်ဆေ့ချ် ရောက်လာရင် Canvas ပေါ်မှ ဖျက်ပစ်မည်
+    if (data.action === 'LEAVE') {
+        delete otherPlayers[data.id];
+    } else if (data.id !== playerId) {
+        otherPlayers[data.id] = data;
+    }
+    });
+
+    // 2. Task Completion စင့်ခ်လုပ်ခြင်း (တစ်ယောက်ပြီးရင် အခြားသူများပါ ပျောက်သွားမည်)
+    stompClient.subscribe('/topic/task-status', function (msg) {
         const data = JSON.parse(msg.body);
-        if (data.id !== playerId) {
-            otherPlayers[data.id] = data;
+
+        // Map ပေါ်မှ ပြီးသွားသော Task ကို ဖျက်ပစ်ခြင်း
+        taskObjects = taskObjects.filter(task => task.name !== data.taskId);
+
+        // အကယ်၍ ထို Task Window ပွင့်နေပါက ပိတ်လိုက်ခြင်း
+        if (nearTask && nearTask.name === data.taskId) {
+            closeTaskModal();
+            alert(`Player ${data.playerId} has completed ${data.taskId}!`);
         }
     });
+
 });}
-function sendPosition() { if (stompClient && stompClient.connected) { stompClient.send("/app/move", {}, JSON.stringify({ id: playerId, x: player.x, y: player.y, frameX: player.frameX, frameY: player.frameY })); } }
+function sendPosition() {
+if (stompClient && stompClient.connected) {
+stompClient.send("/app/move", {}, JSON.stringify({ id: playerId, x: player.x, y: player.y, frameX: player.frameX, frameY: player.frameY })); } }
 // Map JSON ဖတ်ယူခြင်း fetch('/Map/hospital.json') .then(response => response.json()) .then(data => { mapData = data; mapWidth = data.width; mapHeight = data.height; tileSize = data.tilewidth;
     data.layers.forEach(layer => {
         if (layer.type === 'tilelayer') {
@@ -58,7 +82,8 @@ if (e.key === 'Escape' && isTaskOpen) {
 }}); window.addEventListener('keyup', e => delete keys[e.key]);
 // Collision Detection function checkCollision(newX, newY) { for (let box of collisionBoxes) { if ( newX < box.x + box.width && newX + player.width > box.x && newY < box.y + box.height && newY + player.height > box.y ) { return true; } } return false; }
 function updatePlayer() { player.moving = false; let nextX = player.x; let nextY = player.y;
-if (keys['ArrowUp'] || keys['w'] || keys['W']) { nextY -= player.speed; player.frameY = 3; player.moving = true; }
+if (keys['ArrowUp'] || keys['w'] || keys['W'])
+ { nextY -= player.speed; player.frameY = 3; player.moving = true; }
 if (keys['ArrowDown']  keys['s']
 keys['S']) { nextY += player.speed; player.frameY = 0; player.moving = true; }
 if (keys['ArrowLeft']  keys['a']
@@ -162,7 +187,12 @@ if (!checkCollision(nextX, player.y)) {
                           if (mixedCircle) {
                               mixedCircle.style.backgroundColor = rgb(${r}, ${g}, ${b});
                           }}
-                          function checkColorMatch() { const r = parseInt(document.getElementById('redSlider').value); const g = parseInt(document.getElementById('greenSlider').value); const b = parseInt(document.getElementById('blueSlider').value);
+                          function checkColorMatch() { const r = parseInt(document.getElementById('redSlider').
+                          value);
+                          const g = parseInt(document.getElementById('greenSlider').
+                          value);
+                          const b = parseInt(document.getElementById('blueSlider').
+                          value);
                           const diffR = Math.abs(r - targetR);
                           const diffG = Math.abs(g - targetG);
                           const diffB = Math.abs(b - targetB);
@@ -174,11 +204,28 @@ if (!checkCollision(nextX, player.y)) {
                           } else {
                               document.getElementById('colorStatus').style.color = '#ff4757';
                               document.getElementById('colorStatus').innerText = "Not close enough. Keep mixing!";
-                          }}
-                          function checkTask3Password() { const val = document.getElementById('passInput').value; if (val === '1234') { finishTask(true); } else { alert("Incorrect Passcode! Try again."); } }
-                          function finishTask(success) { if (success) { alert("🎉 Mission Completed: " + nearTask.name); closeTaskModal(); } else { alert("❌ Task Failed! Please try again."); } }
-                          function closeTaskModal() { isTaskOpen = false; document.getElementById('taskModal').style.display = 'none'; }
-                          function drawSingleLayer(layer) { if (!layer || !tilesetImg.complete) return;
+                          }
+                          }
+                          function checkTask3Password() {
+                          const val = document.getElementById('passInput').value; if (val === '1234') {
+                          finishTask(true); }
+                          else
+                           {
+                          alert("Incorrect Passcode! Try again.");
+                          }
+                          }
+                          function finishTask(success) {
+                          if (success) { // 1. WebSocket မှတဆင့် အခြား Player များဆီသို့ Task ပြီးကြောင်း သတင်းပို့ခြင်း if (stompClient && stompClient.connected && nearTask) { stompClient.send("/app/task-complete", {}, JSON.stringify({ taskId: nearTask.name, playerId: playerId, completed: true })); }
+                              alert("🎉 Mission Completed: " + nearTask.name);
+                              closeTaskModal();
+                          } else {
+                              alert("❌ Task Failed! Please try again.");
+                          }
+                          }
+                          function closeTaskModal() { isTaskOpen = false;
+                          document.getElementById('taskModal').style.display = 'none'; }
+                          function drawSingleLayer(layer) {
+                           if (!layer || !tilesetImg.complete) return;
                           const data = layer.data;
                           for (let i = 0; i < data.length; i++) {
                               const tileId = data[i];
@@ -197,7 +244,7 @@ if (!checkCollision(nextX, player.y)) {
                                   ctx.drawImage(tilesetImg, sx, sy, tileSize, tileSize, x, y, tileSize, tileSize);
                               }
                           }}
-                          function drawPlayer() { if (playerImg.complete) { ctx.drawImage( playerImg, player.frameX * player.spriteWidth, player.frameY * player.spriteHeight, player.spriteWidth, player.spriteHeight, player.x, player.y, player.width, player.height ); } }
+                          function drawPlayer() { if (playerImg.complete) {
                           function drawOtherPlayers() { if (!playerImg.complete) return;
                           for (let id in otherPlayers) {
                               const p = otherPlayers[id];
