@@ -1,3 +1,8 @@
+/ URL ထဲက room ကို ဖတ်ယူခြင်း (မပါလာရင် RoomA လို့ သတ်မှတ်မည်)
+
+const urlParams = new URLSearchParams(window.location.search);
+const roomId = urlParams.get('room') || 'RoomA';
+
 const canvas = document.getElementById('gameCanvas');
  const ctx = canvas.getContext('2d');
 // WebSocket & Player ID const playerId = "player_" + Math.floor(Math.random() * 10000); const otherPlayers = {}; let stompClient = null;
@@ -17,33 +22,27 @@ stompClient.connect({}, function (frame) {
     console.log('WebSocket Connected!');
 
     // 1. Player များ လှုပ်ရှားမှု နှင့် ထွက်သွားမှု စင့်ခ်လုပ်ခြင်း
-    stompClient.subscribe('/topic/players', function (msg) { const data = JSON.parse(msg.body);
-    // ထွက်သွားကြောင်း မက်ဆေ့ချ် ရောက်လာရင် Canvas ပေါ်မှ ဖျက်ပစ်မည်
-    if (data.action === 'LEAVE') {
-        delete otherPlayers[data.id];
-    } else if (data.id !== playerId) {
-        otherPlayers[data.id] = data;
-    }
-    });
-
+   stompClient.subscribe('/topic/room/' + roomId, function (msg) {
+       const data = JSON.parse(msg.body);
+       if (data.action === 'LEAVE') {
+           delete otherPlayers[data.id];
+       } else if (data.id !== playerId) {
+           otherPlayers[data.id] = data;
+       }
+   });
     // 2. Task Completion စင့်ခ်လုပ်ခြင်း (တစ်ယောက်ပြီးရင် အခြားသူများပါ ပျောက်သွားမည်)
-    stompClient.subscribe('/topic/task-status', function (msg) {
-        const data = JSON.parse(msg.body);
-
-        // Map ပေါ်မှ ပြီးသွားသော Task ကို ဖျက်ပစ်ခြင်း
-        taskObjects = taskObjects.filter(task => task.name !== data.taskId);
-
-        // အကယ်၍ ထို Task Window ပွင့်နေပါက ပိတ်လိုက်ခြင်း
-        if (nearTask && nearTask.name === data.taskId) {
-            closeTaskModal();
-            alert(`Player ${data.playerId} has completed ${data.taskId}!`);
-        }
-    });
-
+   stompClient.subscribe('/topic/room/' + roomId + '/task-status', function (msg) {
+    const data = JSON.parse(msg.body); taskObjects = taskObjects.filter(task => task.name !== data.taskId);
+   if (nearTask && nearTask.name === data.taskId) {
+       closeTaskModal();
+       alert(`Player ${data.playerId} has completed ${data.taskId}!`);
+   }});
 });}
 function sendPosition() {
 if (stompClient && stompClient.connected) {
-stompClient.send("/app/move", {}, JSON.stringify({ id: playerId, x: player.x, y: player.y, frameX: player.frameX, frameY: player.frameY })); } }
+//stompClient.send("/app/move", {}, JSON.stringify({ id: playerId, x: player.x, y: player.y, frameX: player.frameX, frameY: player.frameY })); } }
+stompClient.send("/app/move/" + roomId, {}, JSON.stringify({ id: playerId, x: player.x, y: player.y, ... }));
+
 // Map JSON ဖတ်ယူခြင်း fetch('/Map/hospital.json') .then(response => response.json()) .then(data => { mapData = data; mapWidth = data.width; mapHeight = data.height; tileSize = data.tilewidth;
     data.layers.forEach(layer => {
         if (layer.type === 'tilelayer') {

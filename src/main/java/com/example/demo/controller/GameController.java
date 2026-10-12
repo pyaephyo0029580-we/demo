@@ -160,4 +160,10 @@ public class GameController {
             (@DestinationVariable String roomId, Map<String, Object> playerData) {
         return playerData;
     }
+    // 5. Start Game နှိပ်သောအခါ Room ထဲရှိ လူအားလုံးကို Game စရန် အကြောင်းကြားခြင်း
+    @MessageMapping("/start-game/{roomId}")
+    @SendTo("/topic/room/{roomId}/start")
+    public Map<String, Object> startGame(@DestinationVariable String roomId, Map<String, Object> gameData) {
+        return gameData;
+    }
 }
