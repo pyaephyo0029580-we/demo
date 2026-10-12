@@ -26,7 +26,7 @@ public class DemoApplication extends Application {
     @Override
     public void start(Stage primaryStage) {
         // JavaFX UI - FXML မလိုဘဲ ကိုယ်တိုင် ဆောက်မည်
-        Label title = new Label("AMONG US");
+        Label title = new Label("Crewverse");
         title.setStyle("-fx-text-fill: #8ce0dc; -fx-font-size: 42px; -fx-font-weight: bold;");
 
         Label info = new Label("Server: http://localhost:8081");

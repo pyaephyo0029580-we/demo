@@ -234,27 +234,38 @@
 
     document.getElementById('coinDisplay').innerText = `🪙 ${coins}`;
 
-    const shopItems = {
-        hats: [
-            { id: 1, name: "Hat 1", image: "images/hats/hat1.png", price: 500 },
-            { id: 2, name: "Hat 2", image: "images/hats/hat2.png", price: 500 },
-            { id: 3, name: "Hat 3", image: "images/hats/hat3.png", price: 500 },
-            { id: 4, name: "Hat 4", image: "images/hats/hat4.png", price: 500 },
-            { id: 5, name: "Hat 5", image: "images/hats/hat5.png", price: 500 },
-            { id: 6, name: "Hat 6", image: "images/hats/hat6.png", price: 500 }
-        ],
-        skins: [
-            { id: 101, name: "Skin 1", image: "images/skins/skin1.png", price: 800 },
-            { id: 102, name: "Skin 2", image: "images/skins/skin2.png", price: 800 }
-        ]
-    };
-
+    // Database ကနေ လာမယ့် Data တွေအတွက် အလွတ်ထားမယ်
+    let shopItems = { hats: [], skins: [] };
     let currentCategory = 'hats';
-    let selectedItem = shopItems.hats[0];
+    let selectedItem = null;
+
+    // Database API ကနေ Item တွေကို လှမ်းယူခြင်း
+    async function fetchShopItems() {
+        try {
+            const response = await fetch('/api/items/shop');
+            const data = await response.json();
+
+            // Category အလိုက် ခွဲခြားခြင်း
+            shopItems.hats = data.filter(item => item.category === 'HAT');
+            shopItems.skins = data.filter(item => item.category === 'SKIN');
+
+            // ပထမဆုံး Item ကို ရွေးထားခြင်း
+            if (shopItems[currentCategory].length > 0) {
+                selectedItem = shopItems[currentCategory][0];
+            }
+
+            renderShopGrid();
+            updatePreview();
+        } catch (error) {
+            console.error("Error fetching shop items:", error);
+        }
+    }
 
     function renderShopGrid() {
         const grid = document.getElementById('shopGrid');
         grid.innerHTML = '';
+
+        if (!selectedItem) return;
 
         shopItems[currentCategory].forEach(item => {
             const card = document.createElement('div');
@@ -262,7 +273,7 @@
 
             card.innerHTML = `
                 <div class="item-preview-img">
-                    <img src="${item.image}" alt="${item.name}" onerror="this.outerHTML='<span style=\'font-size:35px;\'>📦</span>'">
+                    <img src="${item.imagePath}" alt="${item.name}" onerror="this.outerHTML='<span style=\\'font-size:35px;\\'>📦</span>'">
                 </div>
                 <div class="price-tag">
                     <span>🪙</span> ${item.price}
@@ -280,8 +291,10 @@
     }
 
     function updatePreview() {
+        if (!selectedItem) return;
+
         const previewContainer = document.getElementById('previewContainer');
-        previewContainer.innerHTML = `<img id="previewImage" src="${selectedItem.image}" alt="${selectedItem.name}" onerror="this.outerHTML='<span style=\'font-size:60px;\'>📦</span>'">`;
+        previewContainer.innerHTML = `<img id="previewImage" src="${selectedItem.imagePath}" alt="${selectedItem.name}" onerror="this.outerHTML='<span style=\\'font-size:60px;\\'>📦</span>'">`;
 
         document.getElementById('itemName').innerText = selectedItem.name;
         document.getElementById('itemPrice').innerText = `🪙 ${selectedItem.price}`;
@@ -292,18 +305,40 @@
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
 
-        selectedItem = shopItems[category][0];
+        if (shopItems[category].length > 0) {
+            selectedItem = shopItems[category][0];
+        } else {
+            selectedItem = null;
+        }
+
         renderShopGrid();
         updatePreview();
     }
 
-    function buyItem() {
-        if(coins >= selectedItem.price) {
-            coins -= selectedItem.price;
-            document.getElementById('coinDisplay').innerText = `🪙 ${coins}`;
-            alert(`Successfully purchased ${selectedItem.name}!`);
-        } else {
-            alert("Not enough coins!");
+       async function buyItem() {
+        if (!selectedItem) {
+            alert("Please select an item first!");
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `/api/buy?username=${encodeURIComponent(username)}&itemId=${selectedItem.id}`,
+                { method: 'POST' }
+            );
+
+            const result = await response.text();
+
+            if (response.ok) {
+                coins -= selectedItem.price;
+                document.getElementById('coinDisplay').innerText = `🪙 ${coins}`;
+                alert(`✅ ${selectedItem.name} ကို ဝယ်လိုက်ပါပြီ!`);
+            } else {
+                alert(`❌ ${result}`);
+            }
+        } catch (error) {
+            console.error("Buy error:", error);
+            alert("Error occurred while buying!");
         }
     }
 
@@ -311,9 +346,8 @@
         window.location.href = `/homepage.html?user=${encodeURIComponent(username)}&coins=${coins}`;
     }
 
-    // Initial Load
-    renderShopGrid();
-    updatePreview();
+    // Initial Load မှာ API ကနေ Item တွေ ဆွဲယူပါ
+    fetchShopItems();
 </script>
 
 </body>

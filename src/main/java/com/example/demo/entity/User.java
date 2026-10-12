@@ -29,10 +29,14 @@ public class User {
     @Column(name = "friend_code")
     private String friendCode;
 
+    // ⭐ Coin Field အသစ် (စမ်းသပ်ဖို့ 1000 ထားပါ)
+    private int coins = 1000;
+
     public User() {
     }
 
-    // Getters and Setters
+    // ============ Getters and Setters ============
+
     public Long getId() {
         return id;
     }
@@ -87,5 +91,14 @@ public class User {
 
     public void setFriendCode(String friendCode) {
         this.friendCode = friendCode;
+    }
+
+    // ⭐ Coins အတွက် Getter နဲ့ Setter
+    public int getCoins() {
+        return coins;
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
     }
 }

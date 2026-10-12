@@ -194,104 +194,27 @@
        သီးသန့်ချိန်နိုင်ပါတယ်။
     ============================================================ */
 
-    const HATS = [
+      const HAT_POSITIONS = {
+        "No Hat":   { x: 0,  y: 0,    scale: 1.0 },
+        "Hat 1":    { x: 0,  y: -105, scale: 1.5 },
+        "Hat 2":    { x: 0,  y: -90,  scale: 1.2 },
+        "Hat 3":    { x: 0,  y: 35,   scale: 1.5 },
+        "Hat 4":    { x: 0,  y: -30,  scale: 1.8 },
+        "Hat 5":    { x: 0,  y: -90,  scale: 1.2 },
+        "Hat 6":    { x: 0,  y: -90,  scale: 1.3 },
+        "Hat 7":    { x: 0,  y: -30,  scale: 1.8 },
+       "Lufi Hat": { x: 0,  y: -95, scale: 1.9 }
+    };
 
+    let HATS = [
         {
             name: "No Hat",
             path: null,
             x: 0,
             y: 0,
             scale: 1
-        },
-
-
-        {
-            name: "Hat 1",
-            path: "Image/hat1.png",
-
-            /*
-             * Character ရဲ့ center နဲ့ညှိ
-             */
-            x: 0,
-
-            /*
-             * Character head ပေါ်ကိုတင်
-             */
-            y: -105,
-
-            /*
-             * Hat size
-             */
-            scale: 1.5
-        },
-
-
-        {
-            name: "Hat 2",
-            path: "Image/hat2.png",
-
-            x: 0,
-
-            y: -90,
-
-            scale: 1.2
-        },
-
-
-        {
-            name: "Hat 3",
-            path: "Image/hat3.png",
-
-            x: 0,
-
-            y: 35,
-
-            scale: 1.5
-        },
-        {
-            name: "Hat 4",
-            path: "Image/hat4.png",
-
-            x: 0,
-
-            y: -30,
-
-            scale: 1.8
-        },
-        {
-            name: "Hat 5",
-            path: "Image/hat5.png",
-
-            x: 0,
-
-            y: -90,
-
-            scale: 1.2
-        },
-        {
-            name: "Hat 6",
-            path: "Image/hat6.png",
-
-            x: 0,
-
-            y: -90,
-
-            scale: 1.3
-        },
-
-        {
-            name: "Hat 7",
-            path: "Image/hat7.png",
-
-            x: 0,
-
-            y: -30,
-
-            scale: 1.8
         }
-
     ];
-
 
 
     /* ============================================================
@@ -800,6 +723,46 @@
     });
 
     /* ============================================================
+       LOAD INVENTORY FROM DATABASE
+    ============================================================ */
+
+    async function loadInventoryFromDB() {
+        try {
+            const response = await fetch(`/api/inventory?username=${encodeURIComponent(username)}`);
+            const data = await response.json();
+
+            console.log("Inventory from DB:", data);
+
+            // ⭐ HATS array ကို Reset လုပ်ပါ
+            HATS = [
+                {
+                    name: "No Hat",
+                    path: null,
+                    x: 0,
+                    y: 0,
+                    scale: 1
+                }
+            ];
+
+            // ⭐ Database က Hat တွေကို ထည့်ပါ
+            data.filter(item => item.category === 'HAT').forEach(item => {
+                const pos = HAT_POSITIONS[item.name] || { x: 0, y: -90, scale: 1.3 };
+
+                HATS.push({
+                    name: item.name,
+                    path: item.imagePath,
+                    x: pos.x,
+                    y: pos.y,
+                    scale: pos.scale
+                });
+            });
+
+            renderHats();
+        } catch (error) {
+            console.error("Error loading inventory:", error);
+        }
+    }
+      /* ============================================================
        INITIAL LOAD
     ============================================================ */
 
@@ -807,16 +770,15 @@
 
         renderColors();
 
-
         setTimeout(() => {
-
-            applyColor(
-                currentColorHex
-            );
-
+            applyColor(currentColorHex);
         }, 100);
 
+        // ⭐ Database ကနေ Hat တွေ လှမ်းယူပါ
+        loadInventoryFromDB();
+
     };
+
 
 </script>
 
