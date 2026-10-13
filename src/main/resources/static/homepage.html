@@ -204,34 +204,27 @@
             /* =====================================
                COINS
             ===================================== */
+            /* =====================================
+               COINS (Database ကနေ လှမ်းယူမယ်)
+            ===================================== */
 
-            var coins =
-                params.get("coins");
+            var coins = "0";
 
-
-            if (!coins) {
-
-                coins =
-                    sessionStorage.getItem("coins");
+            async function fetchUserCoins() {
+                try {
+                    const response = await fetch(`/api/coin/balance?username=${encodeURIComponent(username)}`);
+                    const data = await response.json();
+                    coins = data.coins;
+                    document.getElementById('coinLabel').textContent = coins;
+                } catch (error) {
+                    console.error("Error fetching coins:", error);
+                    coins = params.get("coins") || sessionStorage.getItem("coins") || "0";
+                    document.getElementById('coinLabel').textContent = coins;
+                }
             }
 
-
-            if (!coins) {
-
-                coins = "1000";
-            }
-
-
-            sessionStorage.setItem(
-                "coins",
-                coins
-            );
-
-
-            document.getElementById(
-                "coinLabel"
-            ).textContent = coins;
-
+            // ⭐ Page စတက်တာနဲ့ Coin ကို လှမ်းယူမယ်
+            fetchUserCoins();
 
 
             /* =====================================
