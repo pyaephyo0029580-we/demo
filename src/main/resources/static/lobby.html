@@ -1028,7 +1028,7 @@
       setStatus("Game starting...");
 // --- ဒီနေရာမှာ Room Code ကို ယူပြီး Game Map ဆီ ကူးသွားအောင် ရေးပါ ---
 // Server ကနေ data နဲ့အတူ roomCode ပါလာပါက ယူမည်၊ မပါရင် URL ထဲကဟာကို ယူမည်
-       const roomCode = data.roomCode || new URLSearchParams(window.location.search).get('room');
+      const roomCode = data.roomCode  data.roomId  new URLSearchParams(window.location.search).get('room');
 
 // Host ဖြစ်စေ၊ Join ထားတဲ့ Player ဖြစ်စေ START GAME နှိပ်တာနဲ့ Map ထဲသို့ တန်းရောက်သွားမည်
         if (roomCode) {
