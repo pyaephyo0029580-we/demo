@@ -28,6 +28,7 @@ public class CoinController {
             result.put("coins", 0);
         }
 
+
         return result;
     }
 }
