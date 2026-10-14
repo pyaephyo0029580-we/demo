@@ -1,11 +1,13 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user")
@@ -31,6 +33,15 @@ public class User {
 
     // ⭐ Coin Field အသစ် (စမ်းသပ်ဖို့ 1000 ထားပါ)
     private int coins = 1000;
+
+    @Column(name = "is_online")
+    private Boolean isOnline; // Database တွင် null ဖြစ်နေလျှင် Error မတက်စေရန် Boolean ကိုသုံးထားသည်
+
+    @Column(name = "profile_image", columnDefinition = "LONGTEXT")
+    private String profileImage;
+
+    @Column(name = "last_active_time")
+    private LocalDateTime lastActiveTime;
 
     public User() {
     }
@@ -100,5 +111,30 @@ public class User {
 
     public void setCoins(int coins) {
         this.coins = coins;
+    }
+
+    @JsonProperty("isOnline")
+    public Boolean isOnline() {
+        return isOnline != null && isOnline;
+    }
+
+    public void setOnline(Boolean online) {
+        isOnline = online;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public LocalDateTime getLastActiveTime() {
+        return lastActiveTime;
+    }
+
+    public void setLastActiveTime(LocalDateTime lastActiveTime) {
+        this.lastActiveTime = lastActiveTime;
     }
 }
