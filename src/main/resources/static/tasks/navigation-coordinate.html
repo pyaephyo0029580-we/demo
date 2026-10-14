@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navigation Coordinate</title>
+
+  <style>
+    *{box-sizing:border-box}
+
+    body{
+        margin:0;
+        min-height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-family:Arial,sans-serif;
+        color:white;
+        background:linear-gradient(135deg,#040817,#142456);
+    }
+
+    .game{
+        width:650px;
+        max-width:95%;
+        padding:30px;
+        border:2px solid #3bd7ff;
+        border-radius:24px;
+        background:#081a43;
+        text-align:center;
+    }
+
+    .map{
+        position:relative;
+        width:100%;
+        height:350px;
+        margin:25px 0;
+        border-radius:16px;
+        overflow:hidden;
+
+        background:
+        linear-gradient(
+            rgba(80,150,255,.15) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(80,150,255,.15) 1px,
+            transparent 1px
+        ),
+        #0b254f;
+
+        background-size:
+            10% 10%;
+    }
+
+    #targetPoint,
+    #playerPoint{
+        position:absolute;
+        width:26px;
+        height:26px;
+        border-radius:50%;
+        transform:translate(-50%,-50%);
+    }
+
+    #targetPoint{
+        background:#65ffae;
+        box-shadow:0 0 20px #65ffae;
+    }
+
+    #playerPoint{
+        background:#54dfff;
+        box-shadow:0 0 18px #54dfff;
+    }
+
+    .control{
+        margin:15px 0;
+        text-align:left;
+    }
+
+    input[type="range"]{
+        width:100%;
+    }
+
+    #message{
+        min-height:35px;
+        margin-top:20px;
+        font-size:22px;
+        font-weight:bold;
+    }
+
+    #lockButton{
+        width:100%;
+        height:50px;
+        border:none;
+        border-radius:12px;
+        font-weight:bold;
+        font-size:17px;
+        cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="game">
+
+  <h1>🧭 Navigation Coordinate</h1>
+
+  <p>
+    Move your navigation point to the target coordinate.
+  </p>
+
+  <div>
+    Round:
+    <span id="round">1</span>/3
+  </div>
+
+  <div>
+    Target:
+    <strong>
+      X <span id="targetX"></span>,
+      Y <span id="targetY"></span>
+    </strong>
+  </div>
+
+  <div class="map">
+
+    <div id="targetPoint"></div>
+
+    <div id="playerPoint"></div>
+
+  </div>
+
+  <div class="control">
+
+    X:
+    <span id="xValue">0</span>
+
+    <input
+            type="range"
+            id="xSlider"
+            min="0"
+            max="100"
+            value="0"
+    >
+
+  </div>
+
+  <div class="control">
+
+    Y:
+    <span id="yValue">0</span>
+
+    <input
+            type="range"
+            id="ySlider"
+            min="0"
+            max="100"
+            value="0"
+    >
+
+  </div>
+
+  <button id="lockButton">
+    LOCK COORDINATE
+  </button>
+
+  <div id="message"></div>
+
+</div>
+
+<script>
+
+  const targetPoint =
+      document.getElementById(
+          "targetPoint"
+      );
+
+  const playerPoint =
+      document.getElementById(
+          "playerPoint"
+      );
+
+  const xSlider =
+      document.getElementById(
+          "xSlider"
+      );
+
+  const ySlider =
+      document.getElementById(
+          "ySlider"
+      );
+
+  const xValue =
+      document.getElementById(
+          "xValue"
+      );
+
+  const yValue =
+      document.getElementById(
+          "yValue"
+      );
+
+  const targetXText =
+      document.getElementById(
+          "targetX"
+      );
+
+  const targetYText =
+      document.getElementById(
+          "targetY"
+      );
+
+  const roundText =
+      document.getElementById(
+          "round"
+      );
+
+  const message =
+      document.getElementById(
+          "message"
+      );
+
+  const lockButton =
+      document.getElementById(
+          "lockButton"
+      );
+
+
+  let targetX = 50;
+  let targetY = 50;
+  let round = 1;
+  let complete = false;
+
+
+  function randomTarget(){
+
+      targetX =
+          Math.floor(
+              Math.random()*71
+          ) + 15;
+
+      targetY =
+          Math.floor(
+              Math.random()*71
+          ) + 15;
+
+      targetXText.textContent =
+          targetX;
+
+      targetYText.textContent =
+          targetY;
+
+      targetPoint.style.left =
+          targetX + "%";
+
+      targetPoint.style.top =
+          (100-targetY) + "%";
+
+      xSlider.value = 0;
+      ySlider.value = 0;
+
+      updatePlayer();
+
+      message.textContent = "";
+  }
+
+
+  function updatePlayer(){
+
+      const x =
+          Number(xSlider.value);
+
+      const y =
+          Number(ySlider.value);
+
+      xValue.textContent =
+          x;
+
+      yValue.textContent =
+          y;
+
+      playerPoint.style.left =
+          x + "%";
+
+      playerPoint.style.top =
+          (100-y) + "%";
+  }xSlider.addEventListener(
+    "input",
+    updatePlayer
+);
+
+ySlider.addEventListener(
+    "input",
+    updatePlayer
+);
+
+
+lockButton.addEventListener(
+    "click",
+    ()=>{
+
+        if(complete) return;
+
+        const x =
+            Number(xSlider.value);
+
+        const y =
+            Number(ySlider.value);
+
+        const difference =
+            Math.abs(x-targetX)
+            +
+            Math.abs(y-targetY);
+
+
+        if(difference <= 3){
+
+            if(round >= 3){
+
+                complete = true;
+
+                message.textContent =
+                    "✓ NAVIGATION LOCKED — TASK COMPLETE";
+
+                message.style.color =
+                    "#65ffae";
+
+                lockButton.disabled =
+                    true;
+
+                return;
+            }
+
+
+            message.textContent =
+                "✓ Coordinate locked!";
+
+            message.style.color =
+                "#65ffae";
+
+            round++;
+
+            roundText.textContent =
+                round;
+
+            setTimeout(
+                randomTarget,
+                700
+            );
+
+        }else{
+
+            message.textContent =
+                "✕ Wrong coordinate — keep adjusting.";
+
+            message.style.color =
+                "#ff7272";
+        }
+    }
+);
+
+
+randomTarget();
+
+</script>
+
+</body>
+</html>

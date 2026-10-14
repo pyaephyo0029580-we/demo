@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Pulse Timing</title>
+
+  <style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-family: Arial, sans-serif;
+
+        color: white;
+
+        background:
+            linear-gradient(
+                135deg,
+                #050817,
+                #172159
+            );
+    }
+
+    .game {
+        width: 650px;
+        max-width: 95%;
+
+        padding: 35px;
+
+        text-align: center;
+
+        border-radius: 24px;
+
+        border:
+            2px solid #38d5ff;
+
+        background:
+            #081a45;
+
+        box-shadow:
+            0 0 30px
+            rgba(56, 213, 255, 0.25);
+    }
+
+    h1 {
+        margin-top: 0;
+    }
+
+    .description {
+        color: #d6e6ff;
+        line-height: 1.5;
+    }
+
+    .hits {
+        margin-top: 20px;
+
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    #hits {
+        color: #65ffae;
+    }
+
+
+    /* =========================
+       TRACK
+    ========================= */
+
+    .track {
+        position: relative;
+
+        width: 100%;
+        height: 75px;
+
+        margin: 35px 0;
+
+        border-radius: 18px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #163879,
+                #244fa0
+            );
+
+        overflow: hidden;
+
+        box-shadow:
+            inset 0 0 20px
+            rgba(0,0,0,0.25);
+    }
+
+
+    /* =========================
+       TARGET / CATCH ZONE
+    ========================= */
+
+    #targetZone {
+        position: absolute;
+
+        top: 0;
+
+        left: 42%;
+
+        width: 16%;
+        height: 100%;
+
+        background:
+            rgba(
+                75,
+                255,
+                165,
+                0.32
+            );
+
+        border-left:
+            3px solid #64ffae;
+
+        border-right:
+            3px solid #64ffae;
+
+        box-shadow:
+            0 0 15px
+            rgba(
+                100,
+                255,
+                174,
+                0.35
+            );
+
+        transition:
+            left 0.35s ease;
+    }
+
+
+    /* =========================
+       MOVING PULSE
+    ========================= */
+
+    #pulse {
+        position: absolute;
+
+        top: 0;
+        left: 0;
+
+        width: 10px;
+        height: 100%;
+
+        background:
+            #5ae8ff;
+
+        box-shadow:
+            0 0 20px
+            #5ae8ff;
+
+        border-radius: 5px;
+    }
+
+
+    /* =========================
+       HIT BUTTON
+    ========================= */
+
+    #hitButton {
+        width: 100%;
+        height: 55px;
+
+        border: none;
+
+        border-radius: 12px;
+
+        font-size: 18px;
+        font-weight: bold;
+
+        color: #071430;
+
+        background:
+            linear-gradient(
+                90deg,
+                #eaf9ff,
+                #ffffff
+            );
+
+        cursor: pointer;
+
+        transition:
+            transform 0.15s,
+            box-shadow 0.15s;
+    }
+
+    #hitButton:hover {
+        transform:
+            translateY(-2px);
+
+        box-shadow:
+            0 0 18px
+            rgba(80, 220, 255, 0.35);
+    }
+
+    #hitButton:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }/* =========================
+           MESSAGE
+        ========================= */
+
+        #message {
+            min-height: 35px;
+
+            margin-top: 20px;
+
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .good {
+            color: #64ffae;
+        }
+
+        .miss {
+            color: #ff7c7c;
+        }
+
+        .complete {
+            color: #64ffae;
+
+            font-size: 28px;
+
+            text-shadow:
+                0 0 15px
+                rgba(100,255,174,0.5);
+        }
+
+
+        /* =========================
+           PROGRESS
+        ========================= */
+
+        .progress {
+            height: 10px;
+
+            margin-top: 18px;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+
+            background:
+                rgba(255,255,255,0.12);
+        }
+
+        #progressFill {
+            width: 0%;
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #21d9ff,
+                    #64ffae
+                );
+
+            transition:
+                width 0.3s;
+        }
+
+  </style>
+</head>
+
+
+<body>
+
+<div class="game">
+
+  <h1>
+    ⚡ Pulse Timing
+  </h1>
+
+  <p class="description">
+    Hit the button when the pulse enters the green zone.
+    <br>
+    Get 5 correct hits.
+  </p>
+
+
+  <div class="hits">
+    Hits:
+    <span id="hits">
+            0
+        </span>
+    / 5
+  </div>
+
+
+  <div
+          class="track"
+          id="track"
+  >
+
+    <div
+            id="targetZone"
+    ></div>
+
+    <div
+            id="pulse"
+    ></div>
+
+  </div>
+
+
+  <button
+          id="hitButton"
+          type="button"
+  >
+    HIT
+  </button>
+
+
+  <div id="message"></div>
+
+
+  <div class="progress">
+
+    <div
+            id="progressFill"
+    ></div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  const TOTAL_HITS = 5;
+
+
+  const pulse =
+      document.getElementById(
+          "pulse"
+      );
+
+
+  const track =
+      document.getElementById(
+          "track"
+      );
+
+
+  const targetZone =
+      document.getElementById(
+          "targetZone"
+      );
+
+
+  const hitsText =
+      document.getElementById(
+          "hits"
+      );
+
+
+  const message =
+      document.getElementById(
+          "message"
+      );
+
+
+  const hitButton =
+      document.getElementById(
+          "hitButton"
+      );
+
+
+  const progressFill =
+      document.getElementById(
+          "progressFill"
+      );
+
+
+  let x = 0;
+
+  let direction = 1;
+
+  let hits = 0;
+
+  let gameComplete = false;
+
+
+  /*
+      Catch zone position %
+  */
+
+  let targetLeft = 42;
+
+  const targetWidth = 16;
+
+
+
+  /* =========================
+     MOVE PULSE
+  ========================= */
+
+  function animate() {
+
+      if (gameComplete) {
+          return;
+      }
+
+
+      const max =
+          track.clientWidth - 10;
+
+
+      /*
+          Change this number
+          for speed.
+
+          3 = slow
+          4 = normal
+          6 = fast
+      */
+
+      x +=
+          direction * 4;
+
+
+      if (
+          x >= max
+      ) {
+
+          x = max;
+
+          direction = -1;
+
+      }
+
+
+      if (
+          x <= 0
+      ) {
+
+          x = 0;
+
+          direction = 1;
+
+      }
+
+
+      pulse.style.left =
+          x + "px";
+
+
+      requestAnimationFrame(
+          animate
+      );
+  }
+
+
+
+  /* =========================
+     RANDOM TARGET POSITION
+  ========================= */
+
+  function moveTargetZone() {
+
+      /*
+          Target width = 16%
+
+          Keep it between
+          5% and 79%
+
+          so it never goes
+          outside track.
+      */
+
+      const minPosition = 5;
+
+      const maxPosition =
+          100 -
+          targetWidth -
+          5;
+
+
+      let newPosition;
+
+
+      do {
+
+          newPosition =
+
+              Math.floor(
+
+                  Math.random() *(
+                        maxPosition -
+                        minPosition +
+                        1
+                    )
+
+                )
+
+                +
+
+                minPosition;
+
+
+        } while (
+
+            Math.abs(
+                newPosition -
+                targetLeft
+            )
+            <
+            15
+
+        );
+
+
+        targetLeft =
+            newPosition;
+
+
+        targetZone.style.left =
+            targetLeft + "%";
+    }
+
+
+
+    /* =========================
+       HIT BUTTON
+    ========================= */
+
+    hitButton.addEventListener(
+        "click",
+        function () {
+
+            if (
+                gameComplete
+            ) {
+
+                return;
+            }
+
+
+            const trackWidth =
+                track.clientWidth;
+
+
+            /*
+                Pulse center
+            */
+
+            const pulseCenter =
+                x + 5;
+
+
+            /*
+                Green zone start/end
+            */
+
+            const zoneStart =
+
+                trackWidth *
+
+                (
+                    targetLeft /
+                    100
+                );
+
+
+            const zoneEnd =
+
+                trackWidth *
+
+                (
+                    (
+                        targetLeft +
+                        targetWidth
+                    )
+                    /
+                    100
+                );
+
+
+            /* =====================
+               CORRECT
+            ===================== */
+
+            if (
+
+                pulseCenter >=
+                zoneStart
+
+                &&
+
+                pulseCenter <=
+                zoneEnd
+
+            ) {
+
+                hits++;
+
+
+                hitsText.textContent =
+                    hits;
+
+
+                progressFill.style.width =
+
+                    (
+                        hits /
+                        TOTAL_HITS *
+                        100
+                    )
+
+                    +
+
+                    "%";
+
+
+                /* COMPLETE */
+
+                if (
+                    hits >=
+                    TOTAL_HITS
+                ) {
+
+                    gameComplete =
+                        true;
+
+
+                    message.textContent =
+                        "✓ TASK COMPLETE";
+
+
+                    message.className =
+                        "complete";
+
+
+                    hitButton.disabled =
+                        true;
+
+
+                    return;
+                }
+
+
+                /*
+                    Correct but not complete
+                */
+
+                message.textContent =
+
+                    "✓ GOOD HIT! "
+                    +
+                    hits
+                    +
+                    " / "
+                    +
+                    TOTAL_HITS;
+
+
+                message.className =
+                    "good";
+
+
+                /*
+                    IMPORTANT:
+                    Move green zone after
+                    each correct hit
+                */
+
+                setTimeout(
+                    function () {
+
+                        moveTargetZone();
+
+                        message.textContent =
+                            "";
+
+                    },
+                    350
+                );
+
+
+            }
+
+
+            /* =====================
+               MISS
+            ===================== */
+
+            else {
+
+                message.textContent =
+                    "✕ MISS! Try again.";
+
+
+                message.className =
+                    "miss";
+
+
+                setTimeout(
+                    function () {
+
+                        if (
+                            !gameComplete
+                        ) {
+
+                            message.textContent =
+                                "";
+
+                        }
+
+                    },
+                    500
+                );
+
+            }
+
+        }
+    );
+
+
+
+    /* =========================
+       START
+    ========================= */
+
+    animate();
+
+</script>
+
+
+</body>
+</html>

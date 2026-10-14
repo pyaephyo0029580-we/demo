@@ -148,8 +148,8 @@
 
 <div class="container">
 
-    <button class="back-btn"
-            onclick="location.href='index.html'">
+    <!-- Back to Home Button ပြင်ဆင်ထားသည် -->
+    <button class="back-btn" onclick="goBackToHome()">
         &lt; Back to Home
     </button>
 
@@ -217,33 +217,35 @@
     // ==========================================
 
    function getUsername() {
+        const params = new URLSearchParams(window.location.search);
+        const urlUsername = params.get("user");
 
-    // 1. URL ထဲက user ကို အရင်စစ်
-    const params = new URLSearchParams(window.location.search);
-    const urlUsername = params.get("user");
+        if (urlUsername && urlUsername.trim() !== "") {
+            const username = urlUsername.trim();
+            localStorage.setItem("username", username);
+            return username;
+        }
 
-    if (urlUsername && urlUsername.trim() !== "") {
+        const username = localStorage.getItem("username");
 
-        const username = urlUsername.trim();
+        if (!username || username.trim() === "") {
+            alert("Please login first.");
+            return null;
+        }
 
-        // နောက်ပိုင်း page တွေအတွက် သိမ်းထား
-        localStorage.setItem("username", username);
-
-        return username;
+        return username.trim();
     }
 
-    // 2. URL မှာမရှိရင် localStorage ကိုစစ်
-    const username = localStorage.getItem("username");
 
-    if (!username || username.trim() === "") {
-
-        alert("Please login first.");
-
-        return null;
+    // ==========================================
+    // BACK TO HOME FUNCTION (Added)
+    // ==========================================
+    function goBackToHome() {
+        const username = getUsername() || "Player";
+        const coins = sessionStorage.getItem("coins") || localStorage.getItem("coins") || "0";
+        window.location.href = `/homepage.html?user=${encodeURIComponent(username)}&coins=${coins}`;
     }
 
-    return username.trim();
-}
 
     // ==========================================
     // CONNECT WEBSOCKET

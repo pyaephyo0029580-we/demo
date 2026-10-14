@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Color Mixing</title>
+
+  <style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+
+        min-height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-family: Arial, sans-serif;
+
+        color: white;
+
+        background:
+                linear-gradient(
+                        135deg,
+                        #050818,
+                        #182057
+                );
+    }
+
+    .task {
+        width: 680px;
+        max-width: 95%;
+
+        padding: 30px;
+
+        border-radius: 25px;
+
+        border: 2px solid #32caff;
+
+        background:
+                rgba(8, 24, 64, 0.95);
+
+        box-shadow:
+                0 0 30px
+                rgba(50, 202, 255, 0.25);
+    }
+
+    h1 {
+        margin-top: 0;
+    }
+
+    .content {
+        display: flex;
+
+        gap: 35px;
+
+        align-items: center;
+    }
+
+    .ghost {
+        width: 150px;
+
+        filter:
+                drop-shadow(
+                        0 0 15px
+                        rgba(60, 210, 255, 0.5)
+                );
+    }
+
+    .mix-panel {
+        flex: 1;
+    }
+
+    /* TARGET */
+
+    .target {
+        display: flex;
+        align-items: center;
+
+        gap: 18px;
+
+        margin-bottom: 25px;
+
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .color-box {
+        width: 80px;
+        height: 80px;
+
+        border-radius: 50%;
+
+        border: 3px solid white;
+    }
+
+    #targetColor {
+        background:
+                rgb(180, 70, 210);
+    }
+
+    /* MIXED COLOR */
+
+    #mixedColor {
+        width: 135px;
+        height: 135px;
+
+        margin:
+                15px auto
+                8px auto;
+
+        border-radius: 50%;
+
+        border:
+                3px solid
+                #5bd7ff;
+
+        background:
+                rgb(100, 100, 100);
+
+        box-shadow:
+                0 0 25px
+                rgba(70, 200, 255, 0.45);
+
+        transition:
+                background 0.15s;
+    }
+
+    /* MATCH PERCENT */
+
+    .match-box {
+        text-align: center;
+
+        margin-bottom: 25px;
+    }
+
+    #matchPercent {
+        font-size: 25px;
+        font-weight: bold;
+
+        color: #ffcf5e;
+
+        text-shadow:
+                0 0 12px
+                rgba(255, 207, 94, 0.3);
+    }
+
+    .percent-bar {
+        width: 100%;
+        height: 12px;
+
+        margin-top: 10px;
+
+        border-radius: 20px;
+
+        background:
+                rgba(255,255,255,0.15);
+
+        overflow: hidden;
+    }
+
+    #percentFill {
+        width: 0%;
+        height: 100%;
+
+        border-radius: 20px;
+
+        background:
+                linear-gradient(
+                        90deg,
+                        #19c6ff,
+                        #63ffae
+                );
+
+        transition:
+                width 0.2s;
+    }
+
+    /* SLIDERS */
+
+    .slider {
+        margin:
+                17px 0;
+
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .slider-row {
+        display: flex;
+        justify-content: space-between;
+
+        margin-bottom: 5px;
+    }
+
+    .value {
+        color: #75e4ff;
+    }
+
+    .slider input {
+        width: 100%;
+
+        cursor: pointer;
+    }
+
+    /* BUTTON */
+
+    #mixButton {
+        width: 100%;
+        height: 50px;
+
+        border: none;border-radius: 11px;
+
+            margin-top: 16px;
+
+            background:
+                    linear-gradient(
+                            90deg,
+                            #17d4e8,
+                            #5fe3b4
+                    );
+
+            color: white;
+
+            font-size: 17px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        #mixButton:hover {
+            transform:
+                    translateY(-2px);
+        }
+
+        #result {
+            min-height: 30px;
+
+            margin-top: 18px;
+
+            text-align: center;
+
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 650px) {
+
+            .content {
+                display: block;
+            }
+
+            .ghost {
+                display: none;
+            }
+
+        }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="task">
+
+  <h1>
+    🎨 Color Mixing
+  </h1>
+
+  <p>
+    Mix the colors to match the target.
+  </p>
+
+  <div class="content">
+
+    <img
+            src="/Image/ghost.png"
+            class="ghost"
+            alt="Ghost"
+    >
+
+    <div class="mix-panel">
+
+      <!-- TARGET COLOR -->
+
+      <div class="target">
+
+                <span>
+                    Target:
+                </span>
+
+        <div
+                id="targetColor"
+                class="color-box"
+        ></div>
+
+      </div>
+
+
+      <!-- PLAYER MIXED COLOR -->
+
+      <div id="mixedColor"></div>
+
+
+      <!-- MATCH PERCENTAGE -->
+
+      <div class="match-box">
+
+        <div id="matchPercent">
+          Match: 0%
+        </div>
+
+        <div class="percent-bar">
+
+          <div id="percentFill"></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- RED -->
+
+      <div class="slider">
+
+        <div class="slider-row">
+
+                    <span>
+                        Red
+                    </span>
+
+          <span
+                  class="value"
+                  id="redValue"
+          >
+                        100
+                    </span>
+
+        </div>
+
+        <input
+                type="range"
+                id="red"
+                min="0"
+                max="255"
+                value="100"
+        >
+
+      </div>
+
+
+      <!-- GREEN -->
+
+      <div class="slider">
+
+        <div class="slider-row">
+
+                    <span>
+                        Green
+                    </span>
+
+          <span
+                  class="value"
+                  id="greenValue"
+          >
+                        100
+                    </span>
+
+        </div>
+
+        <input
+                type="range"
+                id="green"
+                min="0"
+                max="255"
+                value="100"
+        >
+
+      </div>
+
+
+      <!-- BLUE -->
+
+      <div class="slider">
+
+        <div class="slider-row">
+
+                    <span>
+                        Blue
+                    </span>
+
+          <span
+                  class="value"
+                  id="blueValue"
+          >
+                        100
+                    </span>
+
+        </div>
+
+        <input
+                type="range"
+                id="blue"
+                min="0"
+                max="255"
+                value="100"
+        >
+
+      </div>
+
+
+      <button
+              id="mixButton"
+              onclick="checkColor()"
+      >
+        MIX
+      </button>
+
+    </div>
+
+  </div>
+
+  <div id="result"></div>
+
+</div>
+
+
+<script>/* ==============================
+       TARGET COLOR
+    ============================== */
+
+    const target = {
+        r: 180,
+        g: 70,
+        b: 210
+    };
+
+
+    /* ==============================
+       ELEMENTS
+    ============================== */
+
+    const red =
+        document.getElementById(
+            "red"
+        );
+
+    const green =
+        document.getElementById(
+            "green"
+        );
+
+    const blue =
+        document.getElementById(
+            "blue"
+        );
+
+
+    const redValue =
+        document.getElementById(
+            "redValue"
+        );
+
+    const greenValue =
+        document.getElementById(
+            "greenValue"
+        );
+
+    const blueValue =
+        document.getElementById(
+            "blueValue"
+        );
+
+
+    const mixed =
+        document.getElementById(
+            "mixedColor"
+        );
+
+
+    const matchPercent =
+        document.getElementById(
+            "matchPercent"
+        );
+
+
+    const percentFill =
+        document.getElementById(
+            "percentFill"
+        );
+
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    /* ==============================
+       CALCULATE MATCH %
+    ============================== */
+
+    function calculateMatch() {
+
+        const r =
+            Number(red.value);
+
+        const g =
+            Number(green.value);
+
+        const b =
+            Number(blue.value);
+
+
+        const difference =
+
+            Math.abs(
+                r - target.r
+            )
+
+            +
+
+            Math.abs(
+                g - target.g
+            )
+
+            +
+
+            Math.abs(
+                b - target.b
+            );
+
+
+        /*
+           Maximum RGB difference:
+           255 + 255 + 255 = 765
+        */
+
+        let percentage =
+
+            100 -
+            (
+                difference /
+                765 *
+                100
+            );
+
+
+        percentage =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    percentage
+                )
+            );
+
+
+        return Math.round(
+            percentage
+        );
+    }
+
+
+    /* ==============================
+       UPDATE COLOR LIVE
+    ============================== */
+
+    function updateColor() {
+
+        const r =
+            Number(red.value);
+
+        const g =
+            Number(green.value);
+
+        const b =
+            Number(blue.value);
+
+
+        mixed.style.background =
+
+            "rgb(" +
+            r +
+            "," +
+            g +
+            "," +
+            b +
+            ")";
+
+
+        redValue.textContent =
+            r;
+
+        greenValue.textContent =
+            g;
+
+        blueValue.textContent =
+            b;
+
+
+        const percentage =
+            calculateMatch();
+
+
+        matchPercent.textContent =
+
+            "Match: " +
+            percentage +
+            "%";
+
+
+        percentFill.style.width =
+
+            percentage +
+            "%";
+
+
+        /* COLOR OF % */
+
+        if (
+            percentage >= 95
+        ) {
+
+            matchPercent.style.color =
+                "#65ffad";
+
+        } else if (
+            percentage >= 80
+        ) {
+
+            matchPercent.style.color =
+                "#ffe264";
+
+        } else {
+
+            matchPercent.style.color =
+                "#ff9274";
+
+        }
+
+
+        result.textContent =
+            "";
+    }
+
+
+    /* ==============================
+       SLIDER EVENTS
+    ============================== */
+
+    red.addEventListener(
+        "input",
+        updateColor
+    );
+
+
+    green.addEventListener(
+        "input",
+        updateColor
+    );
+
+
+    blue.addEventListener(
+        "input",
+        updateColor
+    );
+
+
+    /* ==============================
+       MIX BUTTON
+    ============================== */
+
+    function checkColor() {
+
+        const percentage =
+            calculateMatch();
+
+
+        if (
+            percentage >= 95
+        ) {result.textContent =
+                "✓ TASK COMPLETE — " +
+                percentage +
+                "% MATCH";
+
+
+            result.style.color =
+                "#64ffae";
+
+        } else {
+
+            result.textContent =
+
+                percentage +
+                "% MATCH — Keep mixing!";
+
+
+            result.style.color =
+                "#ffcf5e";
+        }
+
+    }
+
+
+    /* FIRST UPDATE */
+
+    updateColor();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shop - My Online Game</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .shop-container {
+            width: 100vw;
+            height: 100vh;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            position: relative;
+        }
+
+        /* Top Bar / Tabs */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #30363d;
+            background-color: #21262d;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #8b949e;
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: 20px;
+            font-weight: bold;
+        }
+        .back-btn:hover { color: white; }
+
+        .tab-btn {
+            background-color: #30363d;
+            color: #8b949e;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 10px;
+            text-transform: uppercase;
+        }
+
+        .tab-btn.active {
+            background-color: #238636;
+            color: white;
+        }
+
+        .currency-display {
+            margin-left: auto;
+            background: #0d1117;
+            padding: 6px 15px;
+            border-radius: 20px;
+            border: 1px solid #30363d;
+            color: #e3b341;
+            font-weight: bold;
+        }
+
+        /* Main Content Layout */
+        .content-area {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 65px);
+        }
+
+        /* Left Side: Items Grid */
+        .left-panel {
+            width: 60%;
+            padding: 30px;
+            overflow-y: auto;
+            border-right: 1px solid #30363d;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            align-content: start;
+        }
+
+        .item-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .item-card.selected {
+            border-color: #58a6ff;
+            transform: scale(1.02);
+        }
+
+        .item-preview-img {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 5px;
+        }
+
+        .item-preview-img img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .price-tag {
+            background-color: #e6edf3;
+            color: #24292f;
+            width: 100%;
+            border-radius: 6px;
+            padding: 4px 0;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Right Side: Big Preview & Buy Panel */
+        .right-panel {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-color: #161b22;
+        }
+
+        /* Blank Photo Template for Big Preview */
+        .preview-box {
+            width: 180px;
+            height: 180px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        .preview-box img {
+            max-width: 85%;
+            max-height: 85%;
+            object-fit: contain;
+        }
+
+        .item-name {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .item-price {
+            color: #e3b341;
+            font-size: 20px;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .buy-btn {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .buy-btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+<div class="shop-container">
+    <!-- Top Bar with Back Button & Tabs -->
+    <div class="top-bar">
+        <button class="back-btn" onclick="goBack()" title="Back to Homepage">✕</button>
+        <button class="tab-btn active" onclick="switchCategory('hats')">Hats</button>
+        <button class="tab-btn" onclick="switchCategory('skins')">Skins</button>
+        <div class="currency-display" id="coinDisplay">🪙 0</div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="content-area">
+        <!-- Left Panel: Grid with Blank Templates -->
+        <div class="left-panel" id="shopGrid"></div>
+
+        <!-- Right Panel: Blank Photo Preview & Buy Option -->
+        <div class="right-panel">
+            <div class="preview-box" id="previewContainer">
+                <img id="previewImage" src="" alt="Preview" onerror="this.outerHTML='<span style=\'font-size:60px;\'>📦</span>'">
+            </div>
+            <div class="item-name" id="itemName">Select Item</div>
+            <div class="item-price" id="itemPrice">🪙 500</div>
+            <button class="buy-btn" onclick="buyItem()">BUY</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get('user') || 'Player';
+
+    // ⭐ Database ကနေ Coin ကို လှမ်းယူမယ်
+    let coins = 0;
+
+    async function fetchUserCoins() {
+        try {
+            const response = await fetch(`/api/coin/balance?username=${encodeURIComponent(username)}`);
+            const data = await response.json();
+            coins = data.coins;
+            document.getElementById('coinDisplay').innerText = `🪙 ${coins}`;
+        } catch (error) {
+            console.error("Error fetching coins:", error);
+            // Fallback - URL ကနေ ယူ
+            coins = parseInt(urlParams.get('coins') || '0');
+            document.getElementById('coinDisplay').innerText = `🪙 ${coins}`;
+        }
+    }
+
+    // Database ကနေ လာမယ့် Data တွေအတွက် အလွတ်ထားမယ်
+    let shopItems = { hats: [], skins: [] };
+    let currentCategory = 'hats';
+    let selectedItem = null;
+
+    // Database API ကနေ Item တွေကို လှမ်းယူခြင်း
+    async function fetchShopItems() {
+        try {
+            const response = await fetch('/api/items/shop');
+            const data = await response.json();
+
+            // Category အလိုက် ခွဲခြားခြင်း (Color တွေ မပါအောင် Filter လုပ်ထားတယ်)
+            shopItems.hats = data.filter(item => item.category === 'HAT');
+            shopItems.skins = data.filter(item => item.category === 'SKIN');
+
+            // ပထမဆုံး Item ကို ရွေးထားခြင်း
+            if (shopItems[currentCategory].length > 0) {
+                selectedItem = shopItems[currentCategory][0];
+            }
+
+            renderShopGrid();
+            updatePreview();
+        } catch (error) {
+            console.error("Error fetching shop items:", error);
+        }
+    }
+
+    function renderShopGrid() {
+        const grid = document.getElementById('shopGrid');
+        grid.innerHTML = '';
+
+        if (!selectedItem) return;
+
+        shopItems[currentCategory].forEach(item => {
+            const card = document.createElement('div');
+            card.className = `item-card ${selectedItem.id === item.id ? 'selected' : ''}`;
+
+            card.innerHTML = `
+                <div class="item-preview-img">
+                    <img src="${item.imagePath}" alt="${item.name}" onerror="this.outerHTML='<span style=\\'font-size:35px;\\'>📦</span>'">
+                </div>
+                <div class="price-tag">
+                    <span>🪙</span> ${item.price}
+                </div>
+            `;
+
+            card.onclick = () => {
+                selectedItem = item;
+                renderShopGrid();
+                updatePreview();
+            };
+
+            grid.appendChild(card);
+        });
+    }
+
+    function updatePreview() {
+        if (!selectedItem) return;
+
+        const previewContainer = document.getElementById('previewContainer');
+        previewContainer.innerHTML = `<img id="previewImage" src="${selectedItem.imagePath}" alt="${selectedItem.name}" onerror="this.outerHTML='<span style=\\'font-size:60px;\\'>📦</span>'">`;
+
+        document.getElementById('itemName').innerText = selectedItem.name;
+        document.getElementById('itemPrice').innerText = `🪙 ${selectedItem.price}`;
+    }
+
+    function switchCategory(category) {
+        currentCategory = category;
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        if (shopItems[category].length > 0) {
+            selectedItem = shopItems[category][0];
+        } else {
+            selectedItem = null;
+        }
+
+        renderShopGrid();
+        updatePreview();
+    }
+
+    async function buyItem() {
+        if (!selectedItem) {
+            alert("Please select an item first!");
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `/api/buy?username=${encodeURIComponent(username)}&itemId=${selectedItem.id}`,
+                { method: 'POST' }
+            );
+
+            const result = await response.text();
+
+            if (response.ok) {
+                // ⭐ ဝယ်ပြီးရင် Database ကနေ Coin အသစ်ကို ပြန်ဆွဲယူမယ်
+                await fetchUserCoins();
+                alert(`✅ ${selectedItem.name} ကို ဝယ်လိုက်ပါပြီ!`);
+            } else {
+                alert(`❌ ${result}`);
+            }
+        } catch (error) {
+            console.error("Buy error:", error);
+            alert("Error occurred while buying!");
+        }
+    }
+
+
+    function goBack() {
+        // ⭐ Coin အသစ်နဲ့ Homepage ကို ပြန်သွားမယ်
+        window.location.href = `/homepage.html?user=${encodeURIComponent(username)}&coins=${coins}`;
+    }
+
+    // Initial Load မှာ Coin နဲ့ Item တွေကို ဆွဲယူပါ
+    fetchUserCoins();
+    fetchShopItems();
+</script>
+
+</body>
+</html>

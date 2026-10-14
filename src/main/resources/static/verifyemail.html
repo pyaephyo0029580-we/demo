@@ -22,62 +22,143 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background: #f3f5f9;
+
+        background:
+                radial-gradient(
+                        circle at 50% 15%,
+                        #163b87 0%,
+                        #0b2054 32%,
+                        #071638 58%,
+                        #03091c 100%
+                );
+
         font-family: Arial, sans-serif;
+        color: white;
     }
 
     .container {
         width: 100%;
         max-width: 420px;
         padding: 35px;
-        background: white;
+
+        background:
+                linear-gradient(
+                        180deg,
+                        rgba(20, 43, 101, 0.94),
+                        rgba(10, 27, 69, 0.95)
+                );
+
+        border: 2px solid #3c8dff;
+
         border-radius: 20px;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+
+        box-shadow:
+                0 0 18px rgba(51, 150, 255, 0.35),
+                0 0 45px rgba(0, 190, 255, 0.15);
+
         text-align: center;
     }
 
     h1 {
         margin: 0 0 10px;
+
+        color: #ffffff;
+
+        text-shadow:
+                0 0 12px rgba(89, 215, 255, 0.25);
     }
 
     .subtitle {
-        color: #666;
+        color: #d1e2ff;
         line-height: 1.5;
     }
 
     #emailText {
         margin: 8px 0 25px;
+
         font-weight: bold;
+
         word-break: break-word;
+
+        color: #67e6ff;
     }
 
     #verificationCode {
         width: 100%;
         height: 58px;
-        border: 2px solid #ddd;
+
+        border: 2px solid #4197ff;
+
         border-radius: 11px;
+
         outline: none;
+
         text-align: center;
+
         letter-spacing: 8px;
+
         font-size: 23px;
+
         font-weight: bold;
+
+        background:
+                linear-gradient(
+                        90deg,
+                        #152b69,
+                        #193f8d
+                );
+
+        color: #ffffff;
+
+        box-shadow:
+                inset 0 0 10px rgba(0, 110, 255, 0.12),
+                0 0 12px rgba(47, 151, 255, 0.16);
+    }
+
+    #verificationCode::placeholder {
+        color: #a8bee8;
     }
 
     #verificationCode:focus {
-        border-color: #555;
+        border-color: #62eaff;
+
+        box-shadow:
+                0 0 16px rgba(75, 225, 255, 0.48);
     }
 
     #verifyButton {
         width: 100%;
         height: 50px;
+
         margin-top: 18px;
-        background: #222;
+
+        background:
+                linear-gradient(
+                        90deg,
+                        #1ad9e8,
+                        #4fd1ff,
+                        #819fff
+                );
+
         color: white;
+
         border: none;
+
         border-radius: 11px;
+
         font-size: 16px;
+
         font-weight: bold;
+
         cursor: pointer;
+
+        box-shadow:
+                0 0 18px rgba(46, 218, 255, 0.30);
+    }
+
+    #verifyButton:hover {
+        box-shadow:
+                0 0 24px rgba(46, 218, 255, 0.46);
     }
 
     #verifyButton:disabled {
@@ -86,15 +167,23 @@
 
     .resend {
         margin-top: 20px;
-        color: #666;
+
+        color: #bed0ef;
+
         font-size: 14px;
     }
 
     #resendButton {
         border: none;
+
         background: transparent;
+
+        color: #68e8ff;
+
         font-weight: bold;
+
         cursor: pointer;
+
         text-decoration: underline;
     }
 
@@ -103,27 +192,42 @@
         cursor: not-allowed;
     }
 
+    #timer {
+        color: #88dcff;
+    }
+
     #message {
         min-height: 22px;
+
         margin-top: 16px;
+
         font-size: 14px;
+
         font-weight: bold;
     }
 
     .error {
-        color: #d93025;
+        color: #ff8397;
     }
 
     .success {
-        color: #159447;
+        color: #6dffb5;
     }
 
     .login {
         display: inline-block;
+
         margin-top: 20px;
-        color: #222;
+
+        color: #67e6ff;
+
         text-decoration: none;
+
         font-weight: bold;
+    }
+
+    .login:hover {
+        color: #ffffff;
     }
 
   </style>
@@ -133,11 +237,9 @@
 
 <div class="container">
 
-  <h1>Verify Email</h1>
-
-  <div class="subtitle">
-    Enter the 6-digit verification code sent to
-  </div>
+  <h1>Verify Email</h1><div class="subtitle">
+  Enter the 6-digit verification code sent to
+</div>
 
   <div id="emailText"></div>
 
@@ -215,393 +317,492 @@
           "emailText"
       );
 
+
   const codeInput =
       document.getElementById(
           "verificationCode"
-      );const verifyButton =
-        document.getElementById(
-            "verifyButton"
-        );
+      );
 
-    const resendButton =
-        document.getElementById(
-            "resendButton"
-        );
 
-    const timer =
-        document.getElementById(
-            "timer"
-        );
+  const verifyButton =
+      document.getElementById(
+          "verifyButton"
+      );
 
-    const message =
-        document.getElementById(
-            "message"
-        );
 
+  const resendButton =
+      document.getElementById(
+          "resendButton"
+      );
 
-    if (email) {
 
-        emailText.textContent =
-            email;
+  const timer =
+      document.getElementById(
+          "timer"
+      );
 
-        sessionStorage.setItem(
-            "verifyEmail",
-            email
-        );
 
-    } else {
+  const message =
+      document.getElementById(
+          "message"
+      );
 
-        emailText.textContent =
-            "Email not found";
 
-        showError(
-            "Please sign up again."
-        );
+  if (email) {
 
-        verifyButton.disabled = true;
-        resendButton.disabled = true;
-    }
+      emailText.textContent =
+          email;
 
 
-    codeInput.addEventListener(
-        "input",
-        function () {
+      sessionStorage.setItem(
+          "verifyEmail",
+          email
+      );
 
-            this.value =
-                this.value.replace(
-                    /\D/g,
-                    ""
-                );
+  } else {
 
-            if (this.value.length > 6) {
+      emailText.textContent =
+          "Email not found";
 
-                this.value =
-                    this.value.substring(
-                        0,
-                        6
-                    );
-            }
 
-            clearMessage();
-        }
-    );
+      showError(
+          "Please sign up again."
+      );
 
 
-    codeInput.addEventListener(
-        "keydown",
-        function (event) {
+      verifyButton.disabled =
+          true;
 
-            if (event.key === "Enter") {
-                verifyEmail();
-            }
-        }
-    );
 
+      resendButton.disabled =
+          true;
+  }
 
-    verifyButton.addEventListener(
-        "click",
-        verifyEmail
-    );
 
+  codeInput.addEventListener(
+      "input",
+      function () {
 
-    async function verifyEmail() {
+          this.value =
+              this.value.replace(
+                  /\D/g,
+                  ""
+              );
 
-        clearMessage();
 
-        const code =
-            codeInput.value.trim();
+          if (this.value.length > 6) {
 
+              this.value =
+                  this.value.substring(
+                      0,
+                      6
+                  );
+          }
 
-        if (!email) {
 
-            showError(
-                "Email not found."
-            );
+          clearMessage();
+      }
+  );
 
-            return;
-        }
 
+  codeInput.addEventListener(
+      "keydown",
+      function (event) {
 
-        if (code.length !== 6) {
+          if (event.key === "Enter") {
 
-            showError(
-                "Please enter the 6-digit verification code."
-            );
+              verifyEmail();
 
-            return;
-        }
+          }
+      }
+  );
 
 
-        verifyButton.disabled = true;
-        verifyButton.textContent =
-            "Verifying...";
+  verifyButton.addEventListener(
+      "click",
+      verifyEmail
+  );
 
 
-        try {
+  async function verifyEmail() {
 
-            const response =
-                await fetch(
-                    "/api/auth/verify",
-                    {
-                        method: "POST",
+      clearMessage();
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
 
-                        credentials:
-                            "same-origin",
+      const code =
+          codeInput.value.trim();
 
-                        body: JSON.stringify({
-                            email: email,
-                            code: code
-                        })
-                    }
-                );
 
+      if (!email) {
 
-            const responseText =
-                await response.text();
+          showError(
+              "Email not found."
+          );
 
+          return;
+      }
 
-            let data = {};
 
-            try {
-                data = JSON.parse(responseText);
-            } catch (e) {
-                console.error(
-                    responseText
-                );
-            }
+      if (code.length !== 6) {
 
+          showError(
+              "Please enter the 6-digit verification code."
+          );
 
-            if (!response.ok) {
+          return;
+      }
 
-                showError(
-                    data.message ||
-                    "Verification failed."
-                );
 
-                return;
-            }
+      verifyButton.disabled =
+          true;
 
 
-            if (data.success === true) {
+      verifyButton.textContent =
+          "Verifying...";
 
-                showSuccess(
-                    data.message ||
-                    "Email verified successfully."
-                );
 
+      try {
 
-                sessionStorage.removeItem(
-                    "verifyEmail"
-                );
+          const response =
+              await fetch(
+                  "/api/auth/verify",
+                  {
 
+                      method:
+                          "POST",
 
-                setTimeout(
-                    function () {
+                      headers: {
 
-                        window.location.replace(
-                            "/login.html"
-                        );
+                          "Content-Type":
+                              "application/json"
 
-                    },
-                    1000
-                );
+                      },
 
-            } else {
+                      credentials:
+                          "same-origin",
 
-                showError(
-                    data.message ||
-                    "Invalid verification code."
-                );
-            }
+                      body:
+                          JSON.stringify(
+                              {
 
+                                  email:
+                                      email,
 
-        } catch (error) {
+                                  code:
+                                      code
 
-            console.error(error);
+                              }
+                          )
 
-            showError(
-                "Cannot connect to the server."
-            );
+                  }
+              );
 
-        } finally {
 
-            verifyButton.disabled = false;
+          const responseText =
+              await response.text();
 
-            verifyButton.textContent =
-                "Verify Email";
-        }
-    }resendButton.addEventListener(
-        "click",
-        resendCode
-    );
 
+          let data = {};
 
-    async function resendCode() {
 
-        clearMessage();
+          try {
 
+              data =
+                  JSON.parse(
+                      responseText
+                  );
 
-        if (!email) {
+          } catch (e) {console.error(
+                  responseText
+              );
+          }
 
-            showError(
-                "Email not found."
-            );
 
-            return;
-        }
+          if (!response.ok) {
 
+              showError(
+                  data.message ||
+                  "Verification failed."
+              );
 
-        resendButton.disabled = true;
+              return;
+          }
 
 
-        try {
+          if (data.success === true) {
 
-            const response =
-                await fetch(
-                    "/api/auth/resend",
-                    {
-                        method: "POST",
+              showSuccess(
+                  data.message ||
+                  "Email verified successfully."
+              );
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
 
-                        credentials:
-                            "same-origin",
+              sessionStorage.removeItem(
+                  "verifyEmail"
+              );
 
-                        body: JSON.stringify({
-                            email: email
-                        })
-                    }
-                );
 
+              setTimeout(
+                  function () {
 
-            const responseText =
-                await response.text();
+                      window.location.replace(
+                          "/login.html"
+                      );
 
+                  },
+                  1000
+              );
 
-            let data = {};
+          } else {
 
-            try {
-                data =
-                    JSON.parse(
-                        responseText
-                    );
-            } catch (e) {
-                console.error(
-                    responseText
-                );
-            }
+              showError(
+                  data.message ||
+                  "Invalid verification code."
+              );
 
+          }
 
-            if (!response.ok) {
 
-                showError(
-                    data.message ||
-                    "Could not resend verification code."
-                );
+      } catch (error) {
 
-                resendButton.disabled = false;
+          console.error(
+              error
+          );
 
-                return;
-            }
 
+          showError(
+              "Cannot connect to the server."
+          );
 
-            if (data.success === true) {
+      } finally {
 
-                showSuccess(
-                    data.message ||
-                    "New verification code sent."
-                );
+          verifyButton.disabled =
+              false;
 
-                startTimer();
 
-            } else {
+          verifyButton.textContent =
+              "Verify Email";
 
-                showError(
-                    data.message ||
-                    "Could not resend code."
-                );
+      }
+  }
 
-                resendButton.disabled = false;
-            }
 
+  resendButton.addEventListener(
+      "click",
+      resendCode
+  );
 
-        } catch (error) {
 
-            console.error(error);
+  async function resendCode() {
 
-            showError(
-                "Cannot connect to the server."
-            );
+      clearMessage();
 
-            resendButton.disabled = false;
-        }
-    }
 
+      if (!email) {
 
-    function startTimer() {
+          showError(
+              "Email not found."
+          );
 
-        let seconds = 30;
+          return;
+      }
 
-        resendButton.disabled = true;
 
-        timer.textContent =
-            " (" + seconds + "s)";
+      resendButton.disabled =
+          true;
 
 
-        const countdown =
-            setInterval(
-                function () {
+      try {
 
-                    seconds--;
+          const response =
+              await fetch(
+                  "/api/auth/resend",
+                  {
 
-                    timer.textContent =
-                        " (" + seconds + "s)";
+                      method:
+                          "POST",
 
+                      headers: {
 
-                    if (seconds <= 0) {
+                          "Content-Type":
+                              "application/json"
 
-                        clearInterval(
-                            countdown
-                        );
+                      },
 
-                        timer.textContent = "";
+                      credentials:
+                          "same-origin",
 
-                        resendButton.disabled = false;
-                    }
+                      body:
+                          JSON.stringify(
+                              {
 
-                },
-                1000
-            );
-    }
+                                  email:
+                                      email
 
+                              }
+                          )
 
-    function showError(text) {
+                  }
+              );
 
-        message.textContent = text;
-        message.className = "error";
-    }
 
+          const responseText =
+              await response.text();
 
-    function showSuccess(text) {
 
-        message.textContent = text;
-        message.className = "success";
-    }
+          let data = {};
 
 
-    function clearMessage() {
+          try {
 
-        message.textContent = "";
-        message.className = "";
-    }
+              data =
+                  JSON.parse(
+                      responseText
+                  );
+
+          } catch (e) {
+
+              console.error(
+                  responseText
+              );
+
+          }
+
+
+          if (!response.ok) {
+
+              showError(
+                  data.message ||
+                  "Could not resend verification code."
+              );
+
+
+              resendButton.disabled =
+                  false;
+
+
+              return;
+          }
+
+
+          if (data.success === true) {
+
+              showSuccess(
+                  data.message ||
+                  "New verification code sent."
+              );
+
+
+              startTimer();
+
+          } else {
+
+              showError(
+                  data.message ||
+                  "Could not resend code."
+              );
+
+
+              resendButton.disabled =
+                  false;
+
+          }
+
+
+      } catch (error) {
+
+          console.error(
+              error
+          );
+
+
+          showError(
+              "Cannot connect to the server."
+          );
+
+
+          resendButton.disabled =
+              false;
+      }
+  }
+
+
+  function startTimer() {
+
+      let seconds =
+          30;
+
+
+      resendButton.disabled =
+          true;
+
+
+      timer.textContent =
+          " (" + seconds + "s)";
+
+
+      const countdown =
+          setInterval(
+              function () {
+
+                  seconds--;
+
+
+                  timer.textContent =
+                      " (" +
+                      seconds +
+                      "s)";
+
+
+                  if (seconds <= 0) {
+
+                      clearInterval(
+                          countdown
+                      );timer.textContent =
+                          "";
+
+
+                      resendButton.disabled =
+                          false;
+                  }
+
+              },
+              1000
+          );
+  }
+
+
+  function showError(text) {
+
+      message.textContent =
+          text;
+
+
+      message.className =
+          "error";
+  }
+
+
+  function showSuccess(text) {
+
+      message.textContent =
+          text;
+
+
+      message.className =
+          "success";
+  }
+
+
+  function clearMessage() {
+
+      message.textContent =
+          "";
+
+
+      message.className =
+          "";
+  }
 
 </script>
 

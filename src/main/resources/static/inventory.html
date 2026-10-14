@@ -181,8 +181,6 @@
 
     ];
 
-
-
     /* ============================================================
        HATS
 
@@ -194,104 +192,27 @@
        သီးသန့်ချိန်နိုင်ပါတယ်။
     ============================================================ */
 
-    const HATS = [
+      const HAT_POSITIONS = {
+        "No Hat":   { x: 0,  y: 0,    scale: 1.0 },
+        "Hat 1":    { x: 0,  y: -105, scale: 1.5 },
+        "Hat 2":    { x: 0,  y: -90,  scale: 1.2 },
+        "Hat 3":    { x: 0,  y: 35,   scale: 1.5 },
+        "Hat 4":    { x: 0,  y: -30,  scale: 1.8 },
+        "Hat 5":    { x: 0,  y: -90,  scale: 1.2 },
+        "Hat 6":    { x: 0,  y: -90,  scale: 1.3 },
+        "Hat 7":    { x: 0,  y: -30,  scale: 1.8 },
+       "Lufi Hat": { x: 0,  y: -95, scale: 1.9 }
+    };
 
+    let HATS = [
         {
             name: "No Hat",
             path: null,
             x: 0,
             y: 0,
             scale: 1
-        },
-
-
-        {
-            name: "Hat 1",
-            path: "Image/hat1.png",
-
-            /*
-             * Character ရဲ့ center နဲ့ညှိ
-             */
-            x: 0,
-
-            /*
-             * Character head ပေါ်ကိုတင်
-             */
-            y: -105,
-
-            /*
-             * Hat size
-             */
-            scale: 1.5
-        },
-
-
-        {
-            name: "Hat 2",
-            path: "Image/hat2.png",
-
-            x: 0,
-
-            y: -90,
-
-            scale: 1.2
-        },
-
-
-        {
-            name: "Hat 3",
-            path: "Image/hat3.png",
-
-            x: 0,
-
-            y: 35,
-
-            scale: 1.5
-        },
-        {
-            name: "Hat 4",
-            path: "Image/hat4.png",
-
-            x: 0,
-
-            y: -30,
-
-            scale: 1.8
-        },
-        {
-            name: "Hat 5",
-            path: "Image/hat5.png",
-
-            x: 0,
-
-            y: -90,
-
-            scale: 1.2
-        },
-        {
-            name: "Hat 6",
-            path: "Image/hat6.png",
-
-            x: 0,
-
-            y: -90,
-
-            scale: 1.3
-        },
-
-        {
-            name: "Hat 7",
-            path: "Image/hat7.png",
-
-            x: 0,
-
-            y: -30,
-
-            scale: 1.8
         }
-
     ];
-
 
 
     /* ============================================================
@@ -313,88 +234,49 @@
        TAB
     ============================================================ */
 
-    function showTab(tab, element) {
+   function showTab(tab, element) {
+    document.querySelectorAll(".inv-nav-tab").forEach(tabElement => {
+        tabElement.classList.remove("active");
+    });
+    element.classList.add("active");
 
-        document
-            .querySelectorAll(".inv-nav-tab")
-            .forEach(tabElement => {
-
-                tabElement.classList.remove("active");
-
-            });
-
-
-        element.classList.add("active");
-
-
-        if (tab === "colors") {
-
-            renderColors();
-
-        }
-
-        else if (tab === "hats") {
-
-            renderHats();
-
-        }
-
+    if (tab === "colors") {
+        renderColors();
     }
-
+    else if (tab === "hats") {
+        renderHats();
+    }
+}
 
 
     /* ============================================================
        COLORS
     ============================================================ */
 
-    function renderColors() {
+   function renderColors() {
+    let html = `
+        <h2 class="inv-section-title">
+            COLORS
+        </h2>
+        <div class="inv-color-grid">
+    `;
 
-        let html = `
-
-            <h2 class="inv-section-title">
-                COLORS
-            </h2>
-
-            <div class="inv-color-grid">
-
-        `;
-
-
-        COLORS.forEach(([name, hex]) => {
-
-            const selected =
-                name === currentColor
-                    ? "selected"
-                    : "";
-
-
-            html += `
-
-                <div
-                    class="inv-color-btn ${selected}"
-                    style="background:${hex};"
-                    onclick="pickColor('${name}', '${hex}')">
-                </div>
-
-            `;
-
-        });
-
+    COLORS.forEach(([name, hex]) => {
+        const selected = name === currentColor ? "selected" : "";
 
         html += `
-
+            <div
+                class="inv-color-btn ${selected}"
+                style="background:${hex};"
+                onclick="pickColor('${name}', '${hex}')">
             </div>
-
         `;
+    });
 
+    html += `</div>`;
 
-        document
-            .getElementById("tabContent")
-            .innerHTML = html;
-
-    }
-
-
+    document.getElementById("tabContent").innerHTML = html;
+}
 
     /* ============================================================
        PICK COLOR
@@ -687,7 +569,6 @@
         currentHat =
             hat.name;
 
-
         document
             .getElementById("itemName")
             .innerText =
@@ -766,24 +647,99 @@
 
     }
 
+    /* ============================================================
+       CLICK SFX (Inventory Page အတွက် အသံထည့်ခြင်း)
+    ============================================================ */
 
+    function playClickSound() {
+        // သင့် folder ထဲက အသံဖိုင်
+        var sfx = new Audio('/sounds/MouseClick.mp3');
+
+        var saved = localStorage.getItem('gameSettings');
+        var vol = 0.65;
+
+        if (saved) {
+            try {
+                vol = JSON.parse(saved).sfx / 100;
+            } catch (e) {}
+        }
+
+        sfx.volume = vol;
+        sfx.currentTime = 0; // အသံကို အစကနေ ပြန်စဖို့
+        sfx.play().catch(function () {});
+    }
+
+    // ခလုတ်တွေ နှိပ်လိုက်တိုင်း အသံထွက်အောင် စောင့်နားထောင်ခြင်း
+    document.addEventListener('click', function (event) {
+        // Back ခလုတ်၊ Tab ခလုတ်တွေ၊ အရောင် Box တွေ၊ ခုတ် Box တွေ နှိပ်ရင် အသံထွက်မယ်
+        if (event.target.closest('.inv-back-btn') ||
+            event.target.closest('.inv-nav-tab') ||
+            event.target.closest('.inv-color-btn') ||
+            event.target.closest('.inv-hat-btn')) {
+
+            playClickSound();
+        }
+    });
 
     /* ============================================================
+       LOAD INVENTORY FROM DATABASE
+    ============================================================ */
+
+  async function loadInventoryFromDB() {
+        try {
+            const response = await fetch(`/api/inventory?username=${encodeURIComponent(username)}`);
+            const data = await response.json();
+
+            console.log("Inventory from DB:", data);
+
+            HATS = [
+                {
+                    name: "No Hat",
+                    path: null,
+                    x: 0,
+                    y: 0,
+                    scale: 1
+                }
+            ];
+
+            data.filter(item => item.category === 'HAT').forEach(item => {
+                const pos = HAT_POSITIONS[item.name] || { x: 0, y: -90, scale: 1.3 };
+
+                HATS.push({
+                    name: item.name,
+                    path: item.imagePath,
+                    x: pos.x,
+                    y: pos.y,
+                    scale: pos.scale
+                });
+            });
+
+            // ❌ ဒီနေရာက renderHats(); ကို ဖြုတ်လိုက်ပါ (သို့မဟုတ် Comment လုပ်ထားလိုက်ပါ)
+            // renderHats();
+
+        } catch (error) {
+            console.error("Error loading inventory:", error);
+        }
+    }
+      /* ============================================================
+       INITIAL LOAD
+    ============================================================ */
+
+   /* ============================================================
        INITIAL LOAD
     ============================================================ */
 
     window.onload = function () {
 
+        // ⭐ ပထမဦးဆုံး Colors Tab ကို အရင် render လုပ်ပါ
         renderColors();
 
-
         setTimeout(() => {
-
-            applyColor(
-                currentColorHex
-            );
-
+            applyColor(currentColorHex);
         }, 100);
+
+        // ⭐ ပြီးမှ Database ကနေ Hat တွေ လှမ်းယူပါ
+        loadInventoryFromDB();
 
     };
 
