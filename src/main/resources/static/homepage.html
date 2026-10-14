@@ -81,9 +81,7 @@
                 <button
                         type="button"
                         id="playButton"
-                        class="home-menu-button"
-                        onclick="window.location.href='/story.html'"
-                >
+                        class="home-menu-button">
                     PLAY
                 </button>
 
@@ -253,16 +251,22 @@
 
 
             /* =====================================
-               PLAY LINK
+               PLAY BUTTON & LINK
             ===================================== */
 
             document.getElementById(
-                "playLink"
-            ).href =
-                "/play.html?room=" +
-                encodeURIComponent(roomCode) +
-                "&user=" +
-                encodeURIComponent(username);
+                "playButton"
+            ).addEventListener(
+                "click",
+                function () {
+                    playClickSound();
+                    window.location.href =
+                        "/play.html?room=" +
+                        encodeURIComponent(roomCode) +
+                        "&user=" +
+                        encodeURIComponent(username);
+                }
+            );
 
 
 
@@ -365,14 +369,6 @@
             /* =====================================
                CLICK SFX FOR LINKS
             ===================================== */
-
-            document.getElementById(
-                "playLink"
-            ).addEventListener(
-                "click",
-                function () { playClickSound(); }
-            );
-
 
             document.getElementById(
                 "inventoryLink"
