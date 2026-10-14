@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Account - Among Us Style</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .account-container {
+            width: 100vw;
+            height: 100vh;
+            background-color: #161b22;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            background-color: #21262d;
+            border-bottom: 2px solid #30363d;
+        }
+
+        .back-btn {
+            background: #30363d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .back-btn:hover { background-color: #484f58; }
+
+        /* Main Content Layout */
+        .account-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        /* Left Profile Card */
+        .profile-card {
+            background-color: #21262d;
+            border: 2px solid #30363d;
+            border-radius: 16px;
+            width: 320px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        .avatar-container {
+            position: relative;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .avatar-box {
+            width: 120px;
+            height: 120px;
+            background-color: #161b22;
+            border: 3px solid #58a6ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(88, 166, 255, 0.3);
+        }
+
+        .avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-overlay {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: #238636;
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border: 2px solid #21262d;
+        }
+
+        .username-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .user-status {
+            font-size: 13px;
+            color: #3fb950;
+            background-color: rgba(63, 185, 80, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(63, 185, 80, 0.3);
+        }
+
+        /* Right Details Panel */
+        .details-panel {
+            background-color: #21262d;
+            border: 2px solid #30363d;
+            border-radius: 16px;
+            width: 450px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8b949e;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .info-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #e6edf3;
+            background-color: #161b22;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .info-value:hover {
+            border-color: #58a6ff;
+            background-color: #1f242c;
+        }
+
+        .editable-hint {
+            font-size: 12px;
+            color: #58a6ff;
+            font-weight: normal;
+        }
+
+        .coin-badge {
+            color: #e3b341;
+            cursor: default;
+        }
+        .coin-badge:hover {
+            border-color: #30363d;
+            background-color: #161b22;
+        }
+
+        /* Inline Edit Input Style */
+        .inline-input {
+            background-color: #0d1117;
+            border: 1px solid #58a6ff;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 6px 10px;
+            border-radius: 6px;
+            outline: none;
+            width: 60%;
+        }
+
+        .save-btn {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .save-btn:hover { background-color: #2ea043; }
+    </style>
+</head>
+<body>
+
+<div class="account-container">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <button class="back-btn" onclick="goBack()">◀ BACK</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="account-content">
+        <!-- Left Profile Summary -->
+        <div class="profile-card">
+            <div class="avatar-container" onclick="document.getElementById('fileInput').click()" title="Click to change profile picture">
+                <div class="avatar-box" id="avatarBox">
+                    <span id="defaultAvatarEmoji" style="font-size: 60px;">🧑‍🚀</span>
+                </div>
+                <div class="avatar-overlay">📷</div>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="changeAvatar(event)">
+
+            <div class="username-title" id="profileName">Loading...</div>
+            <div class="user-status" id="userStatusIndicator">● Online</div>
+        </div>
+
+        <!-- Right Detailed Information -->
+        <div class="details-panel">
+            <div class="section-title">Account Information</div>
+
+            <div class="info-group">
+                <span class="info-label">Username (Click to edit)</span>
+                <div class="info-value" id="userBox" onclick="enableEditUsername()">
+                    <span id="accUser">Loading...</span>
+                    <span class="editable-hint" id="userHint">Edit ✎</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">Email Address (Click to edit)</span>
+                <div class="info-value" id="emailBox" onclick="enableEditEmail()">
+                    <span id="accEmail">Loading...</span>
+                    <span class="editable-hint" id="emailHint">Edit ✎</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">Friend Code (Permanent)</span>
+                <div class="info-value coin-badge" id="accFriend" style="cursor: default;">
+                    Loading...
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">Total Coins</span>
+                <div class="info-value coin-badge" id="accCoins">
+                    🪙 0
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let username = 'Player';
+    let email = 'No email provided';
+    let friendCode = '';
+    const coins = localStorage.getItem('coins') || '0';
+
+    async function readJson(response) {
+        var text = await response.text();
+        if (!text) return {};
+        try {
+            return JSON.parse(text);
+        } catch (error) {
+            return { success: false, message: text };
+        }
+    }
+
+    async function loadAccountData() {
+        try {
+            const response = await fetch("/api/friends/me", {
+                credentials: "same-origin"
+            });
+
+            if (response.status === 401) {
+                window.location.replace("/login.html");
+                return;
+            }
+
+            const data = await readJson(response);
+            if (!response.ok) {
+                console.error(data.message || "Cannot load account.");
+                return;
+            }
+
+            username = data.username || 'Player';
+            email = data.email || localStorage.getItem('email') || 'No email provided';
+            friendCode = data.friendCode || '';
+
+            document.getElementById('profileName').innerText = username;
+            document.getElementById('accUser').innerText = username;
+            document.getElementById('accEmail').innerText = email;
+            document.getElementById('accFriend').innerText = friendCode;
+            document.getElementById('accCoins').innerText = `🪙 ${coins}`;
+
+            const statusEl = document.getElementById('userStatusIndicator');
+            if (data.isOnline) {
+                statusEl.textContent = "● Online";
+                statusEl.style.color = "#3fb950";
+            } else {
+                statusEl.textContent = "○ Offline";
+                statusEl.style.color = "#8b949e";
+            }
+
+            if (data.profileImage) {
+                document.getElementById('avatarBox').innerHTML = `<img src="${data.profileImage}" alt="Avatar">`;
+                localStorage.setItem('profileAvatar', data.profileImage);
+            } else {
+                let savedAvatar = localStorage.getItem('profileAvatar');
+                if (savedAvatar) {
+                    document.getElementById('avatarBox').innerHTML = `<img src="${savedAvatar}" alt="Avatar">`;
+                } else {
+                    document.getElementById('avatarBox').innerHTML = `<span style="font-size: 60px;">🧑‍🚀</span>`;
+                }
+            }
+
+        } catch (error) {
+            console.error("Error connecting to server:", error);
+        }
+    }
+
+    async function updateProfileOnServer(payload) {
+        try {
+            const response = await fetch("/api/friends/update-profile", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await readJson(response);
+            if (!response.ok) {
+                console.error(data.message || "Failed to update profile.");
+            }
+        } catch (error) {
+            console.error("Error connecting to update profile:", error);
+        }
+    }
+
+    function changeAvatar(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                localStorage.setItem('profileAvatar', base64Image);
+                document.getElementById('avatarBox').innerHTML = `<img src="${base64Image}" alt="Avatar">`;
+                updateProfileOnServer({ profileImage: base64Image });
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function enableEditUsername() {
+        const userBox = document.getElementById('userBox');
+        if (userBox.querySelector('input')) return;
+
+        userBox.innerHTML = `
+            <input type="text" id="userInput" class="inline-input" value="${username}" onclick="event.stopPropagation()">
+            <button class="save-btn" onclick="saveUsernameValue(event)">Save ✓</button>
+        `;
+
+        const input = document.getElementById('userInput');
+        input.focus();
+        input.select();
+
+        input.onkeydown = function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveUsernameValue(e);
+            }
+        };
+    }
+
+    function saveUsernameValue(event) {
+        event.stopPropagation();
+        const input = document.getElementById('userInput');
+        if (!input) return;
+        const val = input.value.trim();
+
+        if (val !== "") {
+            username = val;
+            localStorage.setItem('username', username);
+            document.getElementById('profileName').innerText = username;
+            updateProfileOnServer({ username: username });
+        }
+
+        const userBox = document.getElementById('userBox');
+        userBox.innerHTML = `
+            <span id="accUser">${username}</span>
+            <span class="editable-hint" id="userHint">Edit ✎</span>
+        `;
+    }
+
+    function enableEditEmail() {
+        const emailBox = document.getElementById('emailBox');
+        if (emailBox.querySelector('input')) return;
+
+        let currentVal = email === 'No email provided' ? '' : email;
+        emailBox.innerHTML = `
+            <input type="email" id="emailInput" class="inline-input" value="${currentVal}" placeholder="Enter email" onclick="event.stopPropagation()">
+            <button class="save-btn" onclick="saveEmailValue(event)">Save ✓</button>
+        `;
+
+        const input = document.getElementById('emailInput');
+        input.focus();
+        input.select();
+
+        input.onkeydown = function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveEmailValue(e);
+            }
+        };
+    }
+
+    function saveEmailValue(event) {
+        event.stopPropagation();
+        const input = document.getElementById('emailInput');
+        if (!input) return;
+        const val = input.value.trim();
+
+        email = val === "" ? 'No email provided' : val;
+        localStorage.setItem('email', email);
+
+        const emailBox = document.getElementById('emailBox');
+        emailBox.innerHTML = `
+            <span id="accEmail">${email}</span>
+            <span class="editable-hint" id="emailHint">Edit ✎</span>
+        `;
+    }
+
+    function goBack() {
+        window.location.href = `/homepage.html?user=${encodeURIComponent(username)}&coins=${coins}`;
+    }
+
+    window.addEventListener("load", function () {
+        loadAccountData();
+    });
+</script>
+
+</body>
+</html>
