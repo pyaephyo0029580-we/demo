@@ -1020,51 +1020,37 @@
 
 
     // =====================================================
-    // GAME START EVENT
-    // =====================================================
+// GAME START EVENT
+// =====================================================
 
-    function handleGameStart(data) {
+ function handleGameStart(data) {
 
+    console.log("Game started:", data);
 
-        console.log(
-            "Game started:",
-            data
-        );
+    setStatus("Opening Unity Game...");
 
-
-        setStatus(
-            "Game starting..."
-        );
-
-
-        /*
-         * IMPORTANT:
-         *
-         * For now we do NOT launch Unity.
-         *
-         * Next step:
-         *
-         * Lobby
-         *    ↓
-         * GAME_START
-         *    ↓
-         * Unity Room 1
-         *
-         */
-
-
-        alert(
-            "GAME STARTED!\n\n" +
-            "Room: " +
-            roomCode
-        );
-
-
-        /*
-         * Unity connection will be added here.
-         */
-
+    // Prevent duplicate launch
+    if (window.gameLaunchStarted) {
+        return;
     }
+
+    window.gameLaunchStarted = true;
+
+    // Use the current Spring Boot server address
+    const unityUrl = new URL(
+        "/unity/index.html",
+        window.location.origin
+    );
+
+    // Pass room information to Unity
+    unityUrl.searchParams.set("roomCode", roomCode);
+    unityUrl.searchParams.set("username", username);
+
+    console.log("Opening Unity:", unityUrl.href);
+
+    // Open Unity in the current browser tab
+    window.location.href = unityUrl.href;
+}
 
 
     // =====================================================
