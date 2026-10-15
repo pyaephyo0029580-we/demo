@@ -41,6 +41,8 @@
 
         .page {
 
+            position: relative;
+
             width: 760px;
 
             max-width: 94%;
@@ -51,6 +53,23 @@
                     35px
                     0
                     60px;
+        }
+
+
+        /* 💡 BACK ခလုတ်ကို ဘယ်ဘက်ထောင့်အကျဆုံးနေရာသို့ တိုက်ရိုက်ပို့ခြင်း */
+        .back {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 90px;
+            height: 40px;
+            border: none;
+            border-radius: 9px;
+            background: #7893c5;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 9999;
         }
 
 
@@ -103,13 +122,9 @@
         }
 
 
-        #databaseId {
-
-            margin-top: 7px;
-
-            color: #aab6d0;
-
-            font-size: 12px;
+        /* 💡 Friend Code နှင့် Database ID များကို UI တွင် မပေါ်အောင် ဖျောက်ရန် */
+        #databaseId, .pid, .dbid {
+            display: none !important;
         }
 
 
@@ -409,26 +424,6 @@
         }
 
 
-        .pid {
-
-            margin-top: 2px;
-
-            color: #58b9ff;
-
-            font-size: 13px;
-        }
-
-
-        .dbid {
-
-            margin-top: 2px;
-
-            color: #909bb4;
-
-            font-size: 11px;
-        }
-
-
         .accept {
 
             padding:
@@ -464,24 +459,6 @@
             font-weight: bold;
         }
 
-
-        .back {
-
-            width: 100%;
-
-            height: 45px;
-
-            border: none;
-
-            border-radius: 9px;
-
-            background: #7893c5;
-
-            color: white;
-
-            font-weight: bold;
-        }
-
     </style>
 
 </head>
@@ -489,6 +466,15 @@
 
 <body>
 
+<!-- 💡 Back ခလုတ်ကို မျက်နှာပြင်၏ ဘယ်ဘက်ထောင့်အကျဆုံးနေရာသို့ ပို့လိုက်သည် -->
+<button
+        class="back"
+        type="button"
+        onclick="goBack()">
+
+    BACK
+
+</button>
 
 <div class="page">
 
@@ -642,17 +628,6 @@
         </div>
 
     </div>
-
-
-
-    <button
-            class="back"
-            type="button"
-            onclick="goBack()">
-
-        BACK
-
-    </button>
 
 
 </div>
@@ -978,7 +953,6 @@
                   nameRow.appendChild(status);
                   info.appendChild(nameRow);
 
-                  // 💡 Friend Item ထဲတွင် Player ID နှင့် Database ID ပါ ပေါ်လာစေရန် ဖြည့်စွက်ထားခြင်း
                   var pid = document.createElement("div");
                   pid.className = "pid";
                   pid.textContent = item.playerId;
@@ -1010,7 +984,13 @@
       }
 
       function goBack() {
-          window.location.href = "/homepage.html";
+          var urlParams = new URLSearchParams(window.location.search);
+          var username = urlParams.get('user') || urlParams.get('username') || sessionStorage.getItem("username") || "";
+          if (username) {
+              window.location.href = "/homepage.html?user=" + encodeURIComponent(username);
+          } else {
+              window.location.href = "/homepage.html";
+          }
       }
 
       document.getElementById("searchInput").addEventListener("keydown", function (event) {
@@ -1018,6 +998,15 @@
               searchPlayer();
           }
       });
+
+      setInterval(function () {
+          fetch("/api/friends/heartbeat", {
+              method: "POST",
+              credentials: "same-origin"
+          }).catch(function (error) {
+              console.error("Heartbeat failed:", error);
+          });
+      }, 5000);
 
       window.addEventListener("load", async function () {
           await loadMe();
