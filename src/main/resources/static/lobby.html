@@ -1031,12 +1031,18 @@
       const roomCode = data.roomCode  data.roomId  new URLSearchParams(window.location.search).get('room');
 
 // Host ဖြစ်စေ၊ Join ထားတဲ့ Player ဖြစ်စေ START GAME နှိပ်တာနဲ့ Map ထဲသို့ တန်းရောက်သွားမည်
-        if (roomCode) {
-    window.location.href = `player.html?room=${roomCode}`;
-        }
-        else {
-           window.location.href =
-           player.html?room=RoomA;
+<!--        if (roomCode) {-->
+<!--    window.location.href = `player.html?room=${roomCode}`;-->
+<!--        }-->
+<!--        else {-->
+<!--           window.location.href =-->
+<!--           player.html?room=RoomA;-->
+
+         if (roomCode) {
+// ဥပမာ - ကိုယ့်ရဲ့ Tiled Map ဘက်ကို သွားစေချင်ရင် ဒီလိုပြောင်းပါ
+ window.location.href = tiled-game.html?room=${encodeURIComponent(roomCode)}; }
+ else {
+ window.location.href = player.html?room=RoomA; }
   // Fallback Room
 }
 }
