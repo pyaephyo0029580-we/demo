@@ -1019,32 +1019,24 @@
     }
 
 
-    // =====================================================
-    // GAME START EVENT
-    // =====================================================
+// =====================================================
+// GAME START EVENT
+// =====================================================
 
-    function handleGameStart(data) {
-      console.log("Game started:", data);
-      setStatus("Game starting...");
-// --- ဒီနေရာမှာ Room Code ကို ယူပြီး Game Map ဆီ ကူးသွားအောင် ရေးပါ ---
-// Server ကနေ data နဲ့အတူ roomCode ပါလာပါက ယူမည်၊ မပါရင် URL ထဲကဟာကို ယူမည်
-      const roomCode = data.roomCode  data.roomId  new URLSearchParams(window.location.search).get('room');
+function handleGameStart(data) {
+    console.log("Game started:", data);
+    setStatus("Game starting...");
 
-// Host ဖြစ်စေ၊ Join ထားတဲ့ Player ဖြစ်စေ START GAME နှိပ်တာနဲ့ Map ထဲသို့ တန်းရောက်သွားမည်
-<!--        if (roomCode) {-->
-<!--    window.location.href = `player.html?room=${roomCode}`;-->
-<!--        }-->
-<!--        else {-->
-<!--           window.location.href =-->
-<!--           player.html?room=RoomA;-->
+    // Server က ပို့ပေးလိုက်တဲ့ roomCode ကို ယူမည် (မပါရင် roomCode variable ကို ယူမည်)
+    let targetRoomCode = data.roomCode || roomCode;
 
-         if (roomCode) {
-// ဥပမာ - ကိုယ့်ရဲ့ Tiled Map ဘက်ကို သွားစေချင်ရင် ဒီလိုပြောင်းပါ
- window.location.href = tiled-game.html?room=${encodeURIComponent(roomCode)}; }
- else {
- window.location.href = player.html?room=RoomA; }
-  // Fallback Room
-}
+    if (targetRoomCode) {
+        // Tiled Map ရှိတဲ့ html ဖိုင်ဆီသို့ roomCode နဲ့ username ကို ထည့်ပြီး ပို့ပေးမည်
+        window.location.href = "tiledgame.html?roomCode=" + encodeURIComponent(targetRoomCode) + "&username=" + encodeURIComponent(username);
+    } else {
+        // Fallback အနေနဲ့ player.html ဆီ ပို့မည်
+        window.location.href = "player.html?room=" + roomCode;
+    }
 }
 
 <!--        console.log(-->
