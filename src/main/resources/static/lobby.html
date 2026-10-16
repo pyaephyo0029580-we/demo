@@ -1019,38 +1019,60 @@
     }
 
 
-    // =====================================================
+// =====================================================
 // GAME START EVENT
 // =====================================================
 
- function handleGameStart(data) {
-
+function handleGameStart(data) {
     console.log("Game started:", data);
+    setStatus("Game starting...");
 
-    setStatus("Opening Unity Game...");
+    // Server က ပို့ပေးလိုက်တဲ့ roomCode ကို ယူမည် (မပါရင် roomCode variable ကို ယူမည်)
+    let targetRoomCode = data.roomCode || roomCode;
 
-    // Prevent duplicate launch
-    if (window.gameLaunchStarted) {
-        return;
+    if (targetRoomCode) {
+        // Tiled Map ရှိတဲ့ html ဖိုင်ဆီသို့ roomCode နဲ့ username ကို ထည့်ပြီး ပို့ပေးမည်
+        window.location.href = "tiledgame.html?roomCode=" + encodeURIComponent(targetRoomCode) + "&username=" + encodeURIComponent(username);
+    } else {
+        // Fallback အနေနဲ့ player.html ဆီ ပို့မည်
+        window.location.href = "player.html?room=" + roomCode;
     }
-
-    window.gameLaunchStarted = true;
-
-    // Use the current Spring Boot server address
-    const unityUrl = new URL(
-        "/unity/index.html",
-        window.location.origin
-    );
-
-    // Pass room information to Unity
-    unityUrl.searchParams.set("roomCode", roomCode);
-    unityUrl.searchParams.set("username", username);
-
-    console.log("Opening Unity:", unityUrl.href);
-
-    // Open Unity in the current browser tab
-    window.location.href = unityUrl.href;
 }
+
+<!--        console.log(-->
+<!--            "Game started:",-->
+<!--            data-->
+<!--        );-->
+
+
+<!--        setStatus(-->
+<!--            "Game starting..."-->
+<!--        );-->
+
+
+        /*
+         * IMPORTANT:
+         *
+         * For now we do NOT launch Unity.
+         *
+         * Next step:
+         *
+         * Lobby
+         *    ↓
+         * GAME_START
+         *    ↓
+         * Unity Room 1
+         *
+         */
+
+            window.location.href = "player.html?room=" + roomCode;
+
+
+        /*
+         * Unity connection will be added here.
+         */
+
+    }
 
 
     // =====================================================

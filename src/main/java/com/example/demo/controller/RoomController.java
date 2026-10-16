@@ -15,26 +15,14 @@ public class RoomController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    // Unity native WebSocket handler
-    @Autowired
-    private UnityWebSocketHandler unityWebSocketHandler;
-
     // Room Code -> GameRoom
     private static final Map<String, GameRoom> rooms =
             new ConcurrentHashMap<>();
 
-    // UnityWebSocketHandler က အသုံးပြုရန်
-    public static GameRoom getRoom(String roomCode) {
-        if (roomCode == null) {
-            return null;
-        }
 
-        return rooms.get(roomCode.trim().toUpperCase());
-    }
-
-    // =========================================================
+    // =========================
     // 1. CREATE ROOM
-    // =========================================================
+    // =========================
 
     @MessageMapping("/create-room")
     public void createRoom(
@@ -47,18 +35,22 @@ public class RoomController {
             return;
         }
 
-        username = username.trim();
-
+        // Room Code 6 လုံး generate
         String roomCode = generateRoomCode();
 
+        // Room အသစ်ဆောက်
         GameRoom room = new GameRoom(roomCode, username);
+
         rooms.put(roomCode, room);
 
         System.out.println(
-                "Room Created: " + roomCode + " | Host: " + username
+                "Room Created: " + roomCode +
+                        " | Host: " + username
         );
 
+        // Create လုပ်တဲ့သူဆီပဲ ပြန်ပို့
         Map<String, Object> response = new HashMap<>();
+
         response.put("type", "ROOM_CREATED");
         response.put("roomCode", roomCode);
         response.put("host", username);
@@ -68,12 +60,14 @@ public class RoomController {
                 response
         );
 
+        // Lobby player list ပို့
         broadcastRoomPlayers(roomCode);
     }
 
-    // =========================================================
+
+    // =========================
     // 2. JOIN ROOM
-    // =========================================================
+    // =========================
 
     @MessageMapping("/join-room")
     public void joinRoom(
@@ -83,33 +77,71 @@ public class RoomController {
         String username = payload.get("username");
         String roomCode = payload.get("roomCode");
 
-        if (username == null || username.trim().isEmpty()
-                || roomCode == null || roomCode.trim().isEmpty()) {
+        if (username == null ||
+                username.trim().isEmpty() ||
+                roomCode == null ||
+                roomCode.trim().isEmpty()) {
+
             return;
         }
 
-        username = username.trim();
-        roomCode = roomCode.trim().toUpperCase();
+        roomCode = roomCode.toUpperCase();
 
         GameRoom room = rooms.get(roomCode);
 
+        // Room မရှိ
         if (room == null) {
-            sendRoomError(username, "ROOM_NOT_FOUND",
-                    "Room not found");
+
+            Map<String, Object> response = new HashMap<>();
+
+            response.put("type", "ROOM_NOT_FOUND");
+            response.put("message", "Room not found");
+
+            messagingTemplate.convertAndSend(
+                    "/topic/room-error/" + username,
+                    response
+            );
+
             return;
         }
 
+        // Game စပြီးသားဆို Join မလုပ်ခိုင်း
         if (room.isGameStarted()) {
-            sendRoomError(username, "GAME_ALREADY_STARTED",
-                    "Game has already started");
+
+            Map<String, Object> response = new HashMap<>();
+
+            response.put("type", "GAME_ALREADY_STARTED");
+            response.put(
+                    "message",
+                    "Game has already started"
+            );
+
+            messagingTemplate.convertAndSend(
+                    "/topic/room-error/" + username,
+                    response
+            );
+
             return;
         }
 
+        // Player ထည့်
         boolean added = room.addPlayer(username);
 
         if (!added) {
-            sendRoomError(username, "NAME_ALREADY_USED",
-                    "Username already exists in this room");
+
+            Map<String, Object> response = new HashMap<>();
+
+            response.put("type", "NAME_ALREADY_USED");
+            response.put(
+                    "message",
+                    "Username already exists in this room"
+            );
+
+            messagingTemplate.convertAndSend(
+                    "/topic/room-error/" + username,
+                    response
+            );
+
             return;
         }
 
@@ -117,7 +149,9 @@ public class RoomController {
                 username + " joined room " + roomCode
         );
 
+        // Join လုပ်သူဆီ confirmation
         Map<String, Object> response = new HashMap<>();
+
         response.put("type", "ROOM_JOINED");
         response.put("roomCode", roomCode);
         response.put("host", room.getHost());
@@ -127,27 +161,14 @@ public class RoomController {
                 response
         );
 
+        // Room ထဲက လူအားလုံးကို player list update
         broadcastRoomPlayers(roomCode);
     }
 
-    private void sendRoomError(
-            String username,
-            String type,
-            String message) {
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("type", type);
-        response.put("message", message);
-
-        messagingTemplate.convertAndSend(
-                "/topic/room-error/" + username,
-                response
-        );
-    }
-
-    // =========================================================
+    // =========================
     // 3. ROOM PLAYER LIST
-    // =========================================================
+    // =========================
 
     private void broadcastRoomPlayers(String roomCode) {
 
@@ -158,6 +179,7 @@ public class RoomController {
         }
 
         Map<String, Object> response = new HashMap<>();
+
         response.put("roomCode", roomCode);
         response.put("host", room.getHost());
         response.put(
@@ -171,9 +193,10 @@ public class RoomController {
         );
     }
 
-    // =========================================================
+
+    // =========================
     // 4. START GAME
-    // =========================================================
+    // =========================
 
     @MessageMapping("/start-game")
     public void startGame(
@@ -183,135 +206,83 @@ public class RoomController {
         String username = payload.get("username");
         String roomCode = payload.get("roomCode");
 
-        if (username == null || username.trim().isEmpty()
-                || roomCode == null || roomCode.trim().isEmpty()) {
+        if (username == null ||
+                roomCode == null) {
+
             return;
         }
 
-        username = username.trim();
-        roomCode = roomCode.trim().toUpperCase();
+        roomCode = roomCode.toUpperCase();
 
         GameRoom room = rooms.get(roomCode);
 
         if (room == null) {
-            System.out.println("Cannot start: room not found.");
             return;
         }
 
+        // Host ပဲ Start လုပ်ခွင့်ရှိ
         if (!room.getHost().equals(username)) {
-            System.out.println("Only host can start the game.");
-            return;
-        }
 
-        if (room.isGameStarted()) {
-            System.out.println("Game already started: " + roomCode);
+            System.out.println(
+                    "Only host can start the game."
+            );
+
             return;
         }
 
         room.setGameStarted(true);
 
-        System.out.println("GAME STARTED: " + roomCode);
+        System.out.println(
+                "GAME STARTED: " + roomCode
+        );
 
-        // Lobby ထဲရှိ STOMP clients များထံ ပို့ခြင်း
         Map<String, Object> response = new HashMap<>();
+
         response.put("type", "GAME_START");
         response.put("roomCode", roomCode);
+        response.put("scene", "Room1");
 
-        // SampleScene သည် Unity Build Settings ထဲတွင်
-        // ထည့်ထားသော Scene အမည်ဖြစ်ရမည်။
-        response.put("scene", "SampleScene");
-
+        // Room ထဲက player အားလုံးဆီ ပို့
         messagingTemplate.convertAndSend(
                 "/topic/room/" + roomCode + "/game-start",
                 response
         );
-
-        // Unity native WebSocket clients များထံ ပို့ခြင်း
-        unityWebSocketHandler.broadcastGameStart(roomCode);
     }
 
-    // =========================================================
-    // 5. PLAYER MOVEMENT (STOMP)
-    // =========================================================
 
-    @MessageMapping("/player-move")
-    public void playerMove(
-            StompHeaderAccessor accessor,
-            Map<String, Object> payload) {
-
-        String roomCode = getStringValue(payload.get("roomCode"));
-        String username = getStringValue(payload.get("username"));
-
-        if (roomCode == null || username == null
-                || roomCode.trim().isEmpty()
-                || username.trim().isEmpty()) {
-            return;
-        }
-
-        roomCode = roomCode.trim().toUpperCase();
-        username = username.trim();
-
-        GameRoom room = rooms.get(roomCode);
-
-        if (room == null || !room.isGameStarted()) {
-            return;
-        }
-
-        if (!room.getPlayers().containsKey(username)) {
-            return;
-        }
-
-        Object x = payload.get("x");
-        Object y = payload.get("y");
-
-        if (!(x instanceof Number) || !(y instanceof Number)) {
-            return;
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("type", "PLAYER_MOVE");
-        response.put("roomCode", roomCode);
-        response.put("username", username);
-        response.put("x", ((Number) x).doubleValue());
-        response.put("y", ((Number) y).doubleValue());
-
-        messagingTemplate.convertAndSend(
-                "/topic/room/" + roomCode + "/player-move",
-                response
-        );
-    }
-
-    // =========================================================
-    // 6. HELPERS
-    // =========================================================
-
-    private String getStringValue(Object value) {
-        return value == null ? null : String.valueOf(value);
-    }
+    // =========================
+    // 5. GENERATE ROOM CODE
+    // =========================
 
     private String generateRoomCode() {
 
-        final String characters =
+        String characters =
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         Random random = new Random();
 
-        while (true) {
-            StringBuilder builder = new StringBuilder();
+        String roomCode;
+
+        do {
+
+            StringBuilder builder =
+                    new StringBuilder();
 
             for (int i = 0; i < 6; i++) {
+
                 builder.append(
                         characters.charAt(
-                                random.nextInt(characters.length())
+                                random.nextInt(
+                                        characters.length()
+                                )
                         )
                 );
             }
 
-            String roomCode = builder.toString();
+            roomCode = builder.toString();
 
-            if (!rooms.containsKey(roomCode)) {
-                return roomCode;
-            }
-        }
+        } while (rooms.containsKey(roomCode));
+
+        return roomCode;
     }
 }
