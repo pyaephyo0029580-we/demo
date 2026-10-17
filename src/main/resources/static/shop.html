@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <title>Shop - My Online Game</title>
     <style>
+        /* =========================================
+           SHOP.CSS (Dark Plum & Neon Pink Theme)
+        ========================================= */
+
         body {
-            background-color: #0d1117;
+            background-color: #140A0E; /* Deep dark plum */
             color: white;
             font-family: Arial, sans-serif;
             margin: 0;
@@ -18,11 +22,11 @@
         .shop-container {
             width: 100vw;
             height: 100vh;
-            background-color: #161b22;
-            border: 1px solid #30363d;
+            background-color: #1A0F14;
+            border: 1px solid #2E1A24;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.8);
             position: relative;
         }
 
@@ -31,46 +35,56 @@
             display: flex;
             align-items: center;
             padding: 15px 20px;
-            border-bottom: 1px solid #30363d;
-            background-color: #21262d;
+            border-bottom: 1px solid #3A1F2A;
+            background-color: #24141C;
         }
 
         .back-btn {
             background: none;
             border: none;
-            color: #8b949e;
+            color: #A88B98;
             font-size: 20px;
             cursor: pointer;
             margin-right: 20px;
             font-weight: bold;
+            transition: all 0.3s;
         }
-        .back-btn:hover { color: white; }
+        .back-btn:hover { color: #FF2A6D; transform: scale(1.1); }
 
         .tab-btn {
-            background-color: #30363d;
-            color: #8b949e;
-            border: none;
+            background-color: #2E1A24;
+            color: #A88B98;
+            border: 1px solid #3A1F2A;
             padding: 8px 20px;
             border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
             margin-right: 10px;
             text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background-color: #3A1F2A;
+            color: white;
         }
 
         .tab-btn.active {
-            background-color: #238636;
-            color: white;
+            background-color: #2E1A24;
+            color: #FF2A6D;
+            border: 1px solid #FF2A6D;
+            box-shadow: 0 0 15px rgba(255, 42, 109, 0.4);
         }
 
         .currency-display {
             margin-left: auto;
-            background: #0d1117;
+            background: #2E1A24;
             padding: 6px 15px;
             border-radius: 20px;
-            border: 1px solid #30363d;
-            color: #e3b341;
+            border: 1px solid #3A1F2A;
+            color: #FF2A6D;
             font-weight: bold;
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.2);
         }
 
         /* Main Content Layout */
@@ -85,7 +99,7 @@
             width: 60%;
             padding: 30px;
             overflow-y: auto;
-            border-right: 1px solid #30363d;
+            border-right: 1px solid #2E1A24;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
@@ -93,7 +107,7 @@
         }
 
         .item-card {
-            background-color: #ffffff;
+            background-color: #2E1A24;
             border-radius: 10px;
             height: 130px;
             display: flex;
@@ -103,12 +117,20 @@
             padding: 10px;
             cursor: pointer;
             border: 3px solid transparent;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        .item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+            border-color: #A88B98;
         }
 
         .item-card.selected {
-            border-color: #58a6ff;
+            border-color: #FF2A6D;
             transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255, 42, 109, 0.5);
         }
 
         .item-preview-img {
@@ -124,11 +146,12 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
 
         .price-tag {
-            background-color: #e6edf3;
-            color: #24292f;
+            background-color: #1A0F14;
+            color: #FF2A6D;
             width: 100%;
             border-radius: 6px;
             padding: 4px 0;
@@ -139,6 +162,7 @@
             align-items: center;
             justify-content: center;
             gap: 5px;
+            border: 1px solid #3A1F2A;
         }
 
         /* Right Side: Big Preview & Buy Panel */
@@ -149,27 +173,44 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background-color: #161b22;
+            background-color: #1A0F14;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Glowing background effect */
+        .right-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 42, 109, 0.1) 0%, transparent 60%);
+            pointer-events: none;
         }
 
         /* Blank Photo Template for Big Preview */
         .preview-box {
             width: 180px;
             height: 180px;
-            background-color: #ffffff;
+            background-color: #2E1A24;
+            border: 1px solid #3A1F2A;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             overflow: hidden;
+            z-index: 2;
         }
 
         .preview-box img {
             max-width: 85%;
             max-height: 85%;
             object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
         }
 
         .item-name {
@@ -177,17 +218,21 @@
             font-weight: bold;
             margin-bottom: 10px;
             text-transform: uppercase;
+            color: white;
+            text-shadow: 0 0 15px rgba(255, 42, 109, 0.5);
+            z-index: 2;
         }
 
         .item-price {
-            color: #e3b341;
+            color: #FF2A6D;
             font-size: 20px;
             margin-bottom: 25px;
             font-weight: bold;
+            z-index: 2;
         }
 
         .buy-btn {
-            background-color: #238636;
+            background: linear-gradient(135deg, #FF2A6D, #D92B55);
             color: white;
             border: none;
             padding: 12px 40px;
@@ -195,8 +240,29 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 42, 109, 0.4);
+            transition: all 0.3s;
+            z-index: 2;
         }
-        .buy-btn:hover { opacity: 0.9; }
+        .buy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 42, 109, 0.6);
+        }
+
+        /* Scrollbar */
+        .left-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+        .left-panel::-webkit-scrollbar-track {
+            background: #140A0E;
+        }
+        .left-panel::-webkit-scrollbar-thumb {
+            background: #3A1F2A;
+            border-radius: 4px;
+        }
+        .left-panel::-webkit-scrollbar-thumb:hover {
+            background: #FF2A6D;
+        }
     </style>
 </head>
 <body>
@@ -242,28 +308,23 @@
             document.getElementById('coinDisplay').innerText = `🪙 ${coins}`;
         } catch (error) {
             console.error("Error fetching coins:", error);
-            // Fallback - URL ကနေ ယူ
             coins = parseInt(urlParams.get('coins') || '0');
             document.getElementById('coinDisplay').innerText = `🪙 ${coins}`;
         }
     }
 
-    // Database ကနေ လာမယ့် Data တွေအတွက် အလွတ်ထားမယ်
     let shopItems = { hats: [], skins: [] };
     let currentCategory = 'hats';
     let selectedItem = null;
 
-    // Database API ကနေ Item တွေကို လှမ်းယူခြင်း
     async function fetchShopItems() {
         try {
             const response = await fetch('/api/items/shop');
             const data = await response.json();
 
-            // Category အလိုက် ခွဲခြားခြင်း (Color တွေ မပါအောင် Filter လုပ်ထားတယ်)
             shopItems.hats = data.filter(item => item.category === 'HAT');
             shopItems.skins = data.filter(item => item.category === 'SKIN');
 
-            // ပထမဆုံး Item ကို ရွေးထားခြင်း
             if (shopItems[currentCategory].length > 0) {
                 selectedItem = shopItems[currentCategory][0];
             }
@@ -285,14 +346,15 @@
             const card = document.createElement('div');
             card.className = `item-card ${selectedItem.id === item.id ? 'selected' : ''}`;
 
-            card.innerHTML = `
-                <div class="item-preview-img">
-                    <img src="${item.imagePath}" alt="${item.name}" onerror="this.outerHTML='<span style=\\'font-size:35px;\\'>📦</span>'">
-                </div>
-                <div class="price-tag">
-                    <span>🪙</span> ${item.price}
-                </div>
-            `;
+            // ⭐ ဒီနေရာမှာ Cache မဖမ်းအောင် ?t=... လေးထည့်ထားပါတယ်
+          card.innerHTML = `
+    <div class="item-preview-img">
+        <img src="${item.imagePath}?t=${new Date().getTime()}" alt="${item.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\\'font-size:35px;\\'>📦</span>'">
+    </div>
+    <div class="price-tag">
+        <span>🪙</span> ${item.price}
+    </div>
+`;
 
             card.onclick = () => {
                 selectedItem = item;
@@ -308,7 +370,9 @@
         if (!selectedItem) return;
 
         const previewContainer = document.getElementById('previewContainer');
-        previewContainer.innerHTML = `<img id="previewImage" src="${selectedItem.imagePath}" alt="${selectedItem.name}" onerror="this.outerHTML='<span style=\\'font-size:60px;\\'>📦</span>'">`;
+
+        // ⭐ ဒီနေရာမှာလည်း Cache မဖမ်းအောင် ?t=... လေးထည့်ထားပါတယ်
+        previepreviewContainer.innerHTML = `<img id="previewImage" src="${selectedItem.imagePath}?t=${new Date().getTime()}" alt="${selectedItem.name}" onerror="...">`;
 
         document.getElementById('itemName').innerText = selectedItem.name;
         document.getElementById('itemPrice').innerText = `🪙 ${selectedItem.price}`;
@@ -344,7 +408,6 @@
             const result = await response.text();
 
             if (response.ok) {
-                // ⭐ ဝယ်ပြီးရင် Database ကနေ Coin အသစ်ကို ပြန်ဆွဲယူမယ်
                 await fetchUserCoins();
                 alert(`✅ ${selectedItem.name} ကို ဝယ်လိုက်ပါပြီ!`);
             } else {
@@ -356,16 +419,13 @@
         }
     }
 
-
     function goBack() {
-        // ⭐ Coin အသစ်နဲ့ Homepage ကို ပြန်သွားမယ်
         window.location.href = `/homepage.html?user=${encodeURIComponent(username)}&coins=${coins}`;
     }
 
-    // Initial Load မှာ Coin နဲ့ Item တွေကို ဆွဲယူပါ
     fetchUserCoins();
     fetchShopItems();
 </script>
 
 </body>
-</html>git status
+</html>
