@@ -118,9 +118,13 @@
             color: #ffffff;
         }
 
-        /* 💡 Online/Offline status ကို ဖျောက်ရန် */
         .user-status {
-            display: none !important;
+            font-size: 13px;
+            color: #3fb950;
+            background-color: rgba(63, 185, 80, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(63, 185, 80, 0.3);
         }
 
         /* Right Details Panel */
@@ -319,6 +323,15 @@
             document.getElementById('accEmail').innerText = email;
             document.getElementById('accFriend').innerText = friendCode;
             document.getElementById('accCoins').innerText = `🪙 ${coins}`;
+
+            const statusEl = document.getElementById('userStatusIndicator');
+            if (data.isOnline) {
+                statusEl.textContent = "● Online";
+                statusEl.style.color = "#3fb950";
+            } else {
+                statusEl.textContent = "○ Offline";
+                statusEl.style.color = "#8b949e";
+            }
 
             if (data.profileImage) {
                 document.getElementById('avatarBox').innerHTML = `<img src="${data.profileImage}" alt="Avatar">`;

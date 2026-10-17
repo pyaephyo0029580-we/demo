@@ -8,9 +8,11 @@ import com.example.demo.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -72,7 +74,50 @@ public class FriendApiController {
 
 
     // =====================================================
-    // CURRENT LOGIN USER
+    // HEARTBEAT API (Real Active Check)
+    // =====================================================
+
+    @PostMapping("/heartbeat")
+    public ResponseEntity<?> heartbeat(
+            HttpSession session
+    ) {
+        Optional<User> optionalUser = getLoggedInUser(session);
+
+        if (optionalUser.isEmpty()) {
+            return notLoggedIn();
+        }
+
+        User user = optionalUser.get();
+        user.setOnline(true);
+        user.setLastActiveTime(LocalDateTime.now());
+        userRepository.save(user);
+
+        return success("Heartbeat received");
+    }
+
+
+    // =====================================================
+    // BACKGROUND SCHEDULER (Auto Offline after 25 seconds)
+    // =====================================================
+
+    @Scheduled(fixedRate = 10000)
+    public void checkOfflineUsers() {
+        LocalDateTime threshold = LocalDateTime.now().minusSeconds(25);
+        Iterable<User> users = userRepository.findAll();
+
+        for (User user : users) {
+            if (Boolean.TRUE.equals(user.isOnline()) && user.getLastActiveTime() != null) {
+                if (user.getLastActiveTime().isBefore(threshold)) {
+                    user.setOnline(false);
+                    userRepository.save(user);
+                }
+            }
+        }
+    }
+
+
+    // =====================================================
+    // CURRENT LOGIN USER (Real Active: handled by heartbeat)
     // =====================================================
 
     @GetMapping("/me")
@@ -98,6 +143,8 @@ public class FriendApiController {
                 );
 
 
+        // Note: user.setOnline(true) ကို ဖြုတ်လိုက်ပြီး Heartbeat / Scheduler ဖြင့်သာ Real Active ထိန်းချုပ်သည်[cite: 8]
+
         Map<String, Object> response =
                 userData(
                         user
@@ -113,6 +160,40 @@ public class FriendApiController {
         return ResponseEntity.ok(
                 response
         );
+    }
+
+
+    // =====================================================
+    // UPDATE PROFILE (Username & Profile Image)
+    // =====================================================
+
+    @PostMapping("/update-profile")
+    public ResponseEntity<?> updateProfile(
+            @RequestBody Map<String, String> request,
+            HttpSession session
+    ) {
+        Optional<User> optionalUser = getLoggedInUser(session);
+
+        if (optionalUser.isEmpty()) {
+            return notLoggedIn();
+        }
+
+        User user = optionalUser.get();
+
+        String newUsername = request.get("username");
+        String newProfileImage = request.get("profileImage");
+
+        if (newUsername != null && !newUsername.trim().isEmpty()) {
+            user.setUsername(newUsername.trim());
+        }
+
+        if (newProfileImage != null) {
+            user.setProfileImage(newProfileImage);
+        }
+
+        userRepository.save(user);
+
+        return success("Profile updated successfully.");
     }
 
 
@@ -192,7 +273,9 @@ public class FriendApiController {
         response.put(
                 "success",
                 true
-        );return ResponseEntity.ok(
+        );
+
+        return ResponseEntity.ok(
                 response
         );
     }
@@ -381,83 +464,83 @@ public class FriendApiController {
     }
 
 
-// =====================================================
-// INCOMING REQUESTS
-// =====================================================
-@GetMapping("/requests")
-public ResponseEntity<?> getRequests(
-        HttpSession session
-) {
+    // =====================================================
+    // INCOMING REQUESTS
+    // =====================================================
+    @GetMapping("/requests")
+    public ResponseEntity<?> getRequests(
+            HttpSession session
+    ) {
 
-    Optional<User> optionalUser =
-            getLoggedInUser(
-                    session
-            );
-
-
-    if (optionalUser.isEmpty()) {
-
-        return notLoggedIn();
-    }
-
-
-    Long currentUserId =
-            optionalUser
-                    .get()
-                    .getId();
-
-
-    List<Friend> requests =
-            friendRepository
-                    .findByReceiverIdAndStatus(
-                            currentUserId,
-                            "PENDING"
-                    );
-
-
-    List<Map<String, Object>> result =
-            new ArrayList<>();
-
-
-    for (Friend friend : requests) {
-
-        Optional<User> senderOptional =
-                userRepository.findById(
-                        friend.getRequesterId()
+        Optional<User> optionalUser =
+                getLoggedInUser(
+                        session
                 );
 
 
-        if (senderOptional.isPresent()) {
+        if (optionalUser.isEmpty()) {
 
-            User sender =
-                    ensureFriendCode(
-                            senderOptional.get()
-                    );
-
-
-            Map<String, Object> item =
-                    userData(
-                            sender
-                    );
-
-
-            item.put(
-                    "friendId",
-                    friend.getFriendId()
-            );
-
-
-            result.add(
-                    item
-            );
+            return notLoggedIn();
         }
+
+
+        Long currentUserId =
+                optionalUser
+                        .get()
+                        .getId();
+
+
+        List<Friend> requests =
+                friendRepository
+                        .findByReceiverIdAndStatus(
+                                currentUserId,
+                                "PENDING"
+                        );
+
+
+        List<Map<String, Object>> result =
+                new ArrayList<>();
+
+
+        for (Friend friend : requests) {
+
+            Optional<User> senderOptional =
+                    userRepository.findById(
+                            friend.getRequesterId()
+                    );
+
+
+            if (senderOptional.isPresent()) {
+
+                User sender =
+                        ensureFriendCode(
+                                senderOptional.get()
+                        );
+
+
+                Map<String, Object> item =
+                        userData(
+                                sender
+                        );
+
+
+                item.put(
+                        "friendId",
+                        friend.getFriendId()
+                );
+
+
+                result.add(
+                        item
+                );
+            }
+        }
+
+
+        return ResponseEntity.ok(
+                result
+        );
     }
-
-
-    return ResponseEntity.ok(
-            result
-    );
-}
 
 
     // =====================================================
@@ -506,8 +589,6 @@ public ResponseEntity<?> getRequests(
                 friendOptional.get();
 
 
-        // Request က login ဝင်ထားတဲ့ user ဆီပို့ထားတာ
-        // ဟုတ်မဟုတ်စစ်
         if (!friend.getReceiverId()
                 .equals(currentUserId)) {
 
@@ -570,7 +651,9 @@ public ResponseEntity<?> getRequests(
         if (optionalUser.isEmpty()) {
 
             return notLoggedIn();
-        }Long currentUserId =
+        }
+
+        Long currentUserId =
                 optionalUser
                         .get()
                         .getId();
@@ -732,8 +815,6 @@ public ResponseEntity<?> getRequests(
                 value.trim();
 
 
-        // Example:
-        // Shoon#274143
         if (search.contains("#")) {
 
             int index =
@@ -752,7 +833,9 @@ public ResponseEntity<?> getRequests(
             String code =
                     search.substring(
                             index + 1
-                    ).trim();Optional<User> optionalUser =
+                    ).trim();
+
+            Optional<User> optionalUser =
                     userRepository
                             .findByFriendCode(
                                     code
@@ -781,7 +864,6 @@ public ResponseEntity<?> getRequests(
         }
 
 
-        // Search Username
         Optional<User> usernameResult =
                 userRepository.findByUsername(
                         search
@@ -794,7 +876,6 @@ public ResponseEntity<?> getRequests(
         }
 
 
-        // Search Friend Code
         return userRepository
                 .findByFriendCode(
                         search
@@ -884,6 +965,12 @@ public ResponseEntity<?> getRequests(
                 user.getUsername()
         );
 
+        // ဤနေရာတွင် email ကို ထည့်ပေးပါ
+        data.put(
+                "email",
+                user.getEmail() != null ? user.getEmail() : ""
+        );
+
         data.put(
                 "friendCode",
                 user.getFriendCode()
@@ -896,10 +983,19 @@ public ResponseEntity<?> getRequests(
                         + user.getFriendCode()
         );
 
+        data.put(
+                "isOnline",
+                user.isOnline()
+        );
+
+        data.put(
+                "profileImage",
+                user.getProfileImage()
+        );
+
 
         return data;
     }
-
 
     // =====================================================
     // RESPONSES
@@ -963,7 +1059,9 @@ public ResponseEntity<?> getRequests(
         result.put(
                 "success",
                 false
-        );result.put(
+        );
+
+        result.put(
                 "message",
                 "Please login first."
         );

@@ -3,323 +3,486 @@
 
 <head>
 
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-  <title>MyGaming - Friends</title>
+    <title>MyGaming - Friends</title>
 
 
-  <style>
-    /* =========================================
-       FRIENDS PAGE (Dark Plum & Neon Pink Theme)
-    ========================================= */
+    <style>
 
-    * {
+        * {
+            box-sizing: border-box;
+        }
 
-        box-sizing: border-box;
-    }
 
-    body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: Arial, sans-serif;
-        color: white;
-        background: radial-gradient(circle at top, #24141C, #140A0E);
-    }
+        body {
 
-    .page {
-        width: 760px;
-        max-width: 94%;
-        margin: auto;
-        padding: 35px 0 60px;
-    }
+            margin: 0;
 
-    h1 {
-        text-align: center;
-        margin: 0 0 30px;
-        font-size: 40px;
-        color: #FF2A6D;
-        text-shadow: 0 0 15px rgba(255, 42, 109, 0.5);
-    }
+            min-height: 100vh;
 
-    /* =========================================
-       PLAYER INFO BOX
-    ========================================= */
-    .player-box {
-        margin-bottom: 25px;
-        padding: 25px;
-        border-radius: 15px;
-        text-align: center;
-        background: #1A0F14;
-        border: 1px solid #3A1F2A;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    }
+            font-family:
+                    Arial,
+                    sans-serif;
 
-    .player-label {
-        color: #A88B98;
-        font-size: 13px;
-        font-weight: bold;
-    }
+            color: white;
 
-    #playerId {
-        margin-top: 8px;
-        color: #FF2A6D;
-        font-size: 28px;
-        font-weight: bold;
-        text-shadow: 0 0 10px rgba(255, 42, 109, 0.4);
-    }
+            background:
+                    radial-gradient(
+                            circle at top,
+                            #283052,
+                            #111426
+                    );
+        }
 
-    #databaseId {
-        margin-top: 7px;
-        color: #A88B98;
-        font-size: 12px;
-    }
 
-    /* =========================================
-       CARDS
-    ========================================= */
-    .card {
-        margin-bottom: 20px;
-        padding: 23px;
-        border: 1px solid #3A1F2A;
-        border-radius: 15px;
-        background: #1A0F14;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-    }
+        .page {
 
-    h2 {
-        margin-top: 0;
-        color: #ffffff;
-        font-size: 22px;
-    }
+            width: 760px;
 
-    /* =========================================
-       SEARCH AREA
-    ========================================= */
-    .search-row {
-        display: flex;
-        gap: 10px;
-    }
+            max-width: 94%;
 
-    #searchInput {
-        flex: 1;
-        height: 50px;
-        padding: 0 15px;
-        border: 2px solid #3A1F2A;
-        border-radius: 9px;
-        font-size: 16px;
-        outline: none;
-        background: #2E1A24;
-        color: white;
-        transition: border-color 0.3s;
-    }
+            margin: auto;
 
-    #searchInput:focus {
-        border-color: #FF2A6D;
-        box-shadow: 0 0 10px rgba(255, 42, 109, 0.3);
-    }
+            padding:
+                    35px
+                    0
+                    60px;
+        }
 
-    #searchInput::placeholder {
-        color: #A88B98;
-    }
 
-    button {
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
+        h1 {
 
-    .search-button {
-        width: 120px;
-        border: none;
-        border-radius: 9px;
-        background: linear-gradient(135deg, #FF2A6D, #D92B55);
-        color: white;
-        font-weight: bold;
-        box-shadow: 0 4px 10px rgba(255, 42, 109, 0.3);
-    }
+            text-align: center;
 
-    .search-button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 15px rgba(255, 42, 109, 0.5);
-    }
+            margin:
+                    0
+                    0
+                    30px;
 
-    #foundPlayer {
-        display: none;
-        margin-top: 15px;
-        padding: 15px;
-        border-radius: 9px;
-        background: #2E1A24;
-        border: 1px solid #FF2A6D;
-    }
+            font-size: 40px;
+        }
 
-    #foundName {
-        font-size: 18px;
-        font-weight: bold;
-        color: #ffffff;
-    }
 
-    #foundId {
-        margin-top: 5px;
-        color: #FF8E9E;
-    }
+        .player-box {
 
-    #sendButton {
-        display: block;
-        width: 250px;
-        height: 45px;
-        margin: 15px auto 0;
-        border: none;
-        border-radius: 9px;
-        background: #31c78b; /* Green for Send */
-        color: white;
-        font-weight: bold;
-        box-shadow: 0 4px 10px rgba(49, 199, 139, 0.3);
-    }
+            margin-bottom: 25px;
 
-    #sendButton:hover:not(:disabled) {
-        transform: scale(1.05);
-        box-shadow: 0 6px 15px rgba(49, 199, 139, 0.5);
-    }
+            padding: 25px;
 
-    #sendButton:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-        box-shadow: none;
-    }
+            border-radius: 15px;
 
-    #message {
-        min-height: 24px;
-        margin-top: 12px;
-        text-align: center;
-        color: #FF8E9E;
-        font-weight: bold;
-    }
+            text-align: center;
 
-    /* =========================================
-       LISTS & REQUESTS
-    ========================================= */
-    .section-title {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 15px;
-    }
+            background: #1c233c;
+        }
 
-    .section-title h2 {
-        margin-bottom: 0;
-    }
 
-    .refresh {
-        height: 36px;
-        padding: 0 16px;
-        border: 1px solid #3A1F2A;
-        border-radius: 7px;
-        background: #2E1A24;
-        color: #FF8E9E;
-        font-weight: bold;
-    }
+        .player-label {
 
-    .refresh:hover {
-        background: #3A1F2A;
-        color: white;
-    }
+            color: #89aaff;
 
-    .empty {
-        padding: 22px;
-        border-radius: 9px;
-        text-align: center;
-        color: #A88B98;
-        background: #2E1A24;
-        border: 1px dashed #3A1F2A;
-    }
+            font-size: 13px;
 
-    .request-item, .friend-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
-        padding: 15px;
-        border-radius: 9px;
-        background: #2E1A24;
-        border: 1px solid #3A1F2A;
-        transition: transform 0.2s;
-    }
+            font-weight: bold;
+        }
 
-    .request-item:hover, .friend-item:hover {
-        transform: translateX(5px);
-        border-color: #FF2A6D;
-    }
 
-    .info {
-        flex: 1;
-    }
+        #playerId {
 
-    .name {
-        font-size: 18px;
-        font-weight: bold;
-        color: #ffffff;
-    }
+            margin-top: 8px;
 
-    .pid {
-        margin-top: 4px;
-        color: #FF8E9E;
-        font-size: 13px;
-    }
+            color: #3aa9ff;
 
-    .dbid {
-        margin-top: 4px;
-        color: #A88B98;
-        font-size: 11px;
-    }
+            font-size: 28px;
 
-    .accept {
-        padding: 9px 13px;
-        border: none;
-        border-radius: 7px;
-        background: #31c78b;
-        color: white;
-        font-weight: bold;
-    }
+            font-weight: bold;
+        }
 
-    .accept:hover {
-        background: #28a745;
-    }
 
-    .reject {
-        padding: 9px 13px;
-        border: none;
-        border-radius: 7px;
-        background: #d95569;
-        color: white;
-        font-weight: bold;
-    }
+        #databaseId {
 
-    .reject:hover {
-        background: #c82333;
-    }
+            margin-top: 7px;
 
-    /* =========================================
-       BACK BUTTON
-    ========================================= */
-    .back {
-        width: 100%;
-        height: 45px;
-        border: 1px solid #FF2A6D;
-        border-radius: 9px;
-        background: transparent;
-        color: #FF2A6D;
-        font-weight: bold;
-        font-size: 16px;
-    }
+            color: #aab6d0;
 
-    .back:hover {
-        background: #FF2A6D;
-        color: white;
-        box-shadow: 0 0 15px rgba(255, 42, 109, 0.5);
-    }
-  </style>
+            font-size: 12px;
+        }
+
+
+        .card {
+
+            margin-bottom: 20px;
+
+            padding: 23px;
+
+            border:
+                    1px solid
+                    #526b9d;
+
+            border-radius: 15px;
+
+            background:
+                    rgba(
+                            35,
+                            44,
+                            79,
+                            0.95
+                    );
+        }
+
+
+        h2 {
+
+            margin-top: 0;
+        }
+
+
+        .search-row {
+
+            display: flex;
+
+            gap: 10px;
+        }
+
+
+        #searchInput {
+
+            flex: 1;
+
+            height: 50px;
+
+            padding:
+                    0
+                    15px;
+
+            border: none;
+
+            border-radius: 9px;
+
+            font-size: 16px;
+
+            outline: none;
+        }
+
+
+        button {
+
+            cursor: pointer;
+        }
+
+
+        .search-button {
+
+            width: 120px;
+
+            border: none;
+
+            border-radius: 9px;
+
+            background: #3689ef;
+
+            color: white;
+
+            font-weight: bold;
+        }
+
+
+        #foundPlayer {
+
+            display: none;
+
+            margin-top: 15px;
+
+            padding: 15px;
+
+            border-radius: 9px;
+
+            background: #151b30;
+        }
+
+
+        #foundName {
+
+            font-size: 18px;
+
+            font-weight: bold;
+        }
+
+
+        #foundId {
+
+            margin-top: 5px;
+
+            color: #58b9ff;
+        }
+
+
+        #sendButton {
+
+            display: block;
+
+            width: 250px;
+
+            height: 45px;
+
+            margin:
+                    15px
+                    auto
+                    0;
+
+            border: none;
+
+            border-radius: 9px;
+
+            background: #38c990;
+
+            color: white;
+
+            font-weight: bold;
+        }
+
+
+        #sendButton:disabled {
+
+            opacity: 0.4;
+
+            cursor: not-allowed;
+        }
+
+
+        #message {
+
+            min-height: 24px;
+
+            margin-top: 12px;
+
+            text-align: center;
+        }
+
+
+        .section-title {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content:
+                    space-between;
+        }
+
+
+        .refresh {
+
+            height: 36px;
+
+            padding:
+                    0
+                    16px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            background: #8194bc;
+            color: white;
+            font-weight: bold;
+        }
+
+
+        .empty {
+
+            padding: 22px;
+
+            border-radius: 9px;
+
+            text-align: center;
+
+            color: #b5c0d9;
+
+            background: #151b30;
+        }
+
+
+        .request-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin-bottom: 10px;
+
+            padding: 15px;
+
+            border-radius: 9px;
+
+            background: #151b30;
+        }
+
+
+        /* MY FRIENDS Styles */
+        .friend-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 10px;
+
+            padding: 15px;
+
+            border-radius: 9px;
+
+            background: #151b30;
+        }
+
+        .friend-avatar {
+
+            width: 48px;
+
+            height: 48px;
+
+            border-radius: 50%;
+
+            object-fit: cover;
+
+            border: 2px solid #526b9d;
+
+            background: #283052;
+        }
+
+        .friend-info {
+
+            flex: 1;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 4px;
+        }
+
+        .friend-name-row {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+        .name {
+
+            font-size: 18px;
+
+            font-weight: bold;
+        }
+
+        .status-indicator {
+
+            font-size: 13px;
+
+            font-weight: bold;
+        }
+
+        .status-online {
+
+            color: #31c78b;
+        }
+
+        .status-offline {
+
+            color: #909bb4;
+        }
+
+
+        .info {
+
+            flex: 1;
+        }
+
+
+        .pid {
+
+            margin-top: 2px;
+
+            color: #58b9ff;
+
+            font-size: 13px;
+        }
+
+
+        .dbid {
+
+            margin-top: 2px;
+
+            color: #909bb4;
+
+            font-size: 11px;
+        }
+
+
+        .accept {
+
+            padding:
+                    9px
+                    13px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            background: #31c78b;
+
+            color: white;
+
+            font-weight: bold;
+        }
+
+
+        .reject {
+
+            padding:
+                    9px
+                    13px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            background: #d95569;
+
+            color: white;
+
+            font-weight: bold;
+        }
+
+
+        .back {
+
+            width: 100%;
+
+            height: 45px;
+
+            border: none;
+
+            border-radius: 9px;
+
+            background: #7893c5;
+
+            color: white;
+
+            font-weight: bold;
+        }
+
+    </style>
 
 </head>
 
@@ -330,166 +493,166 @@
 <div class="page">
 
 
-  <h1>
-    FRIENDS
-  </h1>
+    <h1>
+        FRIENDS
+    </h1>
 
 
-  <!-- LOGIN USER -->
+    <!-- LOGIN USER -->
 
-  <div class="player-box">
+    <div class="player-box">
 
-    <div class="player-label">
-      LOGIN PLAYER
-    </div>
-
-
-    <div id="playerId">
-      Loading...
-    </div>
+        <div class="player-label">
+            LOGIN PLAYER
+        </div>
 
 
-    <div id="databaseId">
-      Database ID: Loading...
-    </div>
-
-  </div>
+        <div id="playerId">
+            Loading...
+        </div>
 
 
-
-  <!-- ADD FRIEND -->
-
-  <div class="card">
-
-    <h2>
-      ADD A FRIEND
-    </h2>
-
-
-    <div class="search-row">
-
-      <input
-              id="searchInput"
-              type="text"
-              placeholder="Username / Code / Shoon#274143">
-
-
-      <button
-              type="button"
-              class="search-button"
-              onclick="searchPlayer()">
-
-        SEARCH
-
-      </button>
+        <div id="databaseId">
+            Database ID: Loading...
+        </div>
 
     </div>
 
 
-    <div id="foundPlayer">
 
-      <div id="foundName"></div>
+    <!-- ADD FRIEND -->
 
-      <div id="foundId"></div>
+    <div class="card">
+
+        <h2>
+            ADD A FRIEND
+        </h2>
+
+
+        <div class="search-row">
+
+            <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="Username / Code / Shoon#274143">
+
+
+            <button
+                    type="button"
+                    class="search-button"
+                    onclick="searchPlayer()">
+
+                SEARCH
+
+            </button>
+
+        </div>
+
+
+        <div id="foundPlayer">
+
+            <div id="foundName"></div>
+
+            <div id="foundId"></div>
+
+        </div>
+
+
+        <button
+                id="sendButton"
+                type="button"
+                onclick="sendRequest()"
+                disabled>
+
+            SEND FRIEND REQUEST
+
+        </button>
+
+
+        <div id="message"></div>
 
     </div>
+
+
+
+    <!-- REQUESTS -->
+
+    <div class="card">
+
+        <div class="section-title">
+
+            <h2>
+                FRIEND REQUESTS
+            </h2>
+
+
+            <button
+                    type="button"
+                    class="refresh"
+                    onclick="loadRequests()">
+
+                REFRESH
+
+            </button>
+
+        </div>
+
+
+        <div id="requestsList">
+
+            <div class="empty">
+                Loading...
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- FRIENDS -->
+
+    <div class="card">
+
+        <div class="section-title">
+
+            <h2>
+                MY FRIENDS
+            </h2>
+
+
+            <button
+                    type="button"
+                    class="refresh"
+                    onclick="loadFriends()">
+
+                REFRESH
+
+            </button>
+
+        </div>
+
+
+        <div id="friendsList">
+
+            <div class="empty">
+                Loading...
+            </div>
+
+        </div>
+
+    </div>
+
 
 
     <button
-            id="sendButton"
+            class="back"
             type="button"
-            onclick="sendRequest()"
-            disabled>
+            onclick="goBack()">
 
-      SEND FRIEND REQUEST
+        BACK
 
     </button>
-
-
-    <div id="message"></div>
-
-  </div>
-
-
-
-  <!-- REQUESTS -->
-
-  <div class="card">
-
-    <div class="section-title">
-
-      <h2>
-        FRIEND REQUESTS
-      </h2>
-
-
-      <button
-              type="button"
-              class="refresh"
-              onclick="loadRequests()">
-
-        REFRESH
-
-      </button>
-
-    </div>
-
-
-    <div id="requestsList">
-
-      <div class="empty">
-        Loading...
-      </div>
-
-    </div>
-
-  </div>
-
-
-
-  <!-- FRIENDS -->
-
-  <div class="card">
-
-    <div class="section-title">
-
-      <h2>
-        MY FRIENDS
-      </h2>
-
-
-      <button
-              type="button"
-              class="refresh"
-              onclick="loadFriends()">
-
-        REFRESH
-
-      </button>
-
-    </div>
-
-
-    <div id="friendsList">
-
-      <div class="empty">
-        Loading...
-      </div>
-
-    </div>
-
-  </div>
-
-
-
-  <button
-          class="back"
-          type="button"
-          onclick="goBack()">
-
-    BACK
-
-  </button>
 
 
 </div>
@@ -497,971 +660,370 @@
 
 <script>
 
-  var selectedTarget =
-      null;// =====================================================
-    // SAFE JSON
-    // =====================================================
-
-    async function readJson(response) {
-
-        var text =
-            await response.text();
-
-
-        if (!text) {
-
-            return {};
-        }
-
-
-        try {
-
-            return JSON.parse(
-                text
-            );
-
-        } catch (error) {
-
-            return {
-                success: false,
-                message: text
-            };
-        }
-    }
-
-
-    // =====================================================
-    // HANDLE SESSION EXPIRED
-    // =====================================================
-
-    function checkLogin(response) {
-
-        if (response.status === 401) {
-
-            window.location.replace(
-                "/login.html"
-            );
-
-            return false;
-        }
-
-
-        return true;
-    }
-
-
-    // =====================================================
-    // LOGIN USER
-    // =====================================================
-
-    async function loadMe() {
-
-        try {
-
-            var response =
-                await fetch(
-                    "/api/friends/me",
-                    {
-                        credentials:
-                            "same-origin"
-                    }
-                );
-
-
-            if (!checkLogin(response)) {
-                return;
-            }
-
-
-            var data =
-                await readJson(
-                    response
-                );
-
-
-            if (!response.ok) {
-
-                document.getElementById(
-                    "playerId"
-                ).textContent =
-                    data.message ||
-                    "Cannot load player.";
-
-                return;
-            }
-
-
-            document.getElementById(
-                "playerId"
-            ).textContent =
-                data.playerId;
-
-
-            document.getElementById(
-                "databaseId"
-            ).textContent =
-                "Database ID: "
-                + data.id;
-
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-        }
-    }
-
-
-    // =====================================================
-    // SEARCH
-    // =====================================================
-
-    async function searchPlayer() {
-
-        var query =
-            document.getElementById(
-                "searchInput"
-            ).value.trim();
-
-
-        var message =
-            document.getElementById(
-                "message"
-            );
-
-
-        var foundPlayer =
-            document.getElementById(
-                "foundPlayer"
-            );
-
-
-        var sendButton =
-            document.getElementById(
-                "sendButton"
-            );
-
-
-        selectedTarget =
-            null;
-
-
-        sendButton.disabled =
-            true;
-
-
-        foundPlayer.style.display =
-            "none";
-
-
-        message.textContent =
-            "";
-
-
-        if (!query) {
-
-            message.textContent =
-                "Please enter player.";
-
-            return;
-        }
-
-
-        try {
-
-            var response =
-                await fetch(
-                    "/api/friends/search?query="
-                    + encodeURIComponent(
-                    query
-                    ),
-                    {
-                        credentials:
-                            "same-origin"
-                    }
-                );
-
-
-            if (!checkLogin(response)) {
-                return;
-            }
-
-
-            var data =
-                await readJson(
-                    response
-                );
-
-
-            if (!response.ok) {
-
-                message.textContent =
-                    data.message ||
-                    "Player not found.";
-
-                return;
-            }
-
-
-            selectedTarget =
-                data.playerId;
-
-
-            document.getElementById(
-                "foundName"
-            ).textContent =
-                data.username;document.getElementById(
-                "foundId"
-            ).textContent =
-                data.playerId
-                + " | Database ID: "
-                + data.id;
-
-
-            foundPlayer.style.display =
-                "block";
-
-
-            sendButton.disabled =
-                false;
-
-
-            message.textContent =
-                "Player found.";
-
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-
-            message.textContent =
-                "Cannot connect to server.";
-        }
-    }
-
-
-    // =====================================================
-    // SEND REQUEST
-    // =====================================================
-
-    async function sendRequest() {
-
-        var message =
-            document.getElementById(
-                "message"
-            );
-
-
-        if (!selectedTarget) {
-
-            message.textContent =
-                "Search player first.";
-
-            return;
-        }
-
-
-        try {
-
-            var response =
-                await fetch(
-                    "/api/friends/request",
-                    {
-
-                        method:
-                            "POST",
-
-                        credentials:
-                            "same-origin",
-
-                        headers: {
-
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify({
-
-                                target:
-                                    selectedTarget
-                            })
-                    }
-                );
-
-
-            if (!checkLogin(response)) {
-                return;
-            }
-
-
-            var data =
-                await readJson(
-                    response
-                );
-
-
-            message.textContent =
-                data.message ||
-                "Done.";
-
-
-            if (response.ok) {
-
-                document.getElementById(
-                    "sendButton"
-                ).disabled =
-                    true;
-            }
-
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-
-            message.textContent =
-                "Cannot connect to server.";
-        }
-    }
-
-
-    // =====================================================
-    // REQUESTS
-    // =====================================================
-
-    async function loadRequests() {
-
-        var box =
-            document.getElementById(
-                "requestsList"
-            );
-
-
-        box.innerHTML =
-            "";
-
-
-        showEmpty(
-            box,
-            "Loading..."
-        );
-
-
-        try {
-
-            var response =
-                await fetch(
-                    "/api/friends/requests",
-                    {
-                        credentials:
-                            "same-origin"
-                    }
-                );
-
-
-            if (!checkLogin(response)) {
-                return;
-            }
-
-
-            var data =
-                await readJson(
-                    response
-                );
-
-
-            box.innerHTML =
-                "";
-
-
-            if (!response.ok) {
-
-                showEmpty(
-                    box,
-                    data.message ||
-                    "Cannot load requests."
-                );
-
-                return;
-            }
-
-
-            if (!Array.isArray(data)
-                    || data.length === 0) {
-
-                showEmpty(
-                    box,
-                    "No friend requests."
-                );
-
-                return;
-            }
-
-
-            data.forEach(
-                function (item) {
-
-                    createRequest(
-                        box,
-                        item
-                    );
-                }
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-
-            box.innerHTML =
-                "";showEmpty(
-                box,
-                "Cannot load requests."
-            );
-        }
-    }
-
-
-    // =====================================================
-    // REQUEST ROW
-    // =====================================================
-
-    function createRequest(
-        box,
-        item
-    ) {
-
-        var row =
-            document.createElement(
-                "div"
-            );
-
-
-        row.className =
-            "request-item";
-
-
-        var info =
-            document.createElement(
-                "div"
-            );
-
-
-        info.className =
-            "info";
-
-
-        var name =
-            document.createElement(
-                "div"
-            );
-
-
-        name.className =
-            "name";
-
-
-        name.textContent =
-            item.username;
-
-
-        var pid =
-            document.createElement(
-                "div"
-            );
-
-
-        pid.className =
-            "pid";
-
-
-        pid.textContent =
-            item.playerId;
-
-
-        var dbid =
-            document.createElement(
-                "div"
-            );
-
-
-        dbid.className =
-            "dbid";
-
-
-        dbid.textContent =
-            "Database ID: "
-            + item.id;
-
-
-        info.appendChild(
-            name
-        );
-
-
-        info.appendChild(
-            pid
-        );
-
-
-        info.appendChild(
-            dbid
-        );
-
-
-        var accept =
-            document.createElement(
-                "button"
-            );
-
-
-        accept.className =
-            "accept";
-
-
-        accept.textContent =
-            "ACCEPT";
-
-
-        accept.onclick =
-            function () {
-
-                acceptRequest(
-                    item.friendId
-                );
-            };
-
-
-        var reject =
-            document.createElement(
-                "button"
-            );
-
-
-        reject.className =
-            "reject";
-
-
-        reject.textContent =
-            "REJECT";
-
-
-        reject.onclick =
-            function () {
-
-                rejectRequest(
-                    item.friendId
-                );
-            };
-
-
-        row.appendChild(
-            info
-        );
-
-
-        row.appendChild(
-            accept
-        );
-
-
-        row.appendChild(
-            reject
-        );
-
-
-        box.appendChild(
-            row
-        );
-    }
-
-
-    // =====================================================
-    // ACCEPT
-    // =====================================================
-
-    async function acceptRequest(
-        friendId
-    ) {
-
-        try {
-
-            var response =
-                await fetch(
-                    "/api/friends/"
-                    + friendId
-                    + "/accept",
-                    {
-
-                        method:
-                            "POST",
-
-                        credentials:
-                            "same-origin"
-                    }
-                );
-
-
-            if (!checkLogin(response)) {
-                return;
-            }
-
-
-            var data =
-                await readJson(
-                    response
-                );
-
-
-            if (!response.ok) {
-
-                alert(
-                    data.message ||
-                    "Cannot accept."
-                );
-
-                return;
-            }
-
-
-            await loadRequests();
-
-            await loadFriends();
-
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-        }
-    }
-
-
-    // =====================================================
-    // REJECT
-    // =====================================================
-
-    async function rejectRequest(
-        friendId
-    ) {
-
-        try {
-
-            var response =
-                await fetch(
-                    "/api/friends/"
-                    + friendId
-                    + "/reject",
-                    {
-
-                        method:
-                            "POST",
-
-                        credentials:
-                            "same-origin"
-                    }
-                );if (!checkLogin(response)) {
-                return;
-            }
-
-
-            var data =
-                await readJson(
-                    response
-                );
-
-
-            if (!response.ok) {
-
-                alert(
-                    data.message ||
-                    "Cannot reject."
-                );
-
-                return;
-            }
-
-
-            await loadRequests();
-
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-        }
-    }
-
-
-    // =====================================================
-    // FRIEND LIST
-    // =====================================================
-
-    async function loadFriends() {
-
-        var box =
-            document.getElementById(
-                "friendsList"
-            );
-
-
-        box.innerHTML =
-            "";
-
-
-        showEmpty(
-            box,
-            "Loading..."
-        );
-
-
-        try {
-
-            var response =
-                await fetch(
-                    "/api/friends/list",
-                    {
-                        credentials:
-                            "same-origin"
-                    }
-                );
-
-
-            if (!checkLogin(response)) {
-                return;
-            }
-
-
-            var data =
-                await readJson(
-                    response
-                );
-
-
-            box.innerHTML =
-                "";
-
-
-            if (!response.ok) {
-
-                showEmpty(
-                    box,
-                    data.message ||
-                    "Cannot load friends."
-                );
-
-                return;
-            }
-
-
-            if (!Array.isArray(data)
-                    || data.length === 0) {
-
-                showEmpty(
-                    box,
-                    "No friends yet."
-                );
-
-                return;
-            }
-
-
-            data.forEach(
-                function (item) {
-
-                    var row =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    row.className =
-                        "friend-item";
-
-
-                    var info =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    info.className =
-                        "info";
-
-
-                    var name =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    name.className =
-                        "name";
-
-
-                    name.textContent =
-                        item.username;
-
-
-                    var pid =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    pid.className =
-                        "pid";
-
-
-                    pid.textContent =
-                        item.playerId;
-
-
-                    var dbid =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    dbid.className =
-                        "dbid";
-
-
-                    dbid.textContent =
-                        "Database ID: "
-                        + item.id;
-
-
-                    info.appendChild(
-                        name
-                    );
-
-
-                    info.appendChild(
-                        pid
-                    );
-
-
-                    info.appendChild(
-                        dbid
-                    );
-
-
-                    row.appendChild(
-                        info
-                    );
-
-
-                    box.appendChild(
-                        row
-                    );
-                }
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-
-            box.innerHTML =
-                "";
-
-
-            showEmpty(
-                box,
-                "Cannot load friends."
-            );
-        }
-    }// =====================================================
-    // EMPTY
-    // =====================================================
-
-    function showEmpty(
-        box,
-        message
-    ) {
-
-        var empty =
-            document.createElement(
-                "div"
-            );
-
-
-        empty.className =
-            "empty";
-
-
-        empty.textContent =
-            message;
-
-
-        box.appendChild(
-            empty
-        );
-    }
-
-
-    // =====================================================
-    // BACK
-    // =====================================================
-
-    function goBack() {
-
-        window.location.href =
-            "/homepage.html";
-    }
-
-
-    // =====================================================
-    // ENTER SEARCH
-    // =====================================================
-
-    document
-        .getElementById(
-            "searchInput"
-        )
-        .addEventListener(
-            "keydown",
-            function (event) {
-
-                if (event.key === "Enter") {
-
-                    searchPlayer();
-                }
-            }
-        );
-
-
-    // =====================================================
-    // START
-    // =====================================================
-
-    window.addEventListener(
-        "load",
-        async function () {
-
-            await loadMe();
-
-            await loadRequests();
-
-            await loadFriends();
-        }
-    );
+    var selectedTarget = null;
+
+      async function readJson(response) {
+          var text = await response.text();
+          if (!text) {
+              return {};
+          }
+          try {
+              return JSON.parse(text);
+          } catch (error) {
+              return {
+                  success: false,
+                  message: text
+              };
+          }
+      }
+
+      function checkLogin(response) {
+          if (response.status === 401) {
+              window.location.replace("/login.html");
+              return false;
+          }
+          return true;
+      }
+
+      async function loadMe() {
+          try {
+              var response = await fetch("/api/friends/me", {
+                  credentials: "same-origin"
+              });
+
+              if (!checkLogin(response)) {
+                  return;
+              }
+
+              var data = await readJson(response);
+
+              if (!response.ok) {
+                  document.getElementById("playerId").textContent = data.message || "Cannot load player.";
+                  return;
+              }
+
+              document.getElementById("playerId").textContent = data.playerId;
+              document.getElementById("databaseId").textContent = "Database ID: " + data.id;
+
+          } catch (error) {
+              console.error(error);
+          }
+      }
+
+      async function searchPlayer() {
+          var query = document.getElementById("searchInput").value.trim();
+          var message = document.getElementById("message");
+          var foundPlayer = document.getElementById("foundPlayer");
+          var sendButton = document.getElementById("sendButton");
+
+          selectedTarget = null;
+          sendButton.disabled = true;
+          foundPlayer.style.display = "none";
+          message.textContent = "";
+
+          if (!query) {
+              message.textContent = "Please enter player.";
+              return;
+          }
+
+          try {
+              var response = await fetch("/api/friends/search?query=" + encodeURIComponent(query), {
+                  credentials: "same-origin"
+              });
+
+              if (!checkLogin(response)) {
+                  return;
+              }
+
+              var data = await readJson(response);
+
+              if (!response.ok) {
+                  message.textContent = data.message || "Player not found.";
+                  return;
+              }
+
+              selectedTarget = data.playerId;
+              document.getElementById("foundName").textContent = data.username;
+              document.getElementById("foundId").textContent = data.playerId + " | Database ID: " + data.id;
+
+              foundPlayer.style.display = "block";
+              sendButton.disabled = false;
+              message.textContent = "Player found.";
+
+          } catch (error) {
+              console.error(error);
+              message.textContent = "Cannot connect to server.";
+          }
+      }
+
+      async function sendRequest() {
+          var message = document.getElementById("message");
+
+          if (!selectedTarget) {
+              message.textContent = "Search player first.";
+              return;
+          }
+
+          try {
+              var response = await fetch("/api/friends/request", {
+                  method: "POST",
+                  credentials: "same-origin",
+                  headers: {
+                      "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify({
+                      target: selectedTarget
+                  })
+              });
+
+              if (!checkLogin(response)) {
+                  return;
+              }
+
+              var data = await readJson(response);
+              message.textContent = data.message || "Done.";
+
+              if (response.ok) {
+                  document.getElementById("sendButton").disabled = true;
+              }
+
+          } catch (error) {
+              console.error(error);
+              message.textContent = "Cannot connect to server.";
+          }
+      }
+
+      async function loadRequests() {
+          var box = document.getElementById("requestsList");
+          box.innerHTML = "";
+          showEmpty(box, "Loading...");
+
+          try {
+              var response = await fetch("/api/friends/requests", {
+                  credentials: "same-origin"
+              });
+
+              if (!checkLogin(response)) {
+                  return;
+              }
+
+              var data = await readJson(response);
+              box.innerHTML = "";
+
+              if (!response.ok) {
+                  showEmpty(box, data.message || "Cannot load requests.");
+                  return;
+              }
+
+              if (!Array.isArray(data) || data.length === 0) {
+                  showEmpty(box, "No friend requests.");
+                  return;
+              }
+
+              data.forEach(function (item) {
+                  createRequest(box, item);
+              });
+
+          } catch (error) {
+              console.error(error);
+              box.innerHTML = "";
+              showEmpty(box, "Cannot load requests.");
+          }
+      }
+
+      function createRequest(box, item) {
+          var row = document.createElement("div");
+          row.className = "request-item";
+
+          var info = document.createElement("div");
+          info.className = "info";
+
+          var name = document.createElement("div");
+          name.className = "name";
+          name.textContent = item.username;
+
+          var pid = document.createElement("div");
+          pid.className = "pid";
+          pid.textContent = item.playerId;
+
+          var dbid = document.createElement("div");
+          dbid.className = "dbid";
+          dbid.textContent = "Database ID: " + item.id;
+
+          info.appendChild(name);
+          info.appendChild(pid);
+          info.appendChild(dbid);
+
+          var accept = document.createElement("button");
+          accept.className = "accept";
+          accept.textContent = "ACCEPT";
+          accept.onclick = function () {
+              acceptRequest(item.friendId);
+          };
+
+          var reject = document.createElement("button");
+          reject.className = "reject";
+          reject.textContent = "REJECT";
+          reject.onclick = function () {
+              rejectRequest(item.friendId);
+          };
+
+          row.appendChild(info);
+          row.appendChild(accept);
+          row.appendChild(reject);
+          box.appendChild(row);
+      }
+
+      async function acceptRequest(friendId) {
+          try {
+              var response = await fetch("/api/friends/" + friendId + "/accept", {
+                  method: "POST",
+                  credentials: "same-origin"
+              });
+
+              if (!checkLogin(response)) {
+                  return;
+              }
+
+              var data = await readJson(response);
+
+              if (!response.ok) {
+                  alert(data.message || "Cannot accept.");
+                  return;
+              }
+
+              await loadRequests();
+              await loadFriends();
+
+          } catch (error) {
+              console.error(error);
+          }
+      }
+
+      async function rejectRequest(friendId) {
+          try {
+              var response = await fetch("/api/friends/" + friendId + "/reject", {
+                  method: "POST",
+                  credentials: "same-origin"
+              });
+
+              if (!checkLogin(response)) {
+                  return;
+              }
+
+              var data = await readJson(response);
+
+              if (!response.ok) {
+                  alert(data.message || "Cannot reject.");
+                  return;
+              }
+
+              await loadRequests();
+
+          } catch (error) {
+              console.error(error);
+          }
+      }
+
+      async function loadFriends() {
+          var box = document.getElementById("friendsList");
+          box.innerHTML = "";
+          showEmpty(box, "Loading...");
+
+          try {
+              var response = await fetch("/api/friends/list", {
+                  credentials: "same-origin"
+              });
+
+              if (!checkLogin(response)) {
+                  return;
+              }
+
+              var data = await readJson(response);
+              box.innerHTML = "";
+
+              if (!response.ok) {
+                  showEmpty(box, data.message || "Cannot load friends.");
+                  return;
+              }
+
+              if (!Array.isArray(data) || data.length === 0) {
+                  showEmpty(box, "No friends yet.");
+                  return;
+              }
+
+              data.forEach(function (item) {
+                  var row = document.createElement("div");
+                  row.className = "friend-item";
+
+                  var avatar = document.createElement("img");
+                  avatar.className = "friend-avatar";
+                  avatar.src = item.profileImage || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='none' stroke='%2389aaff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'></path><circle cx='12' cy='7' r='4'></circle></svg>";
+
+                  var info = document.createElement("div");
+                  info.className = "friend-info";
+
+                  var nameRow = document.createElement("div");
+                  nameRow.className = "friend-name-row";
+
+                  var name = document.createElement("div");
+                  name.className = "name";
+                  name.textContent = item.username;
+
+                  var status = document.createElement("div");
+                  status.className = "status-indicator " + (item.isOnline ? "status-online" : "status-offline");
+                  status.textContent = item.isOnline ? "● Online" : "○ Offline";
+
+                  nameRow.appendChild(name);
+                  nameRow.appendChild(status);
+                  info.appendChild(nameRow);
+
+                  // 💡 Friend Item ထဲတွင် Player ID နှင့် Database ID ပါ ပေါ်လာစေရန် ဖြည့်စွက်ထားခြင်း
+                  var pid = document.createElement("div");
+                  pid.className = "pid";
+                  pid.textContent = item.playerId;
+
+                  var dbid = document.createElement("div");
+                  dbid.className = "dbid";
+                  dbid.textContent = "Database ID: " + item.id;
+
+                  info.appendChild(pid);
+                  info.appendChild(dbid);
+
+                  row.appendChild(avatar);
+                  row.appendChild(info);
+                  box.appendChild(row);
+              });
+
+          } catch (error) {
+              console.error(error);
+              box.innerHTML = "";
+              showEmpty(box, "Cannot load friends.");
+          }
+      }
+
+      function showEmpty(box, message) {
+          var empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = message;
+          box.appendChild(empty);
+      }
+
+      function goBack() {
+          window.location.href = "/homepage.html";
+      }
+
+      document.getElementById("searchInput").addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+              searchPlayer();
+          }
+      });
+
+      window.addEventListener("load", async function () {
+          await loadMe();
+          await loadRequests();
+          await loadFriends();
+      });
 
 </script>
 

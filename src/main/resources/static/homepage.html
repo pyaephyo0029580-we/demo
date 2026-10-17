@@ -71,17 +71,18 @@
         <div class="home-left-panel">
 
             <h1 class="home-title-label">
-                AMONG US
+                Who...!
             </h1>
 
 
-            <div class="home-menu-buttons">
+            <div class="home-left-panel">
 
-                <a id="playLink"
-                   class="home-menu-button"
-                   href="/play.html">
+                <button
+                        type="button"
+                        id="playButton"
+                        class="home-menu-button">
                     PLAY
-                </a>
+                </button>
 
 
                 <a id="inventoryLink"
@@ -201,9 +202,6 @@
 
 
             /* =====================================
-               COINS
-            ===================================== */
-            /* =====================================
                COINS (Database ကနေ လှမ်းယူမယ်)
             ===================================== */
 
@@ -222,7 +220,6 @@
                 }
             }
 
-            // ⭐ Page စတက်တာနဲ့ Coin ကို လှမ်းယူမယ်
             fetchUserCoins();
 
 
@@ -253,16 +250,22 @@
 
 
             /* =====================================
-               PLAY LINK
+               PLAY BUTTON & LINK
             ===================================== */
 
             document.getElementById(
-                "playLink"
-            ).href =
-                "/play.html?room=" +
-                encodeURIComponent(roomCode) +
-                "&user=" +
-                encodeURIComponent(username);
+                "playButton"
+            ).addEventListener(
+                "click",
+                function () {
+                    playClickSound();
+                    window.location.href =
+                        "/play.html?room=" +
+                        encodeURIComponent(roomCode) +
+                        "&user=" +
+                        encodeURIComponent(username);
+                }
+            );
 
 
 
@@ -293,7 +296,7 @@
 
 
             /* =====================================
-               SHOP BUTTON (Connected to shop.html)
+               SHOP BUTTON
             ===================================== */
 
             document.getElementById(
@@ -315,7 +318,7 @@
 
 
             /* =====================================
-               MY ACCOUNT
+               MY ACCOUNT (Connected to account.html)
             ===================================== */
 
             document.getElementById(
@@ -326,24 +329,12 @@
 
                     playClickSound();
 
-
-                    var email =
-                        sessionStorage.getItem("email")
-                        || "No email";
-
-
-                    var friendCode =
-                        sessionStorage.getItem("friendCode")
-                        || "No friend code";
-
-
-                    alert(
-                        "MY ACCOUNT\n\n" +
-                        "Username: " + username +
-                        "\n\nEmail: " + email +
-                        "\n\nFriend Code: " + friendCode +
-                        "\n\nCoins: " + coins
-                    );
+                    // Account Page ဆီသို့ တိုက်ရိုက် လင့်ခ်ချိတ်ပေးခြင်း
+                    window.location.href =
+                        "/account.html?user=" +
+                        encodeURIComponent(username) +
+                        "&coins=" +
+                        coins;
                 }
             );
 
@@ -359,20 +350,12 @@
                 "click",
                 function () {
 
-                    /* Click SFX */
-
                     playClickSound();
-
-
-                    /* Music ခဏ ရပ် */
 
                     if (typeof bgMusic !== "undefined" && bgMusic) {
 
                         bgMusic.pause();
                     }
-
-
-                    /* Settings page ကို သွား */
 
                     window.location.href =
                         "/settings.html?user=" +
@@ -385,14 +368,6 @@
             /* =====================================
                CLICK SFX FOR LINKS
             ===================================== */
-
-            document.getElementById(
-                "playLink"
-            ).addEventListener(
-                "click",
-                function () { playClickSound(); }
-            );
-
 
             document.getElementById(
                 "inventoryLink"
@@ -468,10 +443,6 @@
        CLICK SFX
     ============================================================ */
 
-           /* ============================================================
-       CLICK SFX
-    ============================================================ */
-
     function playClickSound() {
 
         var sfx =
@@ -498,12 +469,11 @@
 
 
         sfx.volume = vol;
-
-        // အသံကို အစကနေ ပြန်စဖို့ (ခလုတ်အမြန်နှိပ်ရင် အသံပြတ်မနေစေဖို့)
         sfx.currentTime = 0;
 
         sfx.play().catch(function () {});
     }
+
 
 
     /* ============================================================
@@ -514,14 +484,9 @@
 
         applyMusicVolume();
 
-
         bgMusic.play().catch(function (err) {
 
             console.log("Music blocked:", err);
-
-
-            /* Autoplay block ဖြစ်ရင်
-               ပထမ click မှာ စမယ် */
 
             document.addEventListener(
                 "click",
