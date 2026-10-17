@@ -12,8 +12,10 @@ import javafx.stage.Stage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling; // ၁။ Scheduler အတွက် import ထည့်ခြင်း
 
 @SpringBootApplication
+@EnableScheduling // ၂။ Scheduler ကို ဖွင့်ပေးခြင်း (Real Active check အတွက် လိုအပ်သည်)
 public class DemoApplication extends Application {
 
     private static ConfigurableApplicationContext springContext;

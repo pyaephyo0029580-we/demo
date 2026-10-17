@@ -1020,67 +1020,37 @@
 
 
     // =====================================================
-    // GAME START EVENT
-    // =====================================================
+// GAME START EVENT
+// =====================================================
 
-    function handleGameStart(data) {
-      console.log("Game started:", data);
-      setStatus("Game starting...");
-// --- ဒီနေရာမှာ Room Code ကို ယူပြီး Game Map ဆီ ကူးသွားအောင် ရေးပါ ---
-// Server ကနေ data နဲ့အတူ roomCode ပါလာပါက ယူမည်၊ မပါရင် URL ထဲကဟာကို ယူမည်
-      const roomCode = data.roomCode  data.roomId  new URLSearchParams(window.location.search).get('room');
+ function handleGameStart(data) {
 
-// Host ဖြစ်စေ၊ Join ထားတဲ့ Player ဖြစ်စေ START GAME နှိပ်တာနဲ့ Map ထဲသို့ တန်းရောက်သွားမည်
-<!--        if (roomCode) {-->
-<!--    window.location.href = `player.html?room=${roomCode}`;-->
-<!--        }-->
-<!--        else {-->
-<!--           window.location.href =-->
-<!--           player.html?room=RoomA;-->
+    console.log("Game started:", data);
 
-         if (roomCode) {
-// ဥပမာ - ကိုယ့်ရဲ့ Tiled Map ဘက်ကို သွားစေချင်ရင် ဒီလိုပြောင်းပါ
- window.location.href = tiled-game.html?room=${encodeURIComponent(roomCode)}; }
- else {
- window.location.href = player.html?room=RoomA; }
-  // Fallback Room
-}
-}
+    setStatus("Opening Unity Game...");
 
-<!--        console.log(-->
-<!--            "Game started:",-->
-<!--            data-->
-<!--        );-->
-
-
-<!--        setStatus(-->
-<!--            "Game starting..."-->
-<!--        );-->
-
-
-        /*
-         * IMPORTANT:
-         *
-         * For now we do NOT launch Unity.
-         *
-         * Next step:
-         *
-         * Lobby
-         *    ↓
-         * GAME_START
-         *    ↓
-         * Unity Room 1
-         *
-         */
-
-            window.location.href = "player.html?room=" + roomCode;
-
-
-        /*
-         * Unity connection will be added here.
-         */
-
+    // Prevent duplicate launch
+    if (window.gameLaunchStarted) {
+        return;
     }
+
+    window.gameLaunchStarted = true;
+
+    // Use the current Spring Boot server address
+    const unityUrl = new URL(
+        "/unity/index.html",
+        window.location.origin
+    );
+
+    // Pass room information to Unity
+    unityUrl.searchParams.set("roomCode", roomCode);
+    unityUrl.searchParams.set("username", username);
+
+    console.log("Opening Unity:", unityUrl.href);
+
+    // Open Unity in the current browser tab
+    window.location.href = unityUrl.href;
+}
 
 
     // =====================================================
