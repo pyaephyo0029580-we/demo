@@ -260,6 +260,7 @@ body.inventory-body {
 
 .inv-hat-btn {
     width: 80px;
+
     height: 80px;
     background: linear-gradient(to bottom, #2E1A24, #1A0F14);
     border: 3px solid #2E1A24;

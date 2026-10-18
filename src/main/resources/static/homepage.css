@@ -28,6 +28,7 @@ html, body {
 ========================================= */
 .home-game-container {
     min-height: 100vh;
+
     padding: 18px;
     position: relative;
 }
