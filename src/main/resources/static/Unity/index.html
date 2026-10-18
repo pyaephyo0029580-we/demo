@@ -6,50 +6,6 @@
   <title>Unity Web Player | real map1</title>
   <link rel="shortcut icon" href="TemplateData/favicon.ico">
   <link rel="stylesheet" href="TemplateData/style.css">
-
-  <!-- 🟢 HTML Task များကို ပေါ်စေရန် CSS Style များ ထည့်သွင်းခြင်း -->
-  <style>
-    #task-modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-    }
-    #task-modal-content {
-      width: 80%;
-      max-width: 600px;
-      height: 80%;
-      max-height: 500px;
-      background: white;
-      border-radius: 10px;
-      position: relative;
-      overflow: hidden;
-    }
-    #task-iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    #task-close-btn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      background: red;
-      color: white;
-      border: none;
-      padding: 5px 12px;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 5px;
-      z-index: 10000;
-    }
-  </style>
 </head>
 <body>
 <div id="unity-container" class="unity-desktop">
@@ -71,15 +27,6 @@
     <div id="unity-build-title">real map1</div>
   </div>
 </div>
-
-<!-- 🟢 HTML Task များကို ပြသပေးမည့် Modal Overlay -->
-<div id="task-modal-overlay">
-  <div id="task-modal-content">
-    <button id="task-close-btn" onclick="closeTaskModal()">X</button>
-    <iframe id="task-iframe" src=""></iframe>
-  </div>
-</div>
-
 <script>
   let canvas = document.querySelector("#unity-canvas");
   let fullscreenContainer = document.querySelector("#unity-fullscreen-container");
@@ -103,13 +50,20 @@
     updateBannerVisibility();
   }
 
+  // 🟢 URL မှ room, username နှင့် color ကို ဖတ်ယူခြင်း
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const roomCode = urlParams.get('room') || urlParams.get('roomCode') || 'ABC123';
+  const username = urlParams.get('user') || urlParams.get('username') || 'Player';
+  const userColor = urlParams.get('color') || '#C51111';
+
   var buildUrl = "Build";
-  var loaderUrl = buildUrl + "/Final23.loader.js";
+  var loaderUrl = buildUrl + "/Final25.loader.js";
   var config = {
-    arguments: [],
-    dataUrl: buildUrl + "/Final23.data",
-    frameworkUrl: buildUrl + "/Final23.framework.js",
-    codeUrl: buildUrl + "/Final23.wasm",
+    arguments: [roomCode, username, userColor], // 🟢 Unity သို့ roomCode, username နှင့် color ကို arguments အဖြစ် ပို့ပေးခြင်း[cite: 11]
+    dataUrl: buildUrl + "/Final25.data",
+    frameworkUrl: buildUrl + "/Final25.framework.js",
+    codeUrl: buildUrl + "/Final25.wasm",
     streamingAssetsUrl: "StreamingAssets",
     fullscreenElementID: "unity-fullscreen-container",
     companyName: "DefaultCompany",
@@ -129,28 +83,6 @@
     fullscreenContainer.style.width = "960px";
     fullscreenContainer.style.height = "600px";
   }
-
-  // =====================================================
-  // 🟢 Unity မှ လှမ်းခေါ်သော Task များကို လက်ခံရန် Functions
-  // =====================================================
-  window.showTaskModal = function(taskName) {
-    console.log("Showing task modal for:", taskName);
-    var overlay = document.getElementById("task-modal-overlay");
-    var iframe = document.getElementById("task-iframe");
-
-    // tasks/ ဖိုင်တွဲထဲမှ HTML ဖိုင်များကို ဖွင့်လှစ်ခြင်း
-    iframe.src = "tasks/" + taskName + ".html";
-    overlay.style.display = "flex";
-  };
-
-  window.closeTaskModal = function() {
-    var overlay = document.getElementById("task-modal-overlay");
-    var iframe = document.getElementById("task-iframe");
-
-    iframe.src = "";
-    overlay.style.display = "none";
-  };
-
 
   var script = document.createElement("script");
   script.src = loaderUrl;
