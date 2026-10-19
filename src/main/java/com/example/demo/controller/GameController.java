@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -148,22 +149,53 @@ public class GameController {
         response.put("voteCounts", voteCounts);
         messagingTemplate.convertAndSend("/topic/votes", response);
     }
+
     @MessageMapping("/task-complete/{roomId}")
     @SendTo("/topic/room/{roomId}/task-status")
     public Map<String, Object> syncTaskCompletion
             (@DestinationVariable String roomId, Map<String, Object> taskData) {
         return taskData;
     }
+
     @MessageMapping("/move/{roomId}")
     @SendTo("/topic/room/{roomId}")
     public Map<String, Object> movePlayer
             (@DestinationVariable String roomId, Map<String, Object> playerData) {
         return playerData;
     }
+
     // 5. Start Game နှိပ်သောအခါ Room ထဲရှိ လူအားလုံးကို Game စရန် အကြောင်းကြားခြင်း
     @MessageMapping("/start-game/{roomId}")
     @SendTo("/topic/room/{roomId}/start")
     public Map<String, Object> startGame(@DestinationVariable String roomId, Map<String, Object> gameData) {
         return gameData;
+    }
+
+    // 🟢 6. Lobby မှ အရောင်နှင့် Customization (Color/Hat) ပြောင်းလဲမှုကို လက်ခံပြီး Room ထဲသို့ Broadcast လုပ်ရန်
+    @MessageMapping("/update-customization")
+    public void updateCustomization(@Payload Map<String, Object> data) {
+        String roomCode = (String) data.get("roomCode");
+        String username = (String) data.get("username");
+        String color = (String) data.get("color");
+        String hat = (String) data.get("hat");
+
+        if (roomCode != null) {
+            GameRoom room = RoomController.getRoom(roomCode);
+            if (room != null && username != null && color != null) {
+                room.setPlayerColor(username, color);
+            }
+
+            // Room ထဲရှိ အခြားသူများဆီသို့ Broadcast ပို့ခြင်း
+            messagingTemplate.convertAndSend("/topic/room/" + roomCode, Map.of(
+                    "type", "UPDATE_CUSTOMIZATION",
+                    "username", username != null ? username : "",
+                    "color", color != null ? color : "#FFFFFF",
+                    "hat", hat != null ? hat : "",
+                    "players", room != null ? room.getPlayers().values().stream().map(u -> Map.of(
+                            "username", u,
+                            "color", room.getPlayerColors().getOrDefault(u, "#FFFFFF")
+                    )).toList() : java.util.List.of()
+            ));
+        }
     }
 }

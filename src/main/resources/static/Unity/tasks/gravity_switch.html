@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gravity Switch</title>
+
+  <style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #040817, #142456);
+        color: white;
+    }
+
+    .game {
+        width: 650px;
+        max-width: 95%;
+        padding: 30px;
+        background: #081a43;
+        border: 2px solid #39d7ff;
+        border-radius: 24px;
+        text-align: center;
+    }
+
+    .arena {
+        position: relative;
+        width: 100%;
+        height: 380px;
+        margin-top: 25px;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #102f67;
+    }
+
+    #ball {
+        position: absolute;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #67e6ff;
+        box-shadow: 0 0 20px #67e6ff;
+        left: 40px;
+        top: 40px;
+    }
+
+    .goal {
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        right: 20px;
+        bottom: 20px;
+        border-radius: 15px;
+        background: #65ffae;
+        box-shadow: 0 0 20px #65ffae;
+    }
+
+    .wall {
+        position: absolute;
+        background: #ff6a74;
+        border-radius: 10px;
+    }
+
+    .wall1 {
+        width: 250px;
+        height: 25px;
+        left: 90px;
+        top: 130px;
+    }
+
+    .wall2 {
+        width: 25px;
+        height: 180px;
+        left: 380px;
+        top: 70px;
+    }
+
+    .controls {
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .controls button {
+        height: 50px;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    #message {
+        margin-top: 18px;
+        min-height: 32px;
+        font-size: 22px;
+        font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="game">
+
+  <h1>🌀 Gravity Switch</h1>
+
+  <p>
+    Change gravity and guide the energy ball into the green portal.
+  </p>
+
+  <div class="arena" id="arena">
+
+    <div id="ball"></div>
+
+    <div class="goal"></div>
+
+    <div class="wall wall1"></div>
+    <div class="wall wall2"></div>
+
+  </div>
+
+  <div class="controls">
+
+    <button onclick="setGravity('up')">
+      ↑ UP
+    </button>
+
+    <button onclick="setGravity('down')">
+      ↓ DOWN
+    </button>
+
+    <button onclick="setGravity('left')">
+      ← LEFT
+    </button>
+
+    <button onclick="setGravity('right')">
+      → RIGHT
+    </button>
+
+  </div>
+
+  <div id="message"></div>
+
+</div>
+
+<script>
+
+  const arena =
+      document.getElementById("arena");
+
+  const ball =
+      document.getElementById("ball");
+
+  const goal =
+      document.querySelector(".goal");
+
+  const walls =
+      document.querySelectorAll(".wall");
+
+  const message =
+      document.getElementById("message");
+
+
+  let x = 40;
+  let y = 40;
+
+  let dx = 0;
+  let dy = 0;
+
+  let complete = false;
+
+
+  function setGravity(direction) {
+
+      if (complete) {
+          return;
+      }
+
+      dx = 0;
+      dy = 0;
+
+
+      if (direction === "up") {
+          dy = -3;
+      }
+
+      if (direction === "down") {
+          dy = 3;
+      }
+
+      if (direction === "left") {
+          dx = -3;
+      }
+
+      if (direction === "right") {
+          dx = 3;
+      }
+  }
+
+
+  function intersects(a,b) {
+
+      const r1 =
+          a.getBoundingClientRect();
+
+      const r2 =
+          b.getBoundingClientRect();
+
+      return !(
+          r1.right < r2.left ||
+          r1.left > r2.right ||
+          r1.bottom < r2.top ||
+          r1.top > r2.bottom
+      );
+  }
+
+
+  function animate() {
+
+      if (!complete) {
+
+          const oldX = x;
+          const oldY = y;
+
+
+          x += dx;
+          y += dy;x = Math.max(
+            0,
+            Math.min(
+                arena.clientWidth - 45,
+                x
+            )
+        );
+
+        y = Math.max(
+            0,
+            Math.min(
+                arena.clientHeight - 45,
+                y
+            )
+        );
+
+
+        ball.style.left =
+            x + "px";
+
+        ball.style.top =
+            y + "px";
+
+
+        for (
+            const wall of walls
+        ) {
+
+            if (
+                intersects(
+                    ball,
+                    wall
+                )
+            ) {
+
+                x = oldX;
+                y = oldY;
+
+                dx = 0;
+                dy = 0;
+
+                ball.style.left =
+                    x + "px";
+
+                ball.style.top =
+                    y + "px";
+
+                message.textContent =
+                    "Blocked! Change gravity.";
+
+                message.style.color =
+                    "#ffd56b";
+
+                break;
+            }
+        }
+
+
+        if (
+            intersects(
+                ball,
+                goal
+            )
+        ) {
+
+            complete = true;
+
+            dx = 0;
+            dy = 0;
+
+            message.textContent =
+                "✓ TASK COMPLETE";
+
+            message.style.color =
+                "#65ffae";
+        }
+    }
+
+
+    requestAnimationFrame(
+        animate
+    );
+}
+
+
+animate();
+
+</script>
+
+</body>
+</html>
