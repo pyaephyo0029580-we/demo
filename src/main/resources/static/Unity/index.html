@@ -1,3 +1,120 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en-us">-->
+<!--<head>-->
+<!--  <meta charset="utf-8">-->
+<!--  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">-->
+<!--  <title>Unity Web Player | real map1</title>-->
+<!--  <link rel="shortcut icon" href="TemplateData/favicon.ico">-->
+<!--  <link rel="stylesheet" href="TemplateData/style.css">-->
+<!--</head>-->
+<!--<body>-->
+<!--<div id="unity-container" class="unity-desktop">-->
+<!--  <div id="unity-fullscreen-container">-->
+<!--    <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>-->
+<!--    <div id="unity-loading-container">-->
+<!--      <div id="unity-loading-bar">-->
+<!--        <div id="unity-logo"></div>-->
+<!--        <div id="unity-progress-bar-empty">-->
+<!--          <div id="unity-progress-bar-full"></div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  <div id="unity-warning"> </div>-->
+<!--  <div id="unity-footer">-->
+<!--    <div id="unity-logo-title-footer"></div>-->
+<!--    <div id="unity-fullscreen-button"></div>-->
+<!--    <div id="unity-build-title">real map1</div>-->
+<!--  </div>-->
+<!--</div>-->
+<!--<script>-->
+<!--  let canvas = document.querySelector("#unity-canvas");-->
+<!--  let fullscreenContainer = document.querySelector("#unity-fullscreen-container");-->
+
+<!--  // 🟢 Unity ဘက်မှ Mini Task များကို ဖွင့်ရန် လှမ်းခေါ်မည့် showTaskModal function-->
+<!--  window.showTaskModal = function(taskName) {-->
+<!--    console.log("[HTML Task] Opening task modal for: " + taskName);-->
+<!--    // လိုအပ်ပါက ဤနေရာတွင် Task Modal ကို ဖွင့်ပေးမည့် JavaScript/DOM code များ ထည့်သွင်းနိုင်ပါသည်-->
+<!--  };-->
+
+<!--  // Shows a temporary message banner/ribbon for a few seconds, or-->
+<!--  // a permanent error message on top of the canvas if type=='error'.-->
+<!--  function unityShowBanner(msg, type) {-->
+<!--    var warningBanner = document.querySelector("#unity-warning");-->
+<!--    function updateBannerVisibility() {-->
+<!--      warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';-->
+<!--    }-->
+<!--    var div = document.createElement('div');-->
+<!--    div.innerHTML = msg;-->
+<!--    warningBanner.appendChild(div);-->
+<!--    if (type == 'error') div.style = 'background: red; padding: 10px;';-->
+<!--    else {-->
+<!--      if (type == 'warning') div.style = 'background: yellow; padding: 10px;';-->
+<!--      setTimeout(function() {-->
+<!--        warningBanner.removeChild(div);-->
+<!--        updateBannerVisibility();-->
+<!--      }, 5000);-->
+<!--    }-->
+<!--    updateBannerVisibility();-->
+<!--  }-->
+
+<!--  var buildUrl = "Build";-->
+<!--  var loaderUrl = buildUrl + "/NewOne.loader.js";-->
+<!--  var config = {-->
+<!--    arguments: [],-->
+<!--    dataUrl: buildUrl + "/NewOne.data",-->
+<!--    frameworkUrl: buildUrl + "/NewOne.framework.js",-->
+<!--    codeUrl: buildUrl + "/NewOne.wasm",-->
+<!--    streamingAssetsUrl: "StreamingAssets",-->
+
+<!--    fullscreenElementID: "unity-fullscreen-container",-->
+
+<!--    companyName: "DefaultCompany",-->
+<!--    productName: "real map1",-->
+<!--    productVersion: "1.0",-->
+<!--    showBanner: unityShowBanner,-->
+<!--  };-->
+
+<!--  if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {-->
+<!--    var meta = document.createElement('meta');-->
+<!--    meta.name = 'viewport';-->
+<!--    meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';-->
+<!--    document.getElementsByTagName('head')[0].appendChild(meta);-->
+<!--    document.querySelector("#unity-container").className = "unity-mobile";-->
+<!--    canvas.className = "unity-mobile";-->
+<!--  } else {-->
+<!--    fullscreenContainer.style.width = "960px";-->
+<!--    fullscreenContainer.style.height = "600px";-->
+<!--  }-->
+
+<!--  var script = document.createElement("script");-->
+<!--  script.src = loaderUrl;-->
+<!--  script.onload = () => {-->
+<!--    const loadingContainer = document.querySelector("#unity-loading-container");-->
+<!--    const progressBarFull = document.querySelector("#unity-progress-bar-full");-->
+
+<!--    createUnityInstance(canvas, config, (progress) => {-->
+<!--      if (progress < 1) {-->
+<!--        loadingContainer.style.display = "block";-->
+<!--        progressBarFull.style.width = 100 * progress + "%";-->
+<!--      } else {-->
+<!--        loadingContainer.style.display = "none";-->
+<!--      }-->
+<!--    }).then((unityInstance) => {-->
+<!--            document.querySelector("#unity-fullscreen-button").onclick = () => {-->
+<!--              unityInstance.SetFullscreen(1);-->
+<!--            };-->
+<!--          }).catch((message) => {-->
+<!--            alert(message);-->
+<!--          });-->
+<!--        };-->
+
+<!--  document.body.appendChild(script);-->
+
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
@@ -6,6 +123,50 @@
   <title>Unity Web Player | real map1</title>
   <link rel="shortcut icon" href="TemplateData/favicon.ico">
   <link rel="stylesheet" href="TemplateData/style.css">
+
+  <!-- 🟢 HTML Task များကို ပေါ်စေရန် CSS Style များ ထည့်သွင်းခြင်း -->
+  <style>
+    #task-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    #task-modal-content {
+      width: 80%;
+      max-width: 600px;
+      height: 80%;
+      max-height: 500px;
+      background: white;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    #task-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    #task-close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 12px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      z-index: 10000;
+    }
+  </style>
 </head>
 <body>
 <div id="unity-container" class="unity-desktop">
@@ -27,6 +188,15 @@
     <div id="unity-build-title">real map1</div>
   </div>
 </div>
+
+<!-- 🟢 HTML Task များကို ပြသပေးမည့် Modal Overlay -->
+<div id="task-modal-overlay">
+  <div id="task-modal-content">
+    <button id="task-close-btn" onclick="closeTaskModal()">X</button>
+    <iframe id="task-iframe" src=""></iframe>
+  </div>
+</div>
+
 <script>
   let canvas = document.querySelector("#unity-canvas");
   let fullscreenContainer = document.querySelector("#unity-fullscreen-container");
@@ -50,20 +220,13 @@
     updateBannerVisibility();
   }
 
-  // 🟢 URL မှ room, username နှင့် color ကို ဖတ်ယူခြင်း
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const roomCode = urlParams.get('room') || urlParams.get('roomCode') || 'ABC123';
-  const username = urlParams.get('user') || urlParams.get('username') || 'Player';
-  const userColor = urlParams.get('color') || '#C51111';
-
   var buildUrl = "Build";
-  var loaderUrl = buildUrl + "/Final25.loader.js";
+  var loaderUrl = buildUrl + "/NewOne.loader.js";
   var config = {
-    arguments: [roomCode, username, userColor], // 🟢 Unity သို့ roomCode, username နှင့် color ကို arguments အဖြစ် ပို့ပေးခြင်း[cite: 11]
-    dataUrl: buildUrl + "/Final25.data",
-    frameworkUrl: buildUrl + "/Final25.framework.js",
-    codeUrl: buildUrl + "/Final25.wasm",
+    arguments: [],
+    dataUrl: buildUrl + "/NewOne.data",
+    frameworkUrl: buildUrl + "/NewOne.framework.js",
+    codeUrl: buildUrl + "/NewOne.wasm",
     streamingAssetsUrl: "StreamingAssets",
     fullscreenElementID: "unity-fullscreen-container",
     companyName: "DefaultCompany",
@@ -83,6 +246,28 @@
     fullscreenContainer.style.width = "960px";
     fullscreenContainer.style.height = "600px";
   }
+
+  // =====================================================
+  // 🟢 Unity မှ လှမ်းခေါ်သော Task များကို လက်ခံရန် Functions
+  // =====================================================
+  window.showTaskModal = function(taskName) {
+    console.log("Showing task modal for:", taskName);
+    var overlay = document.getElementById("task-modal-overlay");
+    var iframe = document.getElementById("task-iframe");
+
+    // Unity folder ထဲရှိ tasks/ ဖိုင်တွဲမှ HTML ဖိုင်များကို ဖွင့်လှစ်ခြင်း
+    iframe.src = "tasks/" + taskName + ".html";
+    overlay.style.display = "flex";
+  };
+
+  window.closeTaskModal = function() {
+    var overlay = document.getElementById("task-modal-overlay");
+    var iframe = document.getElementById("task-iframe");
+
+    iframe.src = "";
+    overlay.style.display = "none";
+  };
+
 
   var script = document.createElement("script");
   script.src = loaderUrl;
