@@ -15,51 +15,74 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #111426;
+            background: #150912;
             font-family: Arial, sans-serif;
         }
 
         .box {
             width: 380px;
             padding: 30px;
-            background: #202947;
+            background: #251222;
+            border: 2px solid #ff2a85;
             border-radius: 15px;
             color: white;
+            box-shadow: 0 0 20px rgba(255, 42, 133, 0.25);
         }
 
         h1 {
             text-align: center;
+            color: #ff2a85;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 42, 133, 0.5);
+            margin-bottom: 25px;
         }
 
         input {
             width: 100%;
             height: 48px;
             margin-bottom: 15px;
-            padding: 0 12px;
+            padding: 0 15px;
             box-sizing: border-box;
-            border: none;
-            border-radius: 8px;
+            border: 2px solid #ff2a85;
+            border-radius: 10px;
+            background: #150912;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            box-shadow: 0 0 10px rgba(255, 42, 133, 0.5);
         }
 
         button {
             width: 100%;
             height: 48px;
             border: none;
-            border-radius: 8px;
-            background: #3689ef;
+            border-radius: 10px;
+            background: #ff2a85;
             color: white;
             font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 1px;
             cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        button:hover {
+            background: #e61973;
+            box-shadow: 0 0 15px rgba(255, 42, 133, 0.6);
         }
 
         .signup-link {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 20px;
             color: #aaa;
+            font-size: 14px;
         }
 
         .signup-link a {
-            color: #3689ef;
+            color: #ff2a85;
             text-decoration: none;
             font-weight: bold;
         }
@@ -72,6 +95,7 @@
             margin-top: 15px;
             text-align: center;
             color: #ff8b9b;
+            font-weight: bold;
         }
     </style>
 </head>
