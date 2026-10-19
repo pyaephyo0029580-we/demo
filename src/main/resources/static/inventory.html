@@ -1,3 +1,755 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+
+<!--    <title>Among Us - Inventory</title>-->
+
+<!--    <link rel="stylesheet" href="inventory.css">-->
+<!--</head>-->
+
+
+<!--<body class="inventory-body">-->
+
+
+<!--&lt;!&ndash; ============================================================-->
+<!--     TOP BAR-->
+<!--============================================================ &ndash;&gt;-->
+
+<!--<div class="inv-topbar">-->
+
+<!--    <button-->
+<!--            class="inv-back-btn"-->
+<!--            onclick="goBack()">-->
+<!--        ✕-->
+<!--    </button>-->
+
+
+<!--    <span-->
+<!--            class="inv-nav-tab active"-->
+<!--            onclick="showTab('colors', this)">-->
+<!--        🎨 COLORS-->
+<!--    </span>-->
+
+
+<!--    <span-->
+<!--            class="inv-nav-tab"-->
+<!--            onclick="showTab('hats', this)">-->
+<!--        🎩 HAT-->
+<!--    </span>-->
+
+<!--</div>-->
+
+
+
+<!--&lt;!&ndash; ============================================================-->
+<!--     MAIN CONTENT-->
+<!--============================================================ &ndash;&gt;-->
+
+<!--<div class="inv-content">-->
+
+
+<!--    &lt;!&ndash; ========================================================-->
+<!--         LEFT SIDE-->
+<!--    ======================================================== &ndash;&gt;-->
+
+<!--    <div class="inv-left">-->
+
+<!--        <div id="tabContent"></div>-->
+
+<!--    </div>-->
+
+
+
+<!--    &lt;!&ndash; ========================================================-->
+<!--         RIGHT SIDE-->
+<!--    ======================================================== &ndash;&gt;-->
+
+<!--    <div class="inv-right">-->
+
+
+<!--        &lt;!&ndash; ====================================================-->
+<!--             CHARACTER PREVIEW-->
+<!--        ==================================================== &ndash;&gt;-->
+
+<!--        <div class="inv-char-pane">-->
+
+
+<!--            &lt;!&ndash;-->
+<!--                IMPORTANT-->
+
+<!--                Character နဲ့ Hat ကို-->
+<!--                container တစ်ခုထဲမှာထားပါတယ်။-->
+<!--            &ndash;&gt;-->
+
+<!--            <div class="character-layer">-->
+
+
+<!--                &lt;!&ndash; CHARACTER &ndash;&gt;-->
+
+<!--                <img-->
+<!--                        id="characterImg"-->
+<!--                        src="Image/Jellypop-Photoroom.png"-->
+<!--                        class="inv-character"-->
+<!--                        alt="Character"-->
+<!--                >-->
+
+
+<!--                &lt;!&ndash; HAT &ndash;&gt;-->
+
+<!--                <img-->
+<!--                        id="hatImg"-->
+<!--                        class="inv-hat"-->
+<!--                        alt="Hat"-->
+<!--                        style="display: none;"-->
+<!--                >-->
+
+<!--            </div>-->
+
+<!--        </div>-->
+
+
+
+<!--        &lt;!&ndash; ====================================================-->
+<!--             ITEM NAME-->
+<!--        ==================================================== &ndash;&gt;-->
+
+<!--        <div-->
+<!--                id="itemName"-->
+<!--                class="inv-item-name">-->
+
+<!--            RED-->
+
+<!--        </div>-->
+
+
+
+<!--        &lt;!&ndash; ====================================================-->
+<!--             EQUIPPED-->
+<!--        ==================================================== &ndash;&gt;-->
+
+<!--        <div class="inv-equipped">-->
+
+<!--            EQUIPPED-->
+
+<!--        </div>-->
+
+
+<!--    </div>-->
+
+<!--</div>-->
+
+
+
+<!--<script>-->
+
+<!--    /* ============================================================-->
+<!--       URL-->
+<!--    ============================================================ */-->
+
+<!--    const params =-->
+<!--        new URLSearchParams(window.location.search);-->
+
+<!--    const roomCode =-->
+<!--        params.get('room') || 'DEFAULT';-->
+
+<!--    const username =-->
+<!--        params.get('user') || 'Player';-->
+
+
+
+<!--    /* ============================================================-->
+<!--       COLORS-->
+<!--    ============================================================ */-->
+
+<!--    const COLORS = [-->
+
+<!--        ["Red", "#C51111"],-->
+<!--        ["Blue", "#132ED1"],-->
+<!--        ["Green", "#117F2D"],-->
+<!--        ["Pink", "#ED54BA"],-->
+<!--        ["Orange", "#EF7D0D"],-->
+<!--        ["Yellow", "#F5F557"],-->
+<!--        ["Black", "#3F474E"],-->
+<!--        ["White", "#D6E0F0"],-->
+<!--        ["Purple", "#6B2FBB"],-->
+<!--        ["Brown", "#71491E"],-->
+<!--        ["Cyan", "#38FEDC"],-->
+<!--        ["Lime", "#50EF39"]-->
+
+<!--    ];-->
+
+<!--    /* ============================================================-->
+<!--       HATS-->
+
+<!--       x     = Left / Right-->
+<!--       y     = Up / Down-->
+<!--       scale = Size-->
+
+<!--       ဒီ values တွေကို Hat တစ်ခုချင်းစီအတွက်-->
+<!--       သီးသန့်ချိန်နိုင်ပါတယ်။-->
+<!--    ============================================================ */-->
+
+<!--      const HAT_POSITIONS = {-->
+<!--        "No Hat":   { x: 0,  y: 0,    scale: 1.0 },-->
+<!--        "Hat 1":    { x: 0,  y: -105, scale: 1.5 },-->
+<!--        "Hat 2":    { x: 0,  y: -90,  scale: 1.2 },-->
+<!--        "Hat 3":    { x: 0,  y: 35,   scale: 1.5 },-->
+<!--        "Hat 4":    { x: 0,  y: -30,  scale: 1.8 },-->
+<!--        "Hat 5":    { x: 0,  y: -90,  scale: 1.2 },-->
+<!--        "Hat 6":    { x: 0,  y: -90,  scale: 1.3 },-->
+<!--        "Hat 7":    { x: 0,  y: -30,  scale: 1.8 },-->
+<!--       "Lufi Hat": { x: 0,  y: -95, scale: 1.9 }-->
+<!--    };-->
+
+<!--    let HATS = [-->
+<!--        {-->
+<!--            name: "No Hat",-->
+<!--            path: null,-->
+<!--            x: 0,-->
+<!--            y: 0,-->
+<!--            scale: 1-->
+<!--        }-->
+<!--    ];-->
+
+
+<!--    /* ============================================================-->
+<!--       CURRENT STATE-->
+<!--    ============================================================ */-->
+
+<!--    let currentColor = "Red";-->
+
+<!--    let currentColorHex = "#C51111";-->
+
+<!--    let currentHat = "No Hat";-->
+
+<!--    let originalImageSrc =-->
+<!--        "Image/Jellypop-Photoroom.png";-->
+
+
+
+<!--    /* ============================================================-->
+<!--       TAB-->
+<!--    ============================================================ */-->
+
+<!--   function showTab(tab, element) {-->
+<!--    document.querySelectorAll(".inv-nav-tab").forEach(tabElement => {-->
+<!--        tabElement.classList.remove("active");-->
+<!--    });-->
+<!--    element.classList.add("active");-->
+
+<!--    if (tab === "colors") {-->
+<!--        renderColors();-->
+<!--    }-->
+<!--    else if (tab === "hats") {-->
+<!--        renderHats();-->
+<!--    }-->
+<!--}-->
+
+
+<!--    /* ============================================================-->
+<!--       COLORS-->
+<!--    ============================================================ */-->
+
+<!--   function renderColors() {-->
+<!--    let html = `-->
+<!--        <h2 class="inv-section-title">-->
+<!--            COLORS-->
+<!--        </h2>-->
+<!--        <div class="inv-color-grid">-->
+<!--    `;-->
+
+<!--    COLORS.forEach(([name, hex]) => {-->
+<!--        const selected = name === currentColor ? "selected" : "";-->
+
+<!--        html += `-->
+<!--            <div-->
+<!--                class="inv-color-btn ${selected}"-->
+<!--                style="background:${hex};"-->
+<!--                onclick="pickColor('${name}', '${hex}')">-->
+<!--            </div>-->
+<!--        `;-->
+<!--    });-->
+
+<!--    html += `</div>`;-->
+
+<!--    document.getElementById("tabContent").innerHTML = html;-->
+<!--}-->
+
+<!--    /* ============================================================-->
+<!--       PICK COLOR-->
+<!--    ============================================================ */-->
+
+<!--    function pickColor(name, hex) {-->
+
+<!--        currentColor = name;-->
+
+<!--        currentColorHex = hex;-->
+
+
+<!--        document-->
+<!--            .getElementById("itemName")-->
+<!--            .innerText =-->
+<!--            name.toUpperCase();-->
+
+
+<!--        applyColor(hex);-->
+
+
+<!--        renderColors();-->
+
+<!--    }-->
+
+
+
+<!--    /* ============================================================-->
+<!--       CHARACTER COLOR-->
+<!--    ============================================================ */-->
+
+<!--    function applyColor(hex) {-->
+
+<!--        const img =-->
+<!--            document.getElementById("characterImg");-->
+
+
+<!--        const canvas =-->
+<!--            document.createElement("canvas");-->
+
+
+<!--        const ctx =-->
+<!--            canvas.getContext("2d");-->
+
+
+<!--        const temp =-->
+<!--            new Image();-->
+
+
+<!--        temp.crossOrigin = "anonymous";-->
+
+<!--        temp.src = originalImageSrc;-->
+
+
+<!--        temp.onload = () => {-->
+
+<!--            canvas.width = temp.width;-->
+
+<!--            canvas.height = temp.height;-->
+
+
+<!--            ctx.drawImage(-->
+<!--                temp,-->
+<!--                0,-->
+<!--                0-->
+<!--            );-->
+
+
+<!--            const imageData =-->
+<!--                ctx.getImageData(-->
+<!--                    0,-->
+<!--                    0,-->
+<!--                    canvas.width,-->
+<!--                    canvas.height-->
+<!--                );-->
+
+
+<!--            const data =-->
+<!--                imageData.data;-->
+
+
+<!--            const rgb =-->
+<!--                hexToRgb(hex);-->
+
+
+<!--            for (-->
+<!--                let i = 0;-->
+<!--                i < data.length;-->
+<!--                i += 4-->
+<!--            ) {-->
+
+<!--                const r = data[i];-->
+
+<!--                const g = data[i + 1];-->
+
+<!--                const b = data[i + 2];-->
+
+<!--                const a = data[i + 3];-->
+
+
+<!--                if (a < 25) {-->
+<!--                    continue;-->
+<!--                }-->
+
+
+<!--                const brightness =-->
+<!--                    (r + g + b) / 3;-->
+
+
+<!--                const isFace =-->
+<!--                    r > 153 &&-->
+<!--                    g > 127 &&-->
+<!--                    (r - b) > 5;-->
+
+
+<!--                const isDark =-->
+<!--                    brightness < 115;-->
+
+
+<!--                if (!isFace && !isDark) {-->
+
+<!--                    data[i] =-->
+<!--                        rgb.r;-->
+
+<!--                    data[i + 1] =-->
+<!--                        rgb.g;-->
+
+<!--                    data[i + 2] =-->
+<!--                        rgb.b;-->
+
+<!--                }-->
+
+<!--            }-->
+
+
+<!--            ctx.putImageData(-->
+<!--                imageData,-->
+<!--                0,-->
+<!--                0-->
+<!--            );-->
+
+
+<!--            img.src =-->
+<!--                canvas.toDataURL();-->
+
+<!--        };-->
+
+
+<!--        temp.onerror = () => {-->
+
+<!--            console.error(-->
+<!--                "Character image failed:",-->
+<!--                originalImageSrc-->
+<!--            );-->
+
+
+<!--            img.src =-->
+<!--                originalImageSrc;-->
+
+<!--        };-->
+
+<!--    }-->
+
+
+
+<!--    /* ============================================================-->
+<!--       HEX TO RGB-->
+<!--    ============================================================ */-->
+
+<!--    function hexToRgb(hex) {-->
+
+<!--        const match =-->
+<!--            /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i-->
+<!--            .exec(hex);-->
+
+
+<!--        return match-->
+<!--            ? {-->
+
+<!--                r: parseInt(match[1], 16),-->
+
+<!--                g: parseInt(match[2], 16),-->
+
+<!--                b: parseInt(match[3], 16)-->
+
+<!--            }-->
+
+<!--            : {-->
+
+<!--                r: 255,-->
+
+<!--                g: 0,-->
+
+<!--                b: 0-->
+
+<!--            };-->
+
+<!--    }-->
+
+
+
+<!--    /* ============================================================-->
+<!--       HATS-->
+<!--    ============================================================ */-->
+
+<!--    function renderHats() {-->
+
+<!--        let html = `-->
+
+<!--            <h2 class="inv-section-title">-->
+<!--                HATS-->
+<!--            </h2>-->
+
+<!--            <div class="inv-hat-grid">-->
+
+<!--        `;-->
+
+
+<!--        HATS.forEach((hat, index) => {-->
+
+<!--            const selected =-->
+<!--                hat.name === currentHat-->
+<!--                    ? "selected"-->
+<!--                    : "";-->
+
+
+<!--            if (hat.path) {-->
+
+<!--                html += `-->
+
+<!--                    <div-->
+<!--                        class="inv-hat-btn ${selected}"-->
+<!--                        onclick="pickHat(${index})">-->
+
+<!--                        <img-->
+<!--                            src="${hat.path}"-->
+<!--                            alt="${hat.name}"-->
+<!--                        >-->
+
+<!--                    </div>-->
+
+<!--                `;-->
+
+<!--            }-->
+
+<!--            else {-->
+
+<!--                html += `-->
+
+<!--                    <div-->
+<!--                        class="inv-hat-btn ${selected}"-->
+<!--                        onclick="pickHat(${index})">-->
+
+<!--                        ∅-->
+
+<!--                    </div>-->
+
+<!--                `;-->
+
+<!--            }-->
+
+<!--        });-->
+
+
+<!--        html += `-->
+
+<!--            </div>-->
+
+<!--        `;-->
+
+
+<!--        document-->
+<!--            .getElementById("tabContent")-->
+<!--            .innerHTML = html;-->
+
+<!--    }-->
+
+
+
+<!--    /* ============================================================-->
+<!--       EQUIP HAT-->
+<!--    ============================================================ */-->
+
+<!--    function pickHat(index) {-->
+
+<!--        const hat =-->
+<!--            HATS[index];-->
+
+
+<!--        currentHat =-->
+<!--            hat.name;-->
+
+<!--        document-->
+<!--            .getElementById("itemName")-->
+<!--            .innerText =-->
+<!--            hat.name.toUpperCase();-->
+
+
+<!--        const hatImg =-->
+<!--            document.getElementById("hatImg");-->
+
+
+<!--        /* ========================================================-->
+<!--           NO HAT-->
+<!--        ======================================================== */-->
+
+<!--        if (!hat.path) {-->
+
+<!--            hatImg.style.display =-->
+<!--                "none";-->
+
+<!--            renderHats();-->
+
+<!--            return;-->
+
+<!--        }-->
+
+
+<!--        /* ========================================================-->
+<!--           HAT IMAGE-->
+<!--        ======================================================== */-->
+
+<!--        hatImg.src =-->
+<!--            hat.path;-->
+
+
+<!--        hatImg.style.display =-->
+<!--            "block";-->
+
+
+<!--        /* ========================================================-->
+<!--           HAT POSITION-->
+
+<!--           Character center = Hat center-->
+
+<!--           x = horizontal-->
+<!--           y = vertical-->
+<!--           scale = size-->
+<!--        ======================================================== */-->
+
+<!--        hatImg.style.left =-->
+<!--            `calc(50% + ${hat.x}px)`;-->
+
+
+<!--        hatImg.style.top =-->
+<!--            `calc(50% + ${hat.y}px)`;-->
+
+
+<!--        hatImg.style.transform =-->
+<!--            `translate(-50%, -50%) scale(${hat.scale})`;-->
+
+
+<!--        renderHats();-->
+
+<!--    }-->
+
+
+
+<!--    /* ============================================================-->
+<!--       BACK-->
+<!--    ============================================================ */-->
+
+<!--    function goBack() {-->
+
+<!--        window.location.href =-->
+<!--            "homepage.html?user=" +-->
+<!--            encodeURIComponent(username);-->
+
+<!--    }-->
+
+<!--    /* ============================================================-->
+<!--       CLICK SFX (Inventory Page အတွက် အသံထည့်ခြင်း)-->
+<!--    ============================================================ */-->
+
+<!--    function playClickSound() {-->
+<!--        // သင့် folder ထဲက အသံဖိုင်-->
+<!--        var sfx = new Audio('/sounds/MouseClick.mp3');-->
+
+<!--        var saved = localStorage.getItem('gameSettings');-->
+<!--        var vol = 0.65;-->
+
+<!--        if (saved) {-->
+<!--            try {-->
+<!--                vol = JSON.parse(saved).sfx / 100;-->
+<!--            } catch (e) {}-->
+<!--        }-->
+
+<!--        sfx.volume = vol;-->
+<!--        sfx.currentTime = 0; // အသံကို အစကနေ ပြန်စဖို့-->
+<!--        sfx.play().catch(function () {});-->
+<!--    }-->
+
+<!--    // ခလုတ်တွေ နှိပ်လိုက်တိုင်း အသံထွက်အောင် စောင့်နားထောင်ခြင်း-->
+<!--    document.addEventListener('click', function (event) {-->
+<!--        // Back ခလုတ်၊ Tab ခလုတ်တွေ၊ အရောင် Box တွေ၊ ခုတ် Box တွေ နှိပ်ရင် အသံထွက်မယ်-->
+<!--        if (event.target.closest('.inv-back-btn') ||-->
+<!--            event.target.closest('.inv-nav-tab') ||-->
+<!--            event.target.closest('.inv-color-btn') ||-->
+<!--            event.target.closest('.inv-hat-btn')) {-->
+
+<!--            playClickSound();-->
+<!--        }-->
+<!--    });-->
+
+<!--    /* ============================================================-->
+<!--       LOAD INVENTORY FROM DATABASE-->
+<!--    ============================================================ */-->
+
+<!--  async function loadInventoryFromDB() {-->
+<!--        try {-->
+<!--            const response = await fetch(`/api/inventory?username=${encodeURIComponent(username)}`);-->
+<!--            const data = await response.json();-->
+
+<!--            console.log("Inventory from DB:", data);-->
+
+<!--            HATS = [-->
+<!--                {-->
+<!--                    name: "No Hat",-->
+<!--                    path: null,-->
+<!--                    x: 0,-->
+<!--                    y: 0,-->
+<!--                    scale: 1-->
+<!--                }-->
+<!--            ];-->
+
+<!--            data.filter(item => item.category === 'HAT').forEach(item => {-->
+<!--                const pos = HAT_POSITIONS[item.name] || { x: 0, y: -90, scale: 1.3 };-->
+
+<!--                HATS.push({-->
+<!--                    name: item.name,-->
+<!--                    path: item.imagePath,-->
+<!--                    x: pos.x,-->
+<!--                    y: pos.y,-->
+<!--                    scale: pos.scale-->
+<!--                });-->
+<!--            });-->
+
+<!--            // ❌ ဒီနေရာက renderHats(); ကို ဖြုတ်လိုက်ပါ (သို့မဟုတ် Comment လုပ်ထားလိုက်ပါ)-->
+<!--            // renderHats();-->
+
+<!--        } catch (error) {-->
+<!--            console.error("Error loading inventory:", error);-->
+<!--        }-->
+<!--    }-->
+<!--      /* ============================================================-->
+<!--       INITIAL LOAD-->
+<!--    ============================================================ */-->
+
+<!--   /* ============================================================-->
+<!--       INITIAL LOAD-->
+<!--    ============================================================ */-->
+
+<!--    window.onload = function () {-->
+
+<!--        // ⭐ ပထမဦးဆုံး Colors Tab ကို အရင် render လုပ်ပါ-->
+<!--        renderColors();-->
+
+<!--        setTimeout(() => {-->
+<!--            applyColor(currentColorHex);-->
+<!--        }, 100);-->
+
+<!--        // ⭐ ပြီးမှ Database ကနေ Hat တွေ လှမ်းယူပါ-->
+<!--        loadInventoryFromDB();-->
+
+<!--    };-->
+
+<!--</script>-->
+
+
+<!--</body>-->
+<!--</html>-->
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -146,7 +898,7 @@
 <script>
 
     /* ============================================================
-       URL
+       URL PARAMS
     ============================================================ */
 
     const params =
@@ -157,6 +909,59 @@
 
     const username =
         params.get('user') || 'Player';
+
+
+
+    /* ============================================================
+       WEBSOCKET CONNECTION (Spring Boot WebSocket Sync)
+    ============================================================ */
+
+    let ws;
+
+    function connectWebSocket() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = protocol + "//" + window.location.host + "/unity-websocket";
+
+        ws = new WebSocket(wsUrl);
+
+        ws.onopen = function () {
+            console.log("Connected to WebSocket Server from inventory.html");
+            // Room ထဲဝင်ရောက်ကြောင်း JOIN မက်ဆေ့ခ်ျ ပို့ခြင်း
+            const joinMsg = {
+                type: "JOIN",
+                roomCode: roomCode,
+                username: username
+            };
+            ws.send(JSON.stringify(joinMsg));
+        };
+
+        ws.onerror = function (error) {
+            console.error("WebSocket Error:", error);
+        };
+
+        ws.onclose = function () {
+            console.log("WebSocket Connection Closed. Reconnecting...");
+            setTimeout(connectWebSocket, 3000);
+        };
+    }
+
+    // Server ဆီသို့ Customization (Color & Hat) အပြောင်းအလဲ ပို့မည့် Function
+    function sendCustomizationUpdate() {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            const message = {
+                type: "UPDATE_CUSTOMIZATION",
+                roomCode: roomCode,
+                username: username,
+                color: currentColorHex,
+                hat: currentHat === "No Hat" ? "" : currentHat
+            };
+            ws.send(JSON.stringify(message));
+            console.log("Sent customization update:", message);
+        }
+    }
+
+    // Page စပွင့်သည်နှင့် WebSocket ချိတ်ဆက်ရန် ခေါ်မည်
+    connectWebSocket();
 
 
 
@@ -183,13 +988,6 @@
 
     /* ============================================================
        HATS
-
-       x     = Left / Right
-       y     = Up / Down
-       scale = Size
-
-       ဒီ values တွေကို Hat တစ်ခုချင်းစီအတွက်
-       သီးသန့်ချိန်နိုင်ပါတယ်။
     ============================================================ */
 
       const HAT_POSITIONS = {
@@ -305,6 +1103,9 @@
 
 
         renderColors();
+
+        // 🟢 အရောင်ပြောင်းလိုက်တိုင်း Server ဆီသို့ WebSocket ဖြင့် ပို့မည်
+        sendCustomizationUpdate();
 
     }
 
@@ -596,6 +1397,9 @@
 
             renderHats();
 
+            // 🟢 Hat ဖြုတ်လိုက်သည့်အခါ Server ဆီသို့ WebSocket ဖြင့် ပို့မည်
+            sendCustomizationUpdate();
+
             return;
 
         }
@@ -615,12 +1419,6 @@
 
         /* ========================================================
            HAT POSITION
-
-           Character center = Hat center
-
-           x = horizontal
-           y = vertical
-           scale = size
         ======================================================== */
 
         hatImg.style.left =
@@ -636,6 +1434,9 @@
 
 
         renderHats();
+
+        // 🟢 Hat အသစ်ရွေးလိုက်သည့်အခါ Server ဆီသို့ WebSocket ဖြင့် ပို့မည်
+        sendCustomizationUpdate();
 
     }
 
@@ -654,11 +1455,10 @@
     }
 
     /* ============================================================
-       CLICK SFX (Inventory Page အတွက် အသံထည့်ခြင်း)
+       CLICK SFX
     ============================================================ */
 
     function playClickSound() {
-        // သင့် folder ထဲက အသံဖိုင်
         var sfx = new Audio('/sounds/MouseClick.mp3');
 
         var saved = localStorage.getItem('gameSettings');
@@ -671,13 +1471,11 @@
         }
 
         sfx.volume = vol;
-        sfx.currentTime = 0; // အသံကို အစကနေ ပြန်စဖို့
+        sfx.currentTime = 0;
         sfx.play().catch(function () {});
     }
 
-    // ခလုတ်တွေ နှိပ်လိုက်တိုင်း အသံထွက်အောင် စောင့်နားထောင်ခြင်း
     document.addEventListener('click', function (event) {
-        // Back ခလုတ်၊ Tab ခလုတ်တွေ၊ အရောင် Box တွေ၊ ခုတ် Box တွေ နှိပ်ရင် အသံထွက်မယ်
         if (event.target.closest('.inv-back-btn') ||
             event.target.closest('.inv-nav-tab') ||
             event.target.closest('.inv-color-btn') ||
@@ -720,31 +1518,23 @@
                 });
             });
 
-            // ❌ ဒီနေရာက renderHats(); ကို ဖြုတ်လိုက်ပါ (သို့မဟုတ် Comment လုပ်ထားလိုက်ပါ)
-            // renderHats();
-
         } catch (error) {
             console.error("Error loading inventory:", error);
         }
     }
-      /* ============================================================
-       INITIAL LOAD
-    ============================================================ */
 
-   /* ============================================================
+    /* ============================================================
        INITIAL LOAD
     ============================================================ */
 
     window.onload = function () {
 
-        // ⭐ ပထမဦးဆုံး Colors Tab ကို အရင် render လုပ်ပါ
         renderColors();
 
         setTimeout(() => {
             applyColor(currentColorHex);
         }, 100);
 
-        // ⭐ ပြီးမှ Database ကနေ Hat တွေ လှမ်းယူပါ
         loadInventoryFromDB();
 
     };
