@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //////package com.example.demo.controller;
 //////
 //////import java.util.Map;
@@ -58,6 +59,11 @@
 ////
 ////import java.util.Map;
 ////import java.util.Set;
+=======
+////package com.example.demo.controller;
+////
+////import java.util.Map;
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////import java.util.concurrent.ConcurrentHashMap;
 ////
 ////public class GameRoom {
@@ -65,6 +71,7 @@
 ////    private final String roomCode;
 ////    private final String host;
 ////
+<<<<<<< HEAD
 ////    private final Map<String, String> players =
 ////            new ConcurrentHashMap<>();
 ////
@@ -77,12 +84,21 @@
 ////
 ////    // Voting ပြီးဆုံးပြီးနောက် Cooldown
 ////    private volatile long emergencyCooldownUntil = 0L;
+=======
+////    private final Map<String, String> players = new ConcurrentHashMap<>();
+////
+////    private boolean gameStarted = false;
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////
 ////    public GameRoom(String roomCode, String host) {
 ////        this.roomCode = roomCode;
 ////        this.host = host;
 ////
+<<<<<<< HEAD
 ////        // Host ကို Room ထဲ အလိုအလျောက်ထည့်
+=======
+////        // Host ကို room ထဲ အလိုအလျောက်ထည့်
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////        players.put(host, host);
 ////    }
 ////
@@ -106,6 +122,7 @@
 ////        this.gameStarted = gameStarted;
 ////    }
 ////
+<<<<<<< HEAD
 ////    private volatile boolean gameStarted = false;
 ////
 ////    public boolean addPlayer(String username) {
@@ -114,10 +131,20 @@
 ////        }
 ////
 ////        return players.putIfAbsent(username, username) == null;
+=======
+////    public boolean addPlayer(String username) {
+////        if (players.containsKey(username)) {
+////            return false;
+////        }
+////
+////        players.put(username, username);
+////        return true;
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////    }
 ////
 ////    public void removePlayer(String username) {
 ////        players.remove(username);
+<<<<<<< HEAD
 ////        eliminatedPlayers.remove(username);
 ////    }
 ////
@@ -160,6 +187,8 @@
 ////                0L,
 ////                emergencyCooldownUntil - System.currentTimeMillis()
 ////        );
+=======
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////    }
 ////}
 //
@@ -187,8 +216,11 @@
 //    // Voting ပြီးဆုံးပြီးနောက် Cooldown
 //    private volatile long emergencyCooldownUntil = 0L;
 //
+<<<<<<< HEAD
 //    private volatile boolean gameStarted = false;
 //
+=======
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //    public GameRoom(String roomCode, String host) {
 //        this.roomCode = roomCode;
 //        this.host = host;
@@ -217,6 +249,11 @@
 //        this.gameStarted = gameStarted;
 //    }
 //
+<<<<<<< HEAD
+=======
+//    private volatile boolean gameStarted = false;
+//
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //    public boolean addPlayer(String username) {
 //        if (username == null || username.isBlank()) {
 //            return false;
@@ -272,10 +309,17 @@
 //    }
 //}
 
+<<<<<<< HEAD
 
 package com.example.demo.controller;
 
 import java.util.*;
+=======
+package com.example.demo.controller;
+
+import java.util.Map;
+import java.util.Set;
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameRoom {
@@ -297,6 +341,7 @@ public class GameRoom {
     private volatile long emergencyCooldownUntil = 0L;
 
     private volatile boolean gameStarted = false;
+<<<<<<< HEAD
 
     // HTML Mini-tasks ၂၀ စာရင်း
     private static final List<String> ALL_TASKS = List.of(
@@ -325,6 +370,8 @@ public class GameRoom {
 
         return assignedTasks;
     }
+=======
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 
     public GameRoom(String roomCode, String host) {
         this.roomCode = roomCode;

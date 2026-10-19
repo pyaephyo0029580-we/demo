@@ -224,7 +224,11 @@
 ////    }
 ////
 ////    // =====================================================
+<<<<<<< HEAD
 ////    // KILL MECHANIC (Among Us Style) - FIXED & MEETING INTEGRATED
+=======
+////    // KILL MECHANIC (Among Us Style)
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////    // =====================================================
 ////
 ////    private void handleKill(
@@ -243,6 +247,7 @@
 ////            return;
 ////        }
 ////
+<<<<<<< HEAD
 ////        String targetUsername = data.path("targetUsername").asText("");
 ////
 ////        System.out.println("PLAYER KILLED: Killer=" + username + ", Target=" + targetUsername + " in room " + roomCode);
@@ -313,12 +318,83 @@
 ////                Thread.currentThread().interrupt();
 ////            }
 ////        }).start();
+=======
+////        String targetUser = data.path("targetUser").asText("");
+////
+////        System.out.println("PLAYER KILLED: Killer=" + username + ", Target=" + targetUser + " in room " + roomCode);
+////
+////        Map<String, Object> payload = Map.of(
+////                "type", "PLAYER_KILLED",
+////                "killer", username,
+////                "targetUser", targetUser
+////        );
+////
+////        // Room ထဲမှာရှိတဲ့ လူအားလုံး (Impator နဲ့ Crewmate များ) ဆီကို Broadcast လုပ်မယ်
+////        broadcastToRoom(roomCode, payload, null);
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////    }
 ////
 ////    // =====================================================
 ////    // MEETING / EMERGENCY BUTTON MECHANIC
 ////    // =====================================================
 ////
+<<<<<<< HEAD
+=======
+//////    private void handleMeeting(
+//////            WebSocketSession session,
+//////            JsonNode data) throws IOException {
+//////
+//////        String roomCode = sessionRooms.get(session.getId());
+//////        String username = sessionUsers.get(session.getId());
+//////
+//////        if (roomCode == null || username == null) {
+//////            sendError(session, "NOT_JOINED", "Send JOIN before MEETING");
+//////            return;
+//////        }
+//////
+//////        GameRoom room = RoomController.getRoom(roomCode);
+//////        if (room == null) return;
+//////
+//////        java.util.List<Map<String, Object>> playerList = new java.util.ArrayList<>();
+//////        int index = 0;
+//////        for (String pUsername : room.getPlayers().keySet()) {
+//////            Map<String, Object> pData = new HashMap<>();
+//////            pData.put("username", pUsername);
+//////            pData.put("spawnIndex", index++);
+//////            pData.put("eligible", !room.isEliminated(pUsername));
+//////            pData.put("eliminated", room.isEliminated(pUsername));
+//////            playerList.add(pData);
+//////        }
+//////
+//////        System.out.println("MEETING STARTED by: " + username + " in room " + roomCode);
+//////
+//////        // 1. Discussion Phase စတင်ကြောင်း ပို့မည်
+//////        Map<String, Object> payload = Map.of(
+//////                "type", "MEETING_STARTED",
+//////                "calledBy", username,
+//////                "durationSeconds", 10, // ဥပမာ - ဆွေးနွေးချိန် ၁၀ စက္ကန့်
+//////                "players", playerList
+//////        );
+//////
+//////        broadcastToRoom(roomCode, payload, null);
+//////
+//////        // 2. ခဏစောင့်ပြီး (ဥပမာ ၁၀ စက္ကန့်ပြည့်လျှင်) Voting Phase စတင်ကြောင်း ထပ်ပို့မည်
+//////        new Thread(() -> {
+//////            try {
+//////                Thread.sleep(10000); // Discussion ချိန်ပြီးဆုံးရန် စောင့်မည်
+//////                Map<String, Object> votingPayload = Map.of(
+//////                        "type", "VOTING_STARTED",
+//////                        "durationSeconds", 15, // မဲခွဲချိန် ၁၅ စက္ကန့်
+//////                        "players", playerList
+//////                );
+//////                broadcastToRoom(roomCode, votingPayload, null);
+//////            } catch (InterruptedException e) {
+//////                Thread.currentThread().interrupt();
+//////            }
+//////        }).start();
+//////    }
+////
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////    private void handleMeeting(
 ////            WebSocketSession session,
 ////            JsonNode data) throws IOException {
@@ -334,6 +410,10 @@
 ////        GameRoom room = RoomController.getRoom(roomCode);
 ////        if (room == null) return;
 ////
+<<<<<<< HEAD
+=======
+////        // 🟢 Cooldown စစ်ဆေးခြင်း (၁၀ စက္ကန့် သတ်မှတ်ထားသည်)
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////        if (!room.canCallEmergencyMeeting()) {
 ////            long remaining = room.getEmergencyCooldownRemainingMillis() / 1000;
 ////            sendError(session, "COOLDOWN", "Emergency meeting is on cooldown. Please wait " + remaining + " seconds.");
@@ -355,6 +435,10 @@
 ////
 ////        System.out.println("MEETING STARTED by: " + username + " in room " + roomCode);
 ////
+<<<<<<< HEAD
+=======
+////        // 1. Discussion Phase စတင်ခြင်း (ဥပမာ ၁၀ စက္ကန့်)
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////        Map<String, Object> payload = Map.of(
 ////                "type", "MEETING_STARTED",
 ////                "calledBy", username,
@@ -364,8 +448,15 @@
 ////
 ////        broadcastToRoom(roomCode, payload, null);
 ////
+<<<<<<< HEAD
 ////        new Thread(() -> {
 ////            try {
+=======
+////        // 2. Voting နှင့် Meeting ပြီးဆုံးခြင်းကို Thread ဖြင့် ဆက်လုပ်ဆောင်မည်
+////        new Thread(() -> {
+////            try {
+////                // Discussion ချိန် ၁၀ စက္ကန့် စောင့်မည်
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////                Thread.sleep(10000);
 ////
 ////                Map<String, Object> votingPayload = Map.of(
@@ -375,23 +466,40 @@
 ////                );
 ////                broadcastToRoom(roomCode, votingPayload, null);
 ////
+<<<<<<< HEAD
 ////                Thread.sleep(15000);
 ////
+=======
+////                // Voting ချိန် ၁၅ စက္ကန့် ဆက်စောင့်မည်
+////                Thread.sleep(15000);
+////
+////                // Meeting ပြီးဆုံးကြောင်း ပို့မည်
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////                Map<String, Object> endPayload = Map.of(
 ////                        "type", "MEETING_END"
 ////                );
 ////                broadcastToRoom(roomCode, endPayload, null);
 ////
+<<<<<<< HEAD
 ////                room.setMeetingActive(false);
 ////                room.startEmergencyCooldown(10000);
+=======
+////                // 🟢 Meeting ပြီးသွားသည်နှင့် ၁၀ စက္ကန့် Cooldown စတင်သတ်မှတ်မည်
+////                room.setMeetingActive(false);
+////                room.startEmergencyCooldown(10000); // ၁၀ စက္ကန့် (milliseconds)
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////
 ////            } catch (InterruptedException e) {
 ////                Thread.currentThread().interrupt();
 ////            }
 ////        }).start();
 ////    }
+<<<<<<< HEAD
 ////
 ////    // =====================================================
+=======
+//////    ================================================
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 ////    // START GAME - CALLED BY RoomController
 ////    // =====================================================
 ////
@@ -519,6 +627,10 @@
 ////    }
 ////}
 //
+<<<<<<< HEAD
+=======
+//
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //package com.example.demo.controller;
 //
 //import com.fasterxml.jackson.databind.JsonNode;
@@ -671,14 +783,21 @@
 //        );
 //
 //        if (room.isGameStarted()) {
+<<<<<<< HEAD
 //            java.util.List<Map<String, Object>> assignedTasks = room.getRandomTasksForLocations();
+=======
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //            sendJson(
 //                    session,
 //                    Map.of(
 //                            "type", "GAME_START",
 //                            "roomCode", roomCode,
+<<<<<<< HEAD
 //                            "scene", "SampleScene",
 //                            "assignedTasks", assignedTasks
+=======
+//                            "scene", "SampleScene"
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //                    )
 //            );
 //        }
@@ -747,7 +866,11 @@
 //    }
 //
 //    // =====================================================
+<<<<<<< HEAD
 //    // KILL MECHANIC (Among Us Style) - FIXED & MEETING INTEGRATED
+=======
+//    // KILL MECHANIC (Among Us Style) - FIXED
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //    // =====================================================
 //
 //    private void handleKill(
@@ -770,12 +893,18 @@
 //
 //        System.out.println("PLAYER KILLED: Killer=" + username + ", Target=" + targetUsername + " in room " + roomCode);
 //
+<<<<<<< HEAD
 //        // 1. Unity ဘက်သို့ Kill ဖြစ်ကြောင်း (Animation နှင့် Audio အတွက်) ပို့မည်
 //        Map<String, Object> killPayload = Map.of(
+=======
+//        // 🟢 Unity ဘက်က မျှော်လင့်ထားသော type "KILL" နှင့် field များကို အမှန်အတိုင်း ပို့ပေးမည်
+//        Map<String, Object> payload = Map.of(
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //                "type", "KILL",
 //                "killerUsername", username,
 //                "targetUsername", targetUsername
 //        );
+<<<<<<< HEAD
 //        broadcastToRoom(roomCode, killPayload, null);
 //
 //        // 2. လူတစ်ယောက်သေသည်နှင့် Meeting ကို အလိုအလျောက် စတင်မည်
@@ -836,6 +965,11 @@
 //                Thread.currentThread().interrupt();
 //            }
 //        }).start();
+=======
+//
+//        // Room ထဲရှိ လူအားလုံးဆီသို့ Broadcast လုပ်မည်
+//        broadcastToRoom(roomCode, payload, null);
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //    }
 //
 //    // =====================================================
@@ -857,6 +991,10 @@
 //        GameRoom room = RoomController.getRoom(roomCode);
 //        if (room == null) return;
 //
+<<<<<<< HEAD
+=======
+//        // 🟢 Cooldown စစ်ဆေးခြင်း (၁၀ စက္ကန့် သတ်မှတ်ထားသည်)
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //        if (!room.canCallEmergencyMeeting()) {
 //            long remaining = room.getEmergencyCooldownRemainingMillis() / 1000;
 //            sendError(session, "COOLDOWN", "Emergency meeting is on cooldown. Please wait " + remaining + " seconds.");
@@ -878,6 +1016,10 @@
 //
 //        System.out.println("MEETING STARTED by: " + username + " in room " + roomCode);
 //
+<<<<<<< HEAD
+=======
+//        // 1. Discussion Phase စတင်ခြင်း (ဥပမာ ၁၀ စက္ကန့်)
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //        Map<String, Object> payload = Map.of(
 //                "type", "MEETING_STARTED",
 //                "calledBy", username,
@@ -887,8 +1029,15 @@
 //
 //        broadcastToRoom(roomCode, payload, null);
 //
+<<<<<<< HEAD
 //        new Thread(() -> {
 //            try {
+=======
+//        // 2. Voting နှင့် Meeting ပြီးဆုံးခြင်းကို Thread ဖြင့် ဆက်လုပ်ဆောင်မည်
+//        new Thread(() -> {
+//            try {
+//                // Discussion ချိန် ၁၀ စက္ကန့် စောင့်မည်
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //                Thread.sleep(10000);
 //
 //                Map<String, Object> votingPayload = Map.of(
@@ -898,15 +1047,28 @@
 //                );
 //                broadcastToRoom(roomCode, votingPayload, null);
 //
+<<<<<<< HEAD
 //                Thread.sleep(15000);
 //
+=======
+//                // Voting ချိန် ၁၅ စက္ကန့် ဆက်စောင့်မည်
+//                Thread.sleep(15000);
+//
+//                // Meeting ပြီးဆုံးကြောင်း ပို့မည်
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //                Map<String, Object> endPayload = Map.of(
 //                        "type", "MEETING_END"
 //                );
 //                broadcastToRoom(roomCode, endPayload, null);
 //
+<<<<<<< HEAD
 //                room.setMeetingActive(false);
 //                room.startEmergencyCooldown(10000);
+=======
+//                // 🟢 Meeting ပြီးသွားသည်နှင့် ၁၀ စက္ကန့် Cooldown စတင်သတ်မှတ်မည်
+//                room.setMeetingActive(false);
+//                room.startEmergencyCooldown(10000); // ၁၀ စက္ကန့် (milliseconds)
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //
 //            } catch (InterruptedException e) {
 //                Thread.currentThread().interrupt();
@@ -919,6 +1081,7 @@
 //    // =====================================================
 //
 //    public void broadcastGameStart(String roomCode) {
+<<<<<<< HEAD
 //        GameRoom room = RoomController.getRoom(roomCode);
 //        java.util.List<Map<String, Object>> assignedTasks =
 //                (room != null) ? room.getRandomTasksForLocations() : new java.util.ArrayList<>();
@@ -928,6 +1091,12 @@
 //                "roomCode", roomCode,
 //                "scene", "SampleScene",
 //                "assignedTasks", assignedTasks
+=======
+//        Map<String, Object> payload = Map.of(
+//                "type", "GAME_START",
+//                "roomCode", roomCode,
+//                "scene", "SampleScene"
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 //        );
 //
 //        broadcastToRoom(roomCode, payload, null);
@@ -1122,11 +1291,14 @@ public class UnityWebSocketHandler extends TextWebSocketHandler {
                 handleMeeting(session, data);
                 break;
 
+<<<<<<< HEAD
             // 🟢 Lobby Customization (Color & Hat) Sync အတွက် ထည့်သွင်းထားသည်
             case "UPDATE_CUSTOMIZATION":
                 handleCustomization(session, data);
                 break;
 
+=======
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
             default:
                 sendError(
                         session,
@@ -1204,14 +1376,21 @@ public class UnityWebSocketHandler extends TextWebSocketHandler {
         );
 
         if (room.isGameStarted()) {
+<<<<<<< HEAD
             java.util.List<Map<String, Object>> assignedTasks = room.getRandomTasksForLocations();
+=======
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
             sendJson(
                     session,
                     Map.of(
                             "type", "GAME_START",
                             "roomCode", roomCode,
+<<<<<<< HEAD
                             "scene", "SampleScene",
                             "assignedTasks", assignedTasks
+=======
+                            "scene", "SampleScene"
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
                     )
             );
         }
@@ -1280,6 +1459,7 @@ public class UnityWebSocketHandler extends TextWebSocketHandler {
     }
 
     // =====================================================
+<<<<<<< HEAD
     // CUSTOMIZATION UPDATE (Color & Hat Sync)
     // =====================================================
 
@@ -1305,6 +1485,8 @@ public class UnityWebSocketHandler extends TextWebSocketHandler {
     }
 
     // =====================================================
+=======
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
     // KILL MECHANIC (Among Us Style) - FIXED & MEETING INTEGRATED
     // =====================================================
 
@@ -1353,6 +1535,10 @@ public class UnityWebSocketHandler extends TextWebSocketHandler {
             playerList.add(pData);
         }
 
+<<<<<<< HEAD
+=======
+        // 🟢 Meeting called by နေရာတွင် [Target] was killed ဟု ပေါ်စေရန်
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
         String calledText = targetUsername + " was killed";
 
         Map<String, Object> meetingPayload = Map.of(
@@ -1364,8 +1550,15 @@ public class UnityWebSocketHandler extends TextWebSocketHandler {
 
         broadcastToRoom(roomCode, meetingPayload, null);
 
+<<<<<<< HEAD
         new Thread(() -> {
             try {
+=======
+        // Voting နှင့် Meeting ပြီးဆုံးခြင်းကို Thread ဖြင့် ဆက်လုပ်ဆောင်မည်
+        new Thread(() -> {
+            try {
+                // Discussion ချိန် ၁၀ စက္ကန့် စောင့်မည်
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
                 Thread.sleep(10000);
 
                 Map<String, Object> votingPayload = Map.of(
@@ -1375,15 +1568,26 @@ public class UnityWebSocketHandler extends TextWebSocketHandler {
                 );
                 broadcastToRoom(roomCode, votingPayload, null);
 
+<<<<<<< HEAD
                 Thread.sleep(15000);
 
+=======
+                // Voting ချိန် ၁၅ စက္ကန့် ဆက်စောင့်မည်
+                Thread.sleep(15000);
+
+                // Meeting ပြီးဆုံးကြောင်း ပို့မည်
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
                 Map<String, Object> endPayload = Map.of(
                         "type", "MEETING_END"
                 );
                 broadcastToRoom(roomCode, endPayload, null);
 
                 room.setMeetingActive(false);
+<<<<<<< HEAD
                 room.startEmergencyCooldown(10000);
+=======
+                room.startEmergencyCooldown(10000); // ၁၀ စက္ကန့် Cooldown
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -1472,6 +1676,7 @@ public class UnityWebSocketHandler extends TextWebSocketHandler {
     // =====================================================
 
     public void broadcastGameStart(String roomCode) {
+<<<<<<< HEAD
         GameRoom room = RoomController.getRoom(roomCode);
         java.util.List<Map<String, Object>> assignedTasks =
                 (room != null) ? room.getRandomTasksForLocations() : new java.util.ArrayList<>();
@@ -1481,6 +1686,12 @@ public class UnityWebSocketHandler extends TextWebSocketHandler {
                 "roomCode", roomCode,
                 "scene", "SampleScene",
                 "assignedTasks", assignedTasks
+=======
+        Map<String, Object> payload = Map.of(
+                "type", "GAME_START",
+                "roomCode", roomCode,
+                "scene", "SampleScene"
+>>>>>>> 5b278f711fd372da6f4cd2a37785e993fff3df65
         );
 
         broadcastToRoom(roomCode, payload, null);
