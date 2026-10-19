@@ -429,6 +429,13 @@
         }
 
 
+        /* 💡 MY FRIENDS ထဲမှ Player ID နှင့် Database ID ကို လုံးဝဖျောက်ရန် */
+        .friend-info .pid,
+        .friend-info .dbid {
+            display: none !important;
+        }
+
+
         .accept {
 
             padding:
@@ -978,7 +985,6 @@
                   nameRow.appendChild(status);
                   info.appendChild(nameRow);
 
-                  // 💡 Friend Item ထဲတွင် Player ID နှင့် Database ID ပါ ပေါ်လာစေရန် ဖြည့်စွက်ထားခြင်း
                   var pid = document.createElement("div");
                   pid.className = "pid";
                   pid.textContent = item.playerId;
