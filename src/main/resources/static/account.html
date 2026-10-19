@@ -1,834 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Game Lobby</title>
-
-
-    <!-- ==========================================
-         SockJS
-         ========================================== -->
-
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-
-
-    <!-- ==========================================
-         STOMP
-         ========================================== -->
-
-    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
-
-
+    <title>My Account - Among Us Style</title>
     <style>
-
-        /* ==========================================
-           BODY
-           ========================================== */
-
+        /* =========================================
+           ACCOUNT.CSS (Dark Plum & Neon Pink Theme)
+        ========================================= */
         body {
-            /* ⭐ Dark Plum Gradient Background */
-            background: radial-gradient(circle at center, #24141C, #140A0E);
-            color: #ffffff;
+            background: radial-gradient(circle at center, #24141C, #140A0E); /* Dark Plum */
+            color: white;
             font-family: Arial, sans-serif;
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow: hidden;
         }
 
-
-        /* ==========================================
-           MAIN CONTAINER
-           ========================================== */
-
-        .container {
-            width: 1000px;
-            min-height: 650px;
+        .account-container {
+            width: 100vw;
+            height: 100vh;
+            background-color: #1A0F14;
+            display: flex;
+            flex-direction: column;
             position: relative;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            background-color: #24141C;
+            border-bottom: 2px solid #3A1F2A;
+        }
+
+        .back-btn {
+            background: #2E1A24;
+            color: #A88B98;
+            border: 1px solid #3A1F2A;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .back-btn:hover {
+            background: #FF2A6D;
+            color: white;
+            border-color: #FF2A6D;
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.4);
+        }
+
+        /* Main Content Layout */
+        .account-content {
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
+            gap: 40px;
+            padding: 40px;
         }
 
-
-        /* ==========================================
-           LOBBY BOX
-           ========================================== */
-
-        .lobby-box {
-            width: 600px;
-            min-height: 500px;
-            background-color: #1A0F14; /* Dark Plum */
+        /* Left Profile Card */
+        .profile-card {
+            background-color: #1A0F14;
             border: 2px solid #3A1F2A;
-            border-radius: 14px;
+            border-radius: 16px;
+            width: 320px;
             padding: 30px;
-            box-sizing: border-box;
-            /* ⭐ Pink Glow Shadow */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 42, 109, 0.1);
         }
 
-
-        /* ==========================================
-           TITLE
-           ========================================== */
-
-        .title {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 20px;
-            /* ⭐ Neon Pink */
-            color: #FF2A6D;
-            font-size: 26px;
-            text-shadow: 0 0 15px rgba(255, 42, 109, 0.5);
-        }
-
-
-        /* ==========================================
-           ROOM CODE
-           ========================================== */
-
-        .room-section {
-            text-align: center;
+        .avatar-container {
+            position: relative;
+            cursor: pointer;
             margin-bottom: 20px;
         }
 
-
-        .room-label {
-            color: #A88B98;
-            font-size: 13px;
-            margin-bottom: 6px;
-        }
-
-
-        .room-code {
-            display: inline-block;
+        .avatar-box {
+            width: 120px;
+            height: 120px;
             background-color: #2E1A24;
-            border: 1px solid #FF2A6D;
-            border-radius: 8px;
-            padding: 10px 20px;
-            color: #FF2A6D;
+            border: 3px solid #FF2A6D; /* Neon Pink */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 42, 109, 0.3);
+        }
+
+        .avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-overlay {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: #FF2A6D;
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border: 2px solid #1A0F14;
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.5);
+        }
+
+        .username-title {
             font-size: 24px;
             font-weight: bold;
-            letter-spacing: 4px;
-            box-shadow: 0 0 15px rgba(255, 42, 109, 0.2);
+            margin-bottom: 5px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 42, 109, 0.3);
         }
 
+        /* Right Details Panel */
+        .details-panel {
+            background-color: #1A0F14;
+            border: 2px solid #3A1F2A;
+            border-radius: 16px;
+            width: 450px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 42, 109, 0.1);
+        }
 
-        /* ==========================================
-           PLAYER SECTION
-           ========================================== */
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #FF2A6D;
+            border-bottom: 1px solid #3A1F2A;
+            padding-bottom: 10px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255, 42, 109, 0.2);
+        }
 
-        .players-title {
-            color: #ffffff;
+        .info-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: #A88B98;
+        }
+
+        .info-value {
             font-size: 16px;
             font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-
-        .players-list {
-            background-color: #2E1A24;
-            border: 1px solid #3A1F2A;
-            border-radius: 8px;
-            min-height: 130px;
-            max-height: 130px;
-            overflow-y: auto;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-
-
-        /* ==========================================
-           PLAYER ITEM
-           ========================================== */
-
-        .player {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #1A0F14;
-            border: 1px solid #3A1F2A;
-            border-radius: 7px;
-            padding: 10px 12px;
-            margin-bottom: 6px;
-        }
-
-
-        .player:last-child {
-            margin-bottom: 0;
-        }
-
-        .player-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .player-color-indicator {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
-        }
-
-
-        .player-name {
-            font-size: 14px;
             color: #ffffff;
-        }
-
-
-        .host {
-            color: #FFD700; /* Gold for Host */
-            font-size: 12px;
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-        }
-
-
-        /* ==========================================
-           EMPTY MESSAGE
-           ========================================== */
-
-        .empty-message {
-            text-align: center;
-            color: #A88B98;
-            padding: 35px 10px;
-            font-size: 14px;
-        }
-
-
-        /* ==========================================
-           LOBBY COLOR PICKER
-           ========================================== */
-
-        .color-picker-section {
-            margin-top: 15px;
-        }
-
-        .color-grid {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            justify-content: center;
             background-color: #2E1A24;
+            padding: 12px 14px;
+            border-radius: 8px;
             border: 1px solid #3A1F2A;
-            border-radius: 8px;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-
-        .color-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .color-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .color-btn.disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            pointer-events: none;
-            transform: none !important;
-        }
-
-
-        /* ==========================================
-           BOTTOM BUTTONS
-           ========================================== */
-
-        .buttons {
             display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-
-        .btn {
-            width: 170px;
-            height: 44px;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
+            justify-content: space-between;
+            align-items: center;
             cursor: pointer;
             transition: 0.2s;
         }
 
-
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+        .info-value:hover {
+            border-color: #FF2A6D;
+            background-color: #3A1F2A;
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.2);
         }
 
-
-        .btn-start {
-            /* ⭐ Neon Pink Gradient */
-            background: linear-gradient(135deg, #FF2A6D, #D92B55);
-            box-shadow: 0 4px 15px rgba(255, 42, 109, 0.4);
+        .editable-hint {
+            font-size: 12px;
+            color: #FF8E9E;
+            font-weight: normal;
         }
 
-        .btn-start:hover {
-            box-shadow: 0 6px 20px rgba(255, 42, 109, 0.6);
+        .coin-badge {
+            color: #FFD700; /* Gold */
+            cursor: default;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
         }
-
-
-        .btn-start:disabled {
-            background: #3A1F2A;
-            color: #A88B98;
-            cursor: not-allowed;
-            transform: none;
-            opacity: 0.7;
+        .coin-badge:hover {
+            border-color: #3A1F2A;
+            background-color: #2E1A24;
             box-shadow: none;
         }
 
-
-        .btn-leave {
-            background: #d95569; /* Reddish leave button */
+        /* Inline Edit Input Style */
+        .inline-input {
+            background-color: #140A0E;
+            border: 1px solid #FF2A6D;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 6px 10px;
+            border-radius: 6px;
+            outline: none;
+            width: 60%;
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.2);
         }
 
-        .btn-leave:hover {
-            background: #c82333;
+        .save-btn {
+            background: linear-gradient(135deg, #FF2A6D, #D92B55);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
         }
-
-
-        /* ==========================================
-           STATUS
-           ========================================== */
-
-        .status {
-            text-align: center;
-            color: #A88B98;
-            font-size: 13px;
-            min-height: 18px;
-            margin-top: 15px;
+        .save-btn:hover {
+            box-shadow: 0 0 15px rgba(255, 42, 109, 0.5);
+            transform: scale(1.05);
         }
-
-
     </style>
-
 </head>
-
-
 <body>
 
-
-<div class="container">
-
-
-    <div class="lobby-box">
-
-
-        <!-- ======================================
-             TITLE
-             ====================================== -->
-
-        <h1 class="title">
-
-            GAME LOBBY
-
-        </h1>
-
-
-        <!-- ======================================
-             ROOM CODE
-             ====================================== -->
-
-        <div class="room-section">
-
-            <div class="room-label">
-
-                ROOM CODE
-
-            </div>
-
-
-            <div
-                    id="roomCode"
-                    class="room-code">
-
-                ------
-
-            </div>
-
-        </div>
-
-
-        <!-- ======================================
-             PLAYERS
-             ====================================== -->
-
-        <div class="players-title">
-
-            PLAYERS
-
-        </div>
-
-
-        <div
-                id="playersList"
-                class="players-list">
-
-            <div class="empty-message">
-
-                Waiting for players...
-
-            </div>
-
-        </div>
-
-
-        <!-- ======================================
-             CHARACTER COLOR CUSTOMIZATION
-             ====================================== -->
-
-        <div class="color-picker-section">
-            <div class="players-title">
-                CHOOSE COLOR
-            </div>
-
-            <div id="lobbyColorPicker" class="color-grid">
-                <!-- JavaScript ဖြင့် အရောင်ခလုတ်များ ဝင်လာမည် -->
-            </div>
-        </div>
-
-
-        <!-- ======================================
-             BUTTONS
-             ====================================== -->
-
-        <div class="buttons">
-
-
-            <button
-                    id="startButton"
-                    class="btn btn-start"
-                    onclick="startGame()">
-
-                START GAME
-
-            </button>
-
-
-            <button
-                    class="btn btn-leave"
-                    onclick="leaveLobby()">
-
-                LEAVE
-
-            </button>
-
-
-        </div>
-
-
-        <!-- ======================================
-             STATUS
-             ====================================== -->
-
-        <div
-                id="status"
-                class="status">
-
-            Connecting...
-
-        </div>
-
-
+<div class="account-container">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <button class="back-btn" onclick="goBack()">◀ BACK</button>
     </div>
 
+    <!-- Main Content -->
+    <div class="account-content">
+        <!-- Left Profile Summary -->
+        <div class="profile-card">
+            <div class="avatar-container" onclick="document.getElementById('fileInput').click()" title="Click to change profile picture">
+                <div class="avatar-box" id="avatarBox">
+                    <span id="defaultAvatarEmoji" style="font-size: 60px;">🧑‍🚀</span>
+                </div>
+                <div class="avatar-overlay">📷</div>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="changeAvatar(event)">
+
+            <div class="username-title" id="profileName">Loading...</div>
+        </div>
+
+        <!-- Right Detailed Information -->
+        <div class="details-panel">
+            <div class="section-title">Account Information</div>
+
+            <div class="info-group">
+                <span class="info-label">Username (Click to edit)</span>
+                <div class="info-value" id="userBox" onclick="enableEditUsername()">
+                    <span id="accUser">Loading...</span>
+                    <span class="editable-hint" id="userHint">Edit ✎</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">Email Address (Click to edit)</span>
+                <div class="info-value" id="emailBox" onclick="enableEditEmail()">
+                    <span id="accEmail">Loading...</span>
+                    <span class="editable-hint" id="emailHint">Edit ✎</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">Friend Code (Permanent)</span>
+                <div class="info-value coin-badge" id="accFriend" style="cursor: default;">
+                    Loading...
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">Total Coins</span>
+                <div class="info-value coin-badge" id="accCoins">
+                    🪙 0
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-
 <script>
+    let username = 'Player';
+    let email = 'No email provided';
+    let friendCode = '';
+    const coins = localStorage.getItem('coins') || '0';
 
+    async function readJson(response) {
+        var text = await response.text();
+        if (!text) return {};
+        try {
+            return JSON.parse(text);
+        } catch (error) {
+            return { success: false, message: text };
+        }
+    }
 
-    // =====================================================
-    // GLOBAL VARIABLES
-    // =====================================================
+    async function loadAccountData() {
+        try {
+            const response = await fetch("/api/friends/me", {
+                credentials: "same-origin"
+            });
 
-    let stompClient = null;
-
-
-    let roomCode =
-        sessionStorage.getItem("roomCode");
-
-
-    let username =
-        sessionStorage.getItem("username");
-
-
-    let host =
-        sessionStorage.getItem("host");
-
-
-    // ရယူနိုင်သော အရောင်စာရင်းများ
-    const LOBBY_COLORS = [
-        ["Red", "#C51111"],
-        ["Blue", "#132ED1"],
-        ["Green", "#117F2D"],
-        ["Pink", "#ED54BA"],
-        ["Orange", "#EF7D0D"],
-        ["Yellow", "#F5F557"],
-        ["Black", "#3F474E"],
-        ["White", "#D6E0F0"],
-        ["Purple", "#6B2FBB"],
-        ["Brown", "#71491E"],
-        ["Cyan", "#38FEDC"],
-        ["Lime", "#50EF39"]
-    ];
-
-    let selectedColorHex = sessionStorage.getItem("selectedColor") || "#C51111";
-    let takenColors = []; // အခြားသူများ ရွေးထားပြီးသော အရောင်များစာရင်း
-
-
-    // =====================================================
-    // PAGE LOAD
-    // =====================================================
-
-    window.addEventListener(
-        "load",
-        function() {
-
-            console.log("Username:", username);
-            console.log("Room Code:", roomCode);
-            console.log("Host:", host);
-
-            if (!roomCode || !username) {
-                alert("Room information is missing.");
-                window.location.href = "play.html";
+            if (response.status === 401) {
+                window.location.replace("/login.html");
                 return;
             }
 
-            document.getElementById("roomCode").textContent = roomCode;
-
-            renderLobbyColors();
-            updateStartButton();
-            connectToLobby();
-
-        }
-    );
-
-
-    // =====================================================
-    // RENDER LOBBY COLORS
-    // =====================================================
-
-    function renderLobbyColors() {
-        const container = document.getElementById("lobbyColorPicker");
-        if (!container) return;
-
-        let html = "";
-        LOBBY_COLORS.forEach(([name, hex]) => {
-            const isTaken = takenColors.includes(hex.toUpperCase()) && hex.toUpperCase() !== selectedColorHex.toUpperCase();
-            const isSelected = hex.toUpperCase() === selectedColorHex.toUpperCase()
-                ? "border: 2px solid #ffffff; transform: scale(1.1); box-shadow: 0 0 8px rgba(255,255,255,0.8);"
-                : "border: 1px solid transparent;";
-
-            const disabledClass = isTaken ? "disabled" : "";
-
-            html += `
-                <div class="color-btn ${disabledClass}"
-                     onclick="pickLobbyColor('${name}', '${hex}')"
-                     style="background-color: ${hex}; ${isSelected}"
-                     title="${name} ${isTaken ? '(Taken)' : ''}">
-                </div>
-            `;
-        });
-        container.innerHTML = html;
-    }
-
-
-    // =====================================================
-    // PICK LOBBY COLOR
-    // =====================================================
-
-    function pickLobbyColor(name, hex) {
-        selectedColorHex = hex;
-        sessionStorage.setItem("selectedColor", hex);
-        renderLobbyColors();
-
-        if (stompClient && stompClient.connected) {
-            stompClient.send(
-                "/app/update-customization",
-                {},
-                JSON.stringify({
-                    roomCode: roomCode,
-                    username: username,
-                    color: hex
-                })
-            );
-            console.log("Sent color update:", name, hex);
-        }
-    }
-
-
-    // =====================================================
-    // CONNECT TO WEBSOCKET
-    // =====================================================
-
-    function connectToLobby() {
-
-        setStatus("Connecting to lobby...");
-
-        const socket = new SockJS("/game-websocket");
-        stompClient = Stomp.over(socket);
-        stompClient.debug = null;
-
-        stompClient.connect(
-            {},
-            function(frame) {
-                console.log("Lobby connected:", frame);
-                setStatus("Waiting for players...");
-
-                stompClient.subscribe(
-                    "/topic/room/" + roomCode,
-                    function(message) {
-                        try {
-                            const data = JSON.parse(message.body);
-                            console.log("Room update:", data);
-                            updateLobby(data);
-                        }
-                        catch(error) {
-                            console.error("Room data error:", error);
-                        }
-                    }
-                );
-
-                stompClient.subscribe(
-                    "/topic/room/" + roomCode + "/game-start",
-                    function(message) {
-                        try {
-                            const data = JSON.parse(message.body);
-                            console.log("GAME START:", data);
-                            handleGameStart(data);
-                        }
-                        catch(error) {
-                            console.error("Game start error:", error);
-                        }
-                    }
-                );
-
-                setTimeout(() => {
-                    pickLobbyColor("Selected", selectedColorHex);
-                }, 500);
-            },
-            function(error) {
-                console.error("Lobby WebSocket error:", error);
-                setStatus("Cannot connect to server.");
+            const data = await readJson(response);
+            if (!response.ok) {
+                console.error(data.message || "Cannot load account.");
+                return;
             }
-        );
 
-    }
+            username = data.username || 'Player';
+            email = data.email || localStorage.getItem('email') || 'No email provided';
+            friendCode = data.friendCode || '';
 
+            document.getElementById('profileName').innerText = username;
+            document.getElementById('accUser').innerText = username;
+            document.getElementById('accEmail').innerText = email;
+            document.getElementById('accFriend').innerText = friendCode;
+            document.getElementById('accCoins').innerText = `🪙 ${coins}`;
 
-    // =====================================================
-    // UPDATE LOBBY (Auto-select First Available Color added)
-    // =====================================================
-
-    function updateLobby(data) {
-
-        if (data.roomCode) {
-            roomCode = data.roomCode;
-            document.getElementById("roomCode").textContent = roomCode;
-        }
-
-        if (data.host) {
-            host = data.host;
-            sessionStorage.setItem("host", host);
-        }
-
-        const players = data.players || [];
-
-        // ၁။ အခြားသူများ ရွေးထားသော အရောင်များကို စုဆောင်းခြင်း
-        takenColors = [];
-        players.forEach(p => {
-            if (p.username !== username && p.color) {
-                takenColors.push(p.color.toUpperCase());
-            }
-        });
-
-        // ၂။ မိမိ ရွေးထားသော အရောင်သည် အခြားသူ ရွေးပြီးသား ဖြစ်နေပါက အဆင်သင့်ရှိသော အရောင်သစ်ကို အလိုအလျောက် ရွေးပေးခြင်း
-        if (takenColors.includes(selectedColorHex.toUpperCase())) {
-            const availableColor = LOBBY_COLORS.find(([_, hex]) => !takenColors.includes(hex.toUpperCase()));
-            if (availableColor) {
-                pickLobbyColor(availableColor[0], availableColor[1]);
-            }
-        }
-
-        displayPlayers(players);
-        renderLobbyColors();
-        updateStartButton();
-
-        setStatus(players.length + " player(s) in lobby.");
-    }
-
-
-    // =====================================================
-    // DISPLAY PLAYERS
-    // =====================================================
-
-    function displayPlayers(players) {
-
-        const playersList = document.getElementById("playersList");
-        playersList.innerHTML = "";
-
-        if (players.length === 0) {
-            playersList.innerHTML = `<div class="empty-message">Waiting for players...</div>`;
-            return;
-        }
-
-        players.forEach(
-            function(player) {
-                const playerName = typeof player === 'object' ? player.username : player;
-                const playerColor = typeof player === 'object' && player.color ? player.color : '#8b949e';
-
-                const playerDiv = document.createElement("div");
-                playerDiv.className = "player";
-
-                const infoDiv = document.createElement("div");
-                infoDiv.className = "player-info";
-
-                const colorIndicator = document.createElement("span");
-                colorIndicator.className = "player-color-indicator";
-                colorIndicator.style.backgroundColor = playerColor;
-
-                const nameDiv = document.createElement("div");
-                nameDiv.className = "player-name";
-                nameDiv.textContent = playerName;
-
-                infoDiv.appendChild(colorIndicator);
-                infoDiv.appendChild(nameDiv);
-
-                const hostDiv = document.createElement("div");
-                if (playerName === host) {
-                    hostDiv.className = "host";
-                    hostDiv.textContent = "👑 HOST";
+            if (data.profileImage) {
+                document.getElementById('avatarBox').innerHTML = `<img src="${data.profileImage}" alt="Avatar">`;
+                localStorage.setItem('profileAvatar', data.profileImage);
+            } else {
+                let savedAvatar = localStorage.getItem('profileAvatar');
+                if (savedAvatar) {
+                    document.getElementById('avatarBox').innerHTML = `<img src="${savedAvatar}" alt="Avatar">`;
+                } else {
+                    document.getElementById('avatarBox').innerHTML = `<span style="font-size: 60px;">🧑‍🚀</span>`;
                 }
-
-                playerDiv.appendChild(infoDiv);
-                playerDiv.appendChild(hostDiv);
-                playersList.appendChild(playerDiv);
             }
-        );
 
-    }
-
-
-    // =====================================================
-    // START BUTTON
-    // =====================================================
-
-    function updateStartButton() {
-        const startButton = document.getElementById("startButton");
-        if (username === host) {
-            startButton.disabled = false;
-            startButton.textContent = "START GAME";
-        } else {
-            startButton.disabled = true;
-            startButton.textContent = "WAITING FOR HOST";
+        } catch (error) {
+            console.error("Error connecting to server:", error);
         }
     }
 
-
-    // =====================================================
-    // START GAME
-    // =====================================================
-
-    function startGame() {
-        if (username !== host) {
-            alert("Only the host can start the game.");
-            return;
-        }
-
-        if (!stompClient) {
-            alert("Not connected to server.");
-            return;
-        }
-
-        setStatus("Starting game...");
-
-        stompClient.send(
-            "/app/start-game",
-            {},
-            JSON.stringify({
-                username: username,
-                roomCode: roomCode
-            })
-        );
-    }
-
-
-    // =====================================================
-    // GAME START EVENT
-    // =====================================================
-
-    function handleGameStart(data) {
-        console.log("Game started:", data);
-        setStatus("Opening Unity Game...");
-
-        if (window.gameLaunchStarted) return;
-        window.gameLaunchStarted = true;
-
-        const unityUrl = new URL("/unity/index.html", window.location.origin);
-        const userColor = sessionStorage.getItem("selectedColor") || "#C51111";
-
-        unityUrl.searchParams.set("room", roomCode);
-        unityUrl.searchParams.set("roomCode", roomCode);
-        unityUrl.searchParams.set("user", username);
-        unityUrl.searchParams.set("username", username);
-        unityUrl.searchParams.set("color", userColor);
-
-        window.location.href = unityUrl.href;
-    }
-
-
-    // =====================================================
-    // LEAVE LOBBY
-    // =====================================================
-
-    function leaveLobby() {
-        if (stompClient) {
-            stompClient.disconnect(function() {
-                console.log("Disconnected from lobby.");
+    async function updateProfileOnServer(payload) {
+        try {
+            const response = await fetch("/api/friends/update-profile", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
             });
+            const data = await readJson(response);
+            if (!response.ok) {
+                console.error(data.message || "Failed to update profile.");
+            }
+        } catch (error) {
+            console.error("Error connecting to update profile:", error);
+        }
+    }
+
+    function changeAvatar(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                localStorage.setItem('profileAvatar', base64Image);
+                document.getElementById('avatarBox').innerHTML = `<img src="${base64Image}" alt="Avatar">`;
+                updateProfileOnServer({ profileImage: base64Image });
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function enableEditUsername() {
+        const userBox = document.getElementById('userBox');
+        if (userBox.querySelector('input')) return;
+
+        userBox.innerHTML = `
+            <input type="text" id="userInput" class="inline-input" value="${username}" onclick="event.stopPropagation()">
+            <button class="save-btn" onclick="saveUsernameValue(event)">Save ✓</button>
+        `;
+
+        const input = document.getElementById('userInput');
+        input.focus();
+        input.select();
+
+        input.onkeydown = function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveUsernameValue(e);
+            }
+        };
+    }
+
+    function saveUsernameValue(event) {
+        event.stopPropagation();
+        const input = document.getElementById('userInput');
+        if (!input) return;
+        const val = input.value.trim();
+
+        if (val !== "") {
+            username = val;
+            localStorage.setItem('username', username);
+            document.getElementById('profileName').innerText = username;
+            updateProfileOnServer({ username: username });
         }
 
-        sessionStorage.removeItem("roomCode");
-        sessionStorage.removeItem("host");
-        sessionStorage.removeItem("username");
-        sessionStorage.removeItem("selectedColor");
-
-        window.location.href = "play.html";
+        const userBox = document.getElementById('userBox');
+        userBox.innerHTML = `
+            <span id="accUser">${username}</span>
+            <span class="editable-hint" id="userHint">Edit ✎</span>
+        `;
     }
 
+    function enableEditEmail() {
+        const emailBox = document.getElementById('emailBox');
+        if (emailBox.querySelector('input')) return;
 
-    // =====================================================
-    // STATUS
-    // =====================================================
+        let currentVal = email === 'No email provided' ? '' : email;
+        emailBox.innerHTML = `
+            <input type="email" id="emailInput" class="inline-input" value="${currentVal}" placeholder="Enter email" onclick="event.stopPropagation()">
+            <button class="save-btn" onclick="saveEmailValue(event)">Save ✓</button>
+        `;
 
-    function setStatus(message) {
-        document.getElementById("status").textContent = message;
+        const input = document.getElementById('emailInput');
+        input.focus();
+        input.select();
+
+        input.onkeydown = function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveEmailValue(e);
+            }
+        };
     }
 
+    function saveEmailValue(event) {
+        event.stopPropagation();
+        const input = document.getElementById('emailInput');
+        if (!input) return;
+        const val = input.value.trim();
+
+        email = val === "" ? 'No email provided' : val;
+        localStorage.setItem('email', email);
+
+        const emailBox = document.getElementById('emailBox');
+        emailBox.innerHTML = `
+            <span id="accEmail">${email}</span>
+            <span class="editable-hint" id="emailHint">Edit ✎</span>
+        `;
+    }
+
+    function goBack() {
+        window.location.href = `/homepage.html?user=${encodeURIComponent(username)}&coins=${coins}`;
+    }
+
+    window.addEventListener("load", function () {
+        loadAccountData();
+    });
 </script>
 
-
 </body>
-
 </html>
