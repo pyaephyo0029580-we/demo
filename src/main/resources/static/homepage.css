@@ -156,13 +156,13 @@ html, body {
 ========================================= */
 .home-title-label {
     margin: 0 0 28px;
-    color: #FF2A6D; /* Neon Pink */
-    font-size: 38px;
+    color: #FF2A6D;
+    font-size: 24px !important;  /* !important လေးထည့်ပါ */
     font-weight: 900;
-    letter-spacing: 2px;
+    letter-spacing: 1px !important; /* !important လေးထည့်ပါ */
     text-shadow: 0 0 15px rgba(255, 42, 109, 0.6);
+    white-space: nowrap !important; /* !important လေးထည့်ပါ */
 }
-
 /* =========================================
    BUTTON AREA
 ========================================= */

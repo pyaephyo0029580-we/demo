@@ -790,13 +790,6 @@
 
         restartButton.style.display =
             "block";
-
-        // 🟢 Task ပြီးဆုံးပါက ၁ စက္ကန့်အကြာတွင် မော်ဒယ်ကို အလိုအလျောက် ပိတ်ရန်
-        setTimeout(function() {
-            if (window.parent && typeof window.parent.closeTaskModal === 'function') {
-                window.parent.closeTaskModal();
-            }
-        }, 1000);
     }
 
 

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Cards</title>
+
+  <style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        color: white;
+
+        background:
+            radial-gradient(circle at 30% 20%, #193d87, transparent 35%),
+            linear-gradient(135deg, #030817, #071a3c);
+    }
+
+    .task-box {
+        width: 680px;
+        max-width: 95%;
+        padding: 30px;
+        border-radius: 25px;
+
+        background: rgba(8, 25, 63, 0.94);
+        border: 2px solid #36c8ff;
+
+        box-shadow:
+            0 0 30px rgba(0, 183, 255, 0.3);
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    h1 {
+        margin: 0;
+    }
+
+    .timer {
+        color: #6be8ff;
+        font-weight: bold;
+    }
+
+    .instruction {
+        color: #b7c9e8;
+        margin: 8px 0 22px;
+    }
+
+    .game-area {
+        display: flex;
+        gap: 25px;
+        align-items: center;
+    }
+
+    .ghost {
+        width: 150px;
+        filter: drop-shadow(0 0 15px #3ec8ff);
+    }
+
+    .cards {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .card {
+        height: 95px;
+        border-radius: 14px;
+        border: 2px solid #2d7eea;
+
+        background: #12346e;
+        cursor: pointer;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 38px;
+
+        transition: 0.2s;
+    }
+
+    .card:hover {
+        transform: scale(1.04);
+    }
+
+    .card .face {
+        display: none;
+    }
+
+    .card.open,
+    .card.matched {
+        background: #e9f3ff;
+    }
+
+    .card.open .face,
+    .card.matched .face {
+        display: block;
+    }
+
+    .card.matched {
+        border-color: #4cff91;
+        box-shadow: 0 0 15px #4cff91;
+    }
+
+    #result {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        color: #63ffae;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="task-box">
+
+  <div class="header">
+    <h1>🧠 Memory Cards</h1>
+    <div class="timer" id="timer">01:00</div>
+  </div>
+
+  <div class="instruction">
+    Find all matching pairs.
+  </div>
+
+  <div class="game-area">
+
+
+
+    <div class="cards" id="cards"></div>
+
+  </div>
+
+  <div id="result"></div>
+
+</div>
+
+
+<script>
+
+  const symbols = [
+      "⭐", "⭐",
+      "👻", "👻",
+      "🌙", "🌙",
+      "💎", "💎",
+      "🔑", "🔑",
+      "🪐", "🪐"
+  ];
+
+  let firstCard = null;
+  let secondCard = null;
+  let lock = false;
+  let matched = 0;
+
+  const cardsElement =
+      document.getElementById("cards");
+
+  const result =
+      document.getElementById("result");
+
+
+  function shuffle(array) {
+
+      for (
+          let i = array.length - 1;
+          i > 0;
+          i--
+      ) {
+
+          const j =
+              Math.floor(
+                  Math.random() *
+                  (i + 1)
+              );
+
+          [array[i], array[j]] =
+              [array[j], array[i]];
+      }
+
+      return array;
+  }
+
+
+  function createCards() {
+
+      shuffle(symbols);
+
+      symbols.forEach(
+          function (symbol) {
+
+              const card =
+                  document.createElement("div");card.className =
+                    "card";
+
+                card.dataset.symbol =
+                    symbol;
+
+                card.innerHTML =
+                    '<span class="face">' +
+                    symbol +
+                    '</span>';
+
+                card.addEventListener(
+                    "click",
+                    function () {
+
+                        flipCard(card);
+
+                    }
+                );
+
+                cardsElement.appendChild(
+                    card
+                );
+            }
+        );
+    }
+
+
+    function flipCard(card) {
+
+        if (
+            lock ||
+            card === firstCard ||
+            card.classList.contains("matched")
+        ) {
+            return;
+        }
+
+
+        card.classList.add("open");
+
+
+        if (!firstCard) {
+
+            firstCard = card;
+
+            return;
+        }
+
+
+        secondCard = card;
+
+        lock = true;
+
+
+        if (
+            firstCard.dataset.symbol ===
+            secondCard.dataset.symbol
+        ) {
+
+            firstCard.classList.add(
+                "matched"
+            );
+
+            secondCard.classList.add(
+                "matched"
+            );
+
+            matched += 2;
+
+            resetTurn();
+
+
+            if (
+                matched ===
+                symbols.length
+            ) {
+
+                result.textContent =
+                    "✓ TASK COMPLETE";
+            }
+
+        } else {
+
+            setTimeout(
+                function () {
+
+                    firstCard.classList.remove(
+                        "open"
+                    );
+
+                    secondCard.classList.remove(
+                        "open"
+                    );
+
+                    resetTurn();
+
+                },
+                700
+            );
+        }
+    }
+
+
+    function resetTurn() {
+
+        firstCard = null;
+        secondCard = null;
+        lock = false;
+    }
+
+
+    createCards();
+
+</script>
+
+</body>
+</html>
