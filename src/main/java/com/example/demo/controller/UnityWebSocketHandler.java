@@ -741,7 +741,14 @@ public class UnityWebSocketHandler extends TextWebSocketHandler {
 
         String roomCode = sessionRooms.get(session.getId());
         String username = sessionUsers.get(session.getId());
-        String color = sessionColors.getOrDefault(session.getId(), "#C51111"); // 🟢 Player ၏ အရောင်ကို ထည့်ပေးမည်
+
+        // 🟢 Client ဘက်က ပို့လာတဲ့ color ကို ဦးစားပေးယူမည်၊ မပါလာရင် sessionColors ထဲက ယူမည်
+        String color = data.path("color").asText("");
+        if (color.isEmpty()) {
+            color = sessionColors.getOrDefault(session.getId(), "#C51111");
+        } else {
+            sessionColors.put(session.getId(), color);
+        }
 
         if (roomCode == null || username == null) {
             sendError(

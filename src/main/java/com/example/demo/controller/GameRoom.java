@@ -1,278 +1,3 @@
-//////package com.example.demo.controller;
-//////
-//////import java.util.Map;
-//////import java.util.concurrent.ConcurrentHashMap;
-//////
-//////public class GameRoom {
-//////
-//////    private final String roomCode;
-//////    private final String host;
-//////
-//////    private final Map<String, String> players = new ConcurrentHashMap<>();
-//////
-//////    private boolean gameStarted = false;
-//////
-//////    public GameRoom(String roomCode, String host) {
-//////        this.roomCode = roomCode;
-//////        this.host = host;
-//////
-//////        // Host ကို room ထဲ အလိုအလျောက်ထည့်
-//////        players.put(host, host);
-//////    }
-//////
-//////    public String getRoomCode() {
-//////        return roomCode;
-//////    }
-//////
-//////    public String getHost() {
-//////        return host;
-//////    }
-//////
-//////    public Map<String, String> getPlayers() {
-//////        return players;
-//////    }
-//////
-//////    public boolean isGameStarted() {
-//////        return gameStarted;
-//////    }
-//////
-//////    public void setGameStarted(boolean gameStarted) {
-//////        this.gameStarted = gameStarted;
-//////    }
-//////
-//////    public boolean addPlayer(String username) {
-//////        if (players.containsKey(username)) {
-//////            return false;
-//////        }
-//////
-//////        players.put(username, username);
-//////        return true;
-//////    }
-//////
-//////    public void removePlayer(String username) {
-//////        players.remove(username);
-//////    }
-//////}
-////
-////package com.example.demo.controller;
-////
-////import java.util.Map;
-////import java.util.Set;
-////import java.util.concurrent.ConcurrentHashMap;
-////
-////public class GameRoom {
-////
-////    private final String roomCode;
-////    private final String host;
-////
-////    private final Map<String, String> players =
-////            new ConcurrentHashMap<>();
-////
-////    // Eliminate ဖြစ်ပြီးသား Player များ
-////    private final Set<String> eliminatedPlayers =
-////            ConcurrentHashMap.newKeySet();
-////
-////    // Meeting / Voting state
-////    private volatile boolean meetingActive = false;
-////
-////    // Voting ပြီးဆုံးပြီးနောက် Cooldown
-////    private volatile long emergencyCooldownUntil = 0L;
-////
-////    public GameRoom(String roomCode, String host) {
-////        this.roomCode = roomCode;
-////        this.host = host;
-////
-////        // Host ကို Room ထဲ အလိုအလျောက်ထည့်
-////        players.put(host, host);
-////    }
-////
-////    public String getRoomCode() {
-////        return roomCode;
-////    }
-////
-////    public String getHost() {
-////        return host;
-////    }
-////
-////    public Map<String, String> getPlayers() {
-////        return players;
-////    }
-////
-////    public boolean isGameStarted() {
-////        return gameStarted;
-////    }
-////
-////    public void setGameStarted(boolean gameStarted) {
-////        this.gameStarted = gameStarted;
-////    }
-////
-////    private volatile boolean gameStarted = false;
-////
-////    public boolean addPlayer(String username) {
-////        if (username == null || username.isBlank()) {
-////            return false;
-////        }
-////
-////        return players.putIfAbsent(username, username) == null;
-////    }
-////
-////    public void removePlayer(String username) {
-////        players.remove(username);
-////        eliminatedPlayers.remove(username);
-////    }
-////
-////    public Set<String> getEliminatedPlayers() {
-////        return eliminatedPlayers;
-////    }
-////
-////    public boolean isEliminated(String username) {
-////        return eliminatedPlayers.contains(username);
-////    }
-////
-////    public boolean eliminatePlayer(String username) {
-////        if (username == null || !players.containsKey(username)) {
-////            return false;
-////        }
-////
-////        return eliminatedPlayers.add(username);
-////    }
-////
-////    public boolean isMeetingActive() {
-////        return meetingActive;
-////    }
-////
-////    public void setMeetingActive(boolean meetingActive) {
-////        this.meetingActive = meetingActive;
-////    }
-////
-////    public synchronized boolean canCallEmergencyMeeting() {
-////        return !meetingActive
-////                && System.currentTimeMillis() >= emergencyCooldownUntil;
-////    }
-////
-////    public synchronized void startEmergencyCooldown(long cooldownMillis) {
-////        emergencyCooldownUntil =
-////                System.currentTimeMillis() + cooldownMillis;
-////    }
-////
-////    public long getEmergencyCooldownRemainingMillis() {
-////        return Math.max(
-////                0L,
-////                emergencyCooldownUntil - System.currentTimeMillis()
-////        );
-////    }
-////}
-//
-//package com.example.demo.controller;
-//
-//import java.util.Map;
-//import java.util.Set;
-//import java.util.concurrent.ConcurrentHashMap;
-//
-//public class GameRoom {
-//
-//    private final String roomCode;
-//    private final String host;
-//
-//    private final Map<String, String> players =
-//            new ConcurrentHashMap<>();
-//
-//    // Eliminate ဖြစ်ပြီးသား Player များ
-//    private final Set<String> eliminatedPlayers =
-//            ConcurrentHashMap.newKeySet();
-//
-//    // Meeting / Voting state
-//    private volatile boolean meetingActive = false;
-//
-//    // Voting ပြီးဆုံးပြီးနောက် Cooldown
-//    private volatile long emergencyCooldownUntil = 0L;
-//
-//    private volatile boolean gameStarted = false;
-//
-//    public GameRoom(String roomCode, String host) {
-//        this.roomCode = roomCode;
-//        this.host = host;
-//
-//        // Host ကို Room ထဲ အလိုအလျောက်ထည့်
-//        players.put(host, host);
-//    }
-//
-//    public String getRoomCode() {
-//        return roomCode;
-//    }
-//
-//    public String getHost() {
-//        return host;
-//    }
-//
-//    public Map<String, String> getPlayers() {
-//        return players;
-//    }
-//
-//    public boolean isGameStarted() {
-//        return gameStarted;
-//    }
-//
-//    public void setGameStarted(boolean gameStarted) {
-//        this.gameStarted = gameStarted;
-//    }
-//
-//    public boolean addPlayer(String username) {
-//        if (username == null || username.isBlank()) {
-//            return false;
-//        }
-//
-//        return players.putIfAbsent(username, username) == null;
-//    }
-//
-//    public void removePlayer(String username) {
-//        players.remove(username);
-//        eliminatedPlayers.remove(username);
-//    }
-//
-//    public Set<String> getEliminatedPlayers() {
-//        return eliminatedPlayers;
-//    }
-//
-//    public boolean isEliminated(String username) {
-//        return eliminatedPlayers.contains(username);
-//    }
-//
-//    public boolean eliminatePlayer(String username) {
-//        if (username == null || !players.containsKey(username)) {
-//            return false;
-//        }
-//
-//        return eliminatedPlayers.add(username);
-//    }
-//
-//    public boolean isMeetingActive() {
-//        return meetingActive;
-//    }
-//
-//    public void setMeetingActive(boolean meetingActive) {
-//        this.meetingActive = meetingActive;
-//    }
-//
-//    public synchronized boolean canCallEmergencyMeeting() {
-//        return !meetingActive
-//                && System.currentTimeMillis() >= emergencyCooldownUntil;
-//    }
-//
-//    public synchronized void startEmergencyCooldown(long cooldownMillis) {
-//        emergencyCooldownUntil =
-//                System.currentTimeMillis() + cooldownMillis;
-//    }
-//
-//    public long getEmergencyCooldownRemainingMillis() {
-//        return Math.max(
-//                0L,
-//                emergencyCooldownUntil - System.currentTimeMillis()
-//        );
-//    }
-//}
-
-
 package com.example.demo.controller;
 
 import java.util.*;
@@ -283,7 +8,12 @@ public class GameRoom {
     private final String roomCode;
     private final String host;
 
+    // Username -> Username
     private final Map<String, String> players =
+            new ConcurrentHashMap<>();
+
+    // 🟢 Username -> Player Color (Room ထဲရှိ Player တစ်ဦးချင်းစီ၏ အရောင်များကို မှတ်ရန်)
+    private final Map<String, String> playerColors =
             new ConcurrentHashMap<>();
 
     // Eliminate ဖြစ်ပြီးသား Player များ
@@ -332,6 +62,7 @@ public class GameRoom {
 
         // Host ကို Room ထဲ အလိုအလျောက်ထည့်
         players.put(host, host);
+        playerColors.put(host, "#C51111"); // Default host color
     }
 
     public String getRoomCode() {
@@ -344,6 +75,18 @@ public class GameRoom {
 
     public Map<String, String> getPlayers() {
         return players;
+    }
+
+    // 🟢 Player တစ်ဦးချင်းစီ၏ အရောင်များကို ရယူရန်
+    public Map<String, String> getPlayerColors() {
+        return playerColors;
+    }
+
+    // 🟢 Player ၏ အရောင်ကို သတ်မှတ်ရန် (သို့) ပြောင်းလဲရန်
+    public void setPlayerColor(String username, String color) {
+        if (username != null && color != null) {
+            playerColors.put(username, color);
+        }
     }
 
     public boolean isGameStarted() {
@@ -359,11 +102,17 @@ public class GameRoom {
             return false;
         }
 
-        return players.putIfAbsent(username, username) == null;
+        boolean added = players.putIfAbsent(username, username) == null;
+        if (added) {
+            // Default color when joining
+            playerColors.putIfAbsent(username, "#FFFFFF");
+        }
+        return added;
     }
 
     public void removePlayer(String username) {
         players.remove(username);
+        playerColors.remove(username); // 🟢 Player ထွက်သွားပါက အရောင်ကိုပါ ဖယ်ရှားမည်
         eliminatedPlayers.remove(username);
     }
 
