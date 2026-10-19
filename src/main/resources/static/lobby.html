@@ -1,4 +1,4 @@
-<!DOCTYPE >
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -89,7 +89,7 @@
 
             border-radius: 14px;
 
-            padding: 35px;
+            padding: 30px;
 
             box-sizing: border-box;
 
@@ -109,11 +109,11 @@
 
             margin-top: 0;
 
-            margin-bottom: 25px;
+            margin-bottom: 20px;
 
             color: #f0f6fc;
 
-            font-size: 28px;
+            font-size: 26px;
 
         }
 
@@ -126,7 +126,7 @@
 
             text-align: center;
 
-            margin-bottom: 30px;
+            margin-bottom: 20px;
 
         }
 
@@ -137,7 +137,7 @@
 
             font-size: 13px;
 
-            margin-bottom: 8px;
+            margin-bottom: 6px;
 
         }
 
@@ -152,11 +152,11 @@
 
             border-radius: 8px;
 
-            padding: 12px 25px;
+            padding: 10px 20px;
 
             color: #58a6ff;
 
-            font-size: 28px;
+            font-size: 24px;
 
             font-weight: bold;
 
@@ -173,11 +173,11 @@
 
             color: #f0f6fc;
 
-            font-size: 18px;
+            font-size: 16px;
 
             font-weight: bold;
 
-            margin-bottom: 12px;
+            margin-bottom: 8px;
 
         }
 
@@ -190,9 +190,12 @@
 
             border-radius: 8px;
 
-            min-height: 180px;
+            min-height: 130px;
 
-            padding: 10px;
+            max-height: 130px;
+            overflow-y: auto;
+
+            padding: 8px;
 
             box-sizing: border-box;
 
@@ -217,9 +220,9 @@
 
             border-radius: 7px;
 
-            padding: 12px 15px;
+            padding: 10px 12px;
 
-            margin-bottom: 8px;
+            margin-bottom: 6px;
 
         }
 
@@ -230,10 +233,23 @@
 
         }
 
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-color-indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
 
         .player-name {
 
-            font-size: 15px;
+            font-size: 14px;
 
             color: #ffffff;
 
@@ -244,7 +260,7 @@
 
             color: #f2cc60;
 
-            font-size: 13px;
+            font-size: 12px;
 
             font-weight: bold;
 
@@ -261,8 +277,50 @@
 
             color: #8b949e;
 
-            padding: 50px 10px;
+            padding: 35px 10px;
 
+            font-size: 14px;
+
+        }
+
+
+        /* ==========================================
+           LOBBY COLOR PICKER
+           ========================================== */
+
+        .color-picker-section {
+            margin-top: 15px;
+        }
+
+        .color-grid {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .color-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+            transform: none !important;
         }
 
 
@@ -276,18 +334,18 @@
 
             justify-content: center;
 
-            gap: 15px;
+            gap: 12px;
 
-            margin-top: 30px;
+            margin-top: 20px;
 
         }
 
 
         .btn {
 
-            width: 180px;
+            width: 170px;
 
-            height: 48px;
+            height: 44px;
 
             border: none;
 
@@ -295,7 +353,7 @@
 
             color: white;
 
-            font-size: 15px;
+            font-size: 14px;
 
             font-weight: bold;
 
@@ -358,7 +416,7 @@
 
             min-height: 18px;
 
-            margin-top: 18px;
+            margin-top: 15px;
 
         }
 
@@ -437,6 +495,21 @@
 
 
         <!-- ======================================
+             CHARACTER COLOR CUSTOMIZATION
+             ====================================== -->
+
+        <div class="color-picker-section">
+            <div class="players-title">
+                CHOOSE COLOR
+            </div>
+
+            <div id="lobbyColorPicker" class="color-grid">
+                <!-- JavaScript ဖြင့် အရောင်ခလုတ်များ ဝင်လာမည် -->
+            </div>
+        </div>
+
+
+        <!-- ======================================
              BUTTONS
              ====================================== -->
 
@@ -505,6 +578,26 @@
         sessionStorage.getItem("host");
 
 
+    // ရွေးချယ်နိုင်သော အရောင်စာရင်းများ
+    const LOBBY_COLORS = [
+        ["Red", "#C51111"],
+        ["Blue", "#132ED1"],
+        ["Green", "#117F2D"],
+        ["Pink", "#ED54BA"],
+        ["Orange", "#EF7D0D"],
+        ["Yellow", "#F5F557"],
+        ["Black", "#3F474E"],
+        ["White", "#D6E0F0"],
+        ["Purple", "#6B2FBB"],
+        ["Brown", "#71491E"],
+        ["Cyan", "#38FEDC"],
+        ["Lime", "#50EF39"]
+    ];
+
+    let selectedColorHex = sessionStorage.getItem("selectedColor") || "#C51111";
+    let takenColors = []; // အခြားသူများ ရွေးထားပြီးသော အရောင်များစာရင်း
+
+
     // =====================================================
     // PAGE LOAD
     // =====================================================
@@ -513,67 +606,77 @@
         "load",
         function() {
 
-            console.log(
-                "Username:",
-                username
-            );
-
-
-            console.log(
-                "Room Code:",
-                roomCode
-            );
-
-
-            console.log(
-                "Host:",
-                host
-            );
-
-
-            // ---------------------------------------------
-            // Check Room Information
-            // ---------------------------------------------
+            console.log("Username:", username);
+            console.log("Room Code:", roomCode);
+            console.log("Host:", host);
 
             if (!roomCode || !username) {
-
-                alert(
-                    "Room information is missing."
-                );
-
-                window.location.href =
-                    "play.html";
-
+                alert("Room information is missing.");
+                window.location.href = "play.html";
                 return;
-
             }
 
+            document.getElementById("roomCode").textContent = roomCode;
 
-            // ---------------------------------------------
-            // Display Room Code
-            // ---------------------------------------------
-
-            document.getElementById(
-                "roomCode"
-            ).textContent =
-                roomCode;
-
-
-            // ---------------------------------------------
-            // Check Host
-            // ---------------------------------------------
-
+            renderLobbyColors();
             updateStartButton();
-
-
-            // ---------------------------------------------
-            // Connect
-            // ---------------------------------------------
-
             connectToLobby();
 
         }
     );
+
+
+    // =====================================================
+    // RENDER LOBBY COLORS (Inactive logic ထည့်သွင်းထားသည်)
+    // =====================================================
+
+    function renderLobbyColors() {
+        const container = document.getElementById("lobbyColorPicker");
+        if (!container) return;
+
+        let html = "";
+        LOBBY_COLORS.forEach(([name, hex]) => {
+            const isTaken = takenColors.includes(hex.toUpperCase()) && hex.toUpperCase() !== selectedColorHex.toUpperCase();
+            const isSelected = hex.toUpperCase() === selectedColorHex.toUpperCase()
+                ? "border: 2px solid #ffffff; transform: scale(1.1); box-shadow: 0 0 8px rgba(255,255,255,0.8);"
+                : "border: 1px solid transparent;";
+
+            const disabledClass = isTaken ? "disabled" : "";
+
+            html += `
+                <div class="color-btn ${disabledClass}"
+                     onclick="pickLobbyColor('${name}', '${hex}')"
+                     style="background-color: ${hex}; ${isSelected}"
+                     title="${name} ${isTaken ? '(Taken)' : ''}">
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+
+    // =====================================================
+    // PICK LOBBY COLOR
+    // =====================================================
+
+    function pickLobbyColor(name, hex) {
+        selectedColorHex = hex;
+        sessionStorage.setItem("selectedColor", hex);
+        renderLobbyColors();
+
+        if (stompClient && stompClient.connected) {
+            stompClient.send(
+                "/app/update-customization",
+                {},
+                JSON.stringify({
+                    roomCode: roomCode,
+                    username: username,
+                    color: hex
+                })
+            );
+            console.log("Sent color update:", name, hex);
+        }
+    }
 
 
     // =====================================================
@@ -582,227 +685,91 @@
 
     function connectToLobby() {
 
+        setStatus("Connecting to lobby...");
 
-        setStatus(
-            "Connecting to lobby..."
-        );
-
-
-        // ---------------------------------------------
-        // SockJS
-        // ---------------------------------------------
-
-        const socket =
-            new SockJS("/game-websocket");
-
-
-        // ---------------------------------------------
-        // STOMP
-        // ---------------------------------------------
-
-        stompClient =
-            Stomp.over(socket);
-
-
+        const socket = new SockJS("/game-websocket");
+        stompClient = Stomp.over(socket);
         stompClient.debug = null;
 
-
-        // ---------------------------------------------
-        // Connect
-        // ---------------------------------------------
-
         stompClient.connect(
-
             {},
-
             function(frame) {
-
-                console.log(
-                    "Lobby connected:",
-                    frame
-                );
-
-
-                setStatus(
-                    "Waiting for players..."
-                );
-
-
-                // ======================================
-                // Subscribe Room Players
-                // ======================================
+                console.log("Lobby connected:", frame);
+                setStatus("Waiting for players...");
 
                 stompClient.subscribe(
-
                     "/topic/room/" + roomCode,
-
                     function(message) {
-
                         try {
-
-                            const data =
-                                JSON.parse(
-                                    message.body
-                                );
-
-
-                            console.log(
-                                "Room update:",
-                                data
-                            );
-
-
-                            updateLobby(
-                                data
-                            );
-
+                            const data = JSON.parse(message.body);
+                            console.log("Room update:", data);
+                            updateLobby(data);
                         }
                         catch(error) {
-
-                            console.error(
-                                "Room data error:",
-                                error
-                            );
-
+                            console.error("Room data error:", error);
                         }
-
                     }
-
                 );
-
-
-                // ======================================
-                // Subscribe Game Start
-                // ======================================
 
                 stompClient.subscribe(
-
-                    "/topic/room/" +
-                    roomCode +
-                    "/game-start",
-
+                    "/topic/room/" + roomCode + "/game-start",
                     function(message) {
-
                         try {
-
-                            const data =
-                                JSON.parse(
-                                    message.body
-                                );
-
-
-                            console.log(
-                                "GAME START:",
-                                data
-                            );
-
-
-                            handleGameStart(
-                                data
-                            );
-
+                            const data = JSON.parse(message.body);
+                            console.log("GAME START:", data);
+                            handleGameStart(data);
                         }
                         catch(error) {
-
-                            console.error(
-                                "Game start error:",
-                                error
-                            );
-
+                            console.error("Game start error:", error);
                         }
-
                     }
-
                 );
 
+                // ချိတ်ဆက်ပြီးတာနဲ့ မိမိရဲ့အရောင်ကို Server ဆီ တခါတည်း ကြေငြာပေးရန်
+                setTimeout(() => {
+                    pickLobbyColor("Selected", selectedColorHex);
+                }, 500);
             },
-
-
             function(error) {
-
-                console.error(
-                    "Lobby WebSocket error:",
-                    error
-                );
-
-
-                setStatus(
-                    "Cannot connect to server."
-                );
-
+                console.error("Lobby WebSocket error:", error);
+                setStatus("Cannot connect to server.");
             }
-
         );
 
     }
 
 
     // =====================================================
-    // UPDATE LOBBY
+    // UPDATE LOBBY (Taken colors များကို တွက်ချက်ခြင်း)
     // =====================================================
 
     function updateLobby(data) {
 
-
-        // ---------------------------------------------
-        // Update Room Code
-        // ---------------------------------------------
-
         if (data.roomCode) {
-
-            roomCode =
-                data.roomCode;
-
-            document.getElementById(
-                "roomCode"
-            ).textContent =
-                roomCode;
-
+            roomCode = data.roomCode;
+            document.getElementById("roomCode").textContent = roomCode;
         }
-
-
-        // ---------------------------------------------
-        // Update Host
-        // ---------------------------------------------
 
         if (data.host) {
-
-            host =
-                data.host;
-
-            sessionStorage.setItem(
-                "host",
-                host
-            );
-
+            host = data.host;
+            sessionStorage.setItem("host", host);
         }
 
+        const players = data.players || [];
 
-        // ---------------------------------------------
-        // Update Players
-        // ---------------------------------------------
+        // အခြားသူများ ရွေးထားသော အရောင်များကို စုဆောင်းခြင်း
+        takenColors = [];
+        players.forEach(p => {
+            if (p.username !== username && p.color) {
+                takenColors.push(p.color.toUpperCase());
+            }
+        });
 
-        const players =
-            data.players || [];
-
-
-        displayPlayers(
-            players
-        );
-
-
-        // ---------------------------------------------
-        // Update Start Button
-        // ---------------------------------------------
-
+        displayPlayers(players);
+        renderLobbyColors(); // အရောင်များ Inactive ဖြစ်မှုများကို Update လုပ်ရန်
         updateStartButton();
 
-
-        setStatus(
-            players.length +
-            " player(s) in lobby."
-        );
-
+        setStatus(players.length + " player(s) in lobby.");
     }
 
 
@@ -812,101 +779,47 @@
 
     function displayPlayers(players) {
 
-
-        const playersList =
-            document.getElementById(
-                "playersList"
-            );
-
-
+        const playersList = document.getElementById("playersList");
         playersList.innerHTML = "";
 
-
         if (players.length === 0) {
-
-            playersList.innerHTML =
-                `
-                <div class="empty-message">
-                    Waiting for players...
-                </div>
-                `;
-
+            playersList.innerHTML = `<div class="empty-message">Waiting for players...</div>`;
             return;
-
         }
 
-
         players.forEach(
-            function(playerName) {
+            function(player) {
+                // player သည် object သို့မဟုတ် string ဖြစ်နိုင်သဖြင့် စစ်ဆေးခြင်း
+                const playerName = typeof player === 'object' ? player.username : player;
+                const playerColor = typeof player === 'object' && player.color ? player.color : '#8b949e';
 
+                const playerDiv = document.createElement("div");
+                playerDiv.className = "player";
 
-                const playerDiv =
-                    document.createElement(
-                        "div"
-                    );
+                const infoDiv = document.createElement("div");
+                infoDiv.className = "player-info";
 
+                // အရောင်ပြ ညွှန်တံ
+                const colorIndicator = document.createElement("span");
+                colorIndicator.className = "player-color-indicator";
+                colorIndicator.style.backgroundColor = playerColor;
 
-                playerDiv.className =
-                    "player";
+                const nameDiv = document.createElement("div");
+                nameDiv.className = "player-name";
+                nameDiv.textContent = playerName;
 
+                infoDiv.appendChild(colorIndicator);
+                infoDiv.appendChild(nameDiv);
 
-                // -----------------------------------------
-                // Player Name
-                // -----------------------------------------
-
-                const nameDiv =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                nameDiv.className =
-                    "player-name";
-
-
-                nameDiv.textContent =
-                    playerName;
-
-
-                // -----------------------------------------
-                // Host Label
-                // -----------------------------------------
-
-                const hostDiv =
-                    document.createElement(
-                        "div"
-                    );
-
-
+                const hostDiv = document.createElement("div");
                 if (playerName === host) {
-
-                    hostDiv.className =
-                        "host";
-
-                    hostDiv.textContent =
-                        "👑 HOST";
-
+                    hostDiv.className = "host";
+                    hostDiv.textContent = "👑 HOST";
                 }
 
-
-                // -----------------------------------------
-                // Add
-                // -----------------------------------------
-
-                playerDiv.appendChild(
-                    nameDiv
-                );
-
-
-                playerDiv.appendChild(
-                    hostDiv
-                );
-
-
-                playersList.appendChild(
-                    playerDiv
-                );
-
+                playerDiv.appendChild(infoDiv);
+                playerDiv.appendChild(hostDiv);
+                playersList.appendChild(playerDiv);
             }
         );
 
@@ -918,37 +831,14 @@
     // =====================================================
 
     function updateStartButton() {
-
-
-        const startButton =
-            document.getElementById(
-                "startButton"
-            );
-
-
-        /*
-         * Only Host can start.
-         */
-
+        const startButton = document.getElementById("startButton");
         if (username === host) {
-
-            startButton.disabled =
-                false;
-
-            startButton.textContent =
-                "START GAME";
-
+            startButton.disabled = false;
+            startButton.textContent = "START GAME";
+        } else {
+            startButton.disabled = true;
+            startButton.textContent = "WAITING FOR HOST";
         }
-        else {
-
-            startButton.disabled =
-                true;
-
-            startButton.textContent =
-                "WAITING FOR HOST";
-
-        }
-
     }
 
 
@@ -957,121 +847,50 @@
     // =====================================================
 
     function startGame() {
-
-
-        // ---------------------------------------------
-        // Check Host
-        // ---------------------------------------------
-
         if (username !== host) {
-
-            alert(
-                "Only the host can start the game."
-            );
-
+            alert("Only the host can start the game.");
             return;
-
         }
-
-
-        // ---------------------------------------------
-        // Check Connection
-        // ---------------------------------------------
 
         if (!stompClient) {
-
-            alert(
-                "Not connected to server."
-            );
-
+            alert("Not connected to server.");
             return;
-
         }
 
-
-        setStatus(
-            "Starting game..."
-        );
-
-
-        // ---------------------------------------------
-        // Send Start Game
-        // ---------------------------------------------
+        setStatus("Starting game...");
 
         stompClient.send(
-
             "/app/start-game",
-
             {},
-
             JSON.stringify({
-
-                username:
-                    username,
-
-                roomCode:
-                    roomCode
-
+                username: username,
+                roomCode: roomCode
             })
-
         );
-
     }
 
 
-// =====================================================
-// GAME START EVENT
-// =====================================================
+    // =====================================================
+    // GAME START EVENT
+    // =====================================================
 
-function handleGameStart(data) {
-    console.log("Game started:", data);
-    setStatus("Game starting...");
+    function handleGameStart(data) {
+        console.log("Game started:", data);
+        setStatus("Opening Unity Game...");
 
-    // Server က ပို့ပေးလိုက်တဲ့ roomCode ကို ယူမည် (မပါရင် roomCode variable ကို ယူမည်)
-    let targetRoomCode = data.roomCode || roomCode;
+        if (window.gameLaunchStarted) return;
+        window.gameLaunchStarted = true;
 
-    if (targetRoomCode) {
-        // Tiled Map ရှိတဲ့ html ဖိုင်ဆီသို့ roomCode နဲ့ username ကို ထည့်ပြီး ပို့ပေးမည်
-        window.location.href = "tiledgame.html?roomCode=" + encodeURIComponent(targetRoomCode) + "&username=" + encodeURIComponent(username);
-    } else {
-        // Fallback အနေနဲ့ player.html ဆီ ပို့မည်
-        window.location.href = "player.html?room=" + roomCode;
-    }
-}
+        const unityUrl = new URL("/unity/index.html", window.location.origin);
+        const userColor = sessionStorage.getItem("selectedColor") || "#C51111";
 
-<!--        console.log(-->
-<!--            "Game started:",-->
-<!--            data-->
-<!--        );-->
+        unityUrl.searchParams.set("room", roomCode);
+        unityUrl.searchParams.set("roomCode", roomCode);
+        unityUrl.searchParams.set("user", username);
+        unityUrl.searchParams.set("username", username);
+        unityUrl.searchParams.set("color", userColor);
 
-
-<!--        setStatus(-->
-<!--            "Game starting..."-->
-<!--        );-->
-
-
-        /*
-         * IMPORTANT:
-         *
-         * For now we do NOT launch Unity.
-         *
-         * Next step:
-         *
-         * Lobby
-         *    ↓
-         * GAME_START
-         *    ↓
-         * Unity Room 1
-         *
-         */
-
-            window.location.href = "player.html?room=" + roomCode;
-
-
-        /*
-         * Unity connection will be added here.
-         */
-
+        window.location.href = unityUrl.href;
     }
 
 
@@ -1080,41 +899,18 @@ function handleGameStart(data) {
     // =====================================================
 
     function leaveLobby() {
-
-
         if (stompClient) {
-
-            stompClient.disconnect(
-                function() {
-
-                    console.log(
-                        "Disconnected from lobby."
-                    );
-
-                }
-            );
-
+            stompClient.disconnect(function() {
+                console.log("Disconnected from lobby.");
+            });
         }
 
+        sessionStorage.removeItem("roomCode");
+        sessionStorage.removeItem("host");
+        sessionStorage.removeItem("username");
+        sessionStorage.removeItem("selectedColor");
 
-        sessionStorage.removeItem(
-            "roomCode"
-        );
-
-
-        sessionStorage.removeItem(
-            "host"
-        );
-
-
-        sessionStorage.removeItem(
-            "username"
-        );
-
-
-        window.location.href =
-            "play.html";
-
+        window.location.href = "play.html";
     }
 
 
@@ -1123,14 +919,8 @@ function handleGameStart(data) {
     // =====================================================
 
     function setStatus(message) {
-
-        document.getElementById(
-            "status"
-        ).textContent =
-            message;
-
+        document.getElementById("status").textContent = message;
     }
-
 
 </script>
 
@@ -1138,4 +928,3 @@ function handleGameStart(data) {
 </body>
 
 </html>
-
