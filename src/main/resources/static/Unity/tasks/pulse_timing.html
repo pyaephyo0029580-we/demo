@@ -7,7 +7,6 @@
   <title>Pulse Timing</title>
 
   <style>
-
     * {
         box-sizing: border-box;
     }
@@ -212,69 +211,62 @@
     #hitButton:disabled {
         opacity: 0.5;
         cursor: not-allowed;
-    }/* =========================
-           MESSAGE
-        ========================= */
+    }
 
-        #message {
-            min-height: 35px;
+    #message {
+        min-height: 35px;
 
-            margin-top: 20px;
+        margin-top: 20px;
 
-            font-size: 23px;
-            font-weight: bold;
-        }
+        font-size: 23px;
+        font-weight: bold;
+    }
 
-        .good {
-            color: #64ffae;
-        }
+    .good {
+        color: #64ffae;
+    }
 
-        .miss {
-            color: #ff7c7c;
-        }
+    .miss {
+        color: #ff7c7c;
+    }
 
-        .complete {
-            color: #64ffae;
+    .complete {
+        color: #64ffae;
 
-            font-size: 28px;
+        font-size: 28px;
 
-            text-shadow:
-                0 0 15px
-                rgba(100,255,174,0.5);
-        }
+        text-shadow:
+            0 0 15px
+            rgba(100,255,174,0.5);
+    }
 
+    .progress {
+        height: 10px;
 
-        /* =========================
-           PROGRESS
-        ========================= */
+        margin-top: 18px;
 
-        .progress {
-            height: 10px;
+        border-radius: 20px;
 
-            margin-top: 18px;
+        overflow: hidden;
 
-            border-radius: 20px;
+        background:
+            rgba(255,255,255,0.12);
+    }
 
-            overflow: hidden;
+    #progressFill {
+        width: 0%;
+        height: 100%;
 
-            background:
-                rgba(255,255,255,0.12);
-        }
+        background:
+            linear-gradient(
+                90deg,
+                #21d9ff,
+                #64ffae
+            );
 
-        #progressFill {
-            width: 0%;
-            height: 100%;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    #21d9ff,
-                    #64ffae
-                );
-
-            transition:
-                width 0.3s;
-        }
+        transition:
+            width 0.3s;
+    }
 
   </style>
 </head>
@@ -297,33 +289,17 @@
 
   <div class="hits">
     Hits:
-    <span id="hits">
-            0
-        </span>
-    / 5
+    <span id="hits">0</span> / 5
   </div>
 
 
-  <div
-          class="track"
-          id="track"
-  >
-
-    <div
-            id="targetZone"
-    ></div>
-
-    <div
-            id="pulse"
-    ></div>
-
+  <div class="track" id="track">
+    <div id="targetZone"></div>
+    <div id="pulse"></div>
   </div>
 
 
-  <button
-          id="hitButton"
-          type="button"
-  >
+  <button id="hitButton" type="button">
     HIT
   </button>
 
@@ -332,11 +308,7 @@
 
 
   <div class="progress">
-
-    <div
-            id="progressFill"
-    ></div>
-
+    <div id="progressFill"></div>
   </div>
 
 </div>
@@ -344,401 +316,132 @@
 
 <script>
 
+  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+  if (sessionStorage.getItem('pulse_timing_completed') === 'true') {
+      alert("This task is already completed in this session!");
+      if (window.parent && window.parent.closeTaskModal) {
+          window.parent.closeTaskModal();
+      }
+  }
+
   const TOTAL_HITS = 5;
 
-
-  const pulse =
-      document.getElementById(
-          "pulse"
-      );
-
-
-  const track =
-      document.getElementById(
-          "track"
-      );
-
-
-  const targetZone =
-      document.getElementById(
-          "targetZone"
-      );
-
-
-  const hitsText =
-      document.getElementById(
-          "hits"
-      );
-
-
-  const message =
-      document.getElementById(
-          "message"
-      );
-
-
-  const hitButton =
-      document.getElementById(
-          "hitButton"
-      );
-
-
-  const progressFill =
-      document.getElementById(
-          "progressFill"
-      );
-
+  const pulse = document.getElementById("pulse");
+  const track = document.getElementById("track");
+  const targetZone = document.getElementById("targetZone");
+  const hitsText = document.getElementById("hits");
+  const message = document.getElementById("message");
+  const hitButton = document.getElementById("hitButton");
+  const progressFill = document.getElementById("progressFill");
 
   let x = 0;
-
   let direction = 1;
-
   let hits = 0;
-
   let gameComplete = false;
 
-
-  /*
-      Catch zone position %
-  */
-
   let targetLeft = 42;
-
   const targetWidth = 16;
 
 
-
-  /* =========================
-     MOVE PULSE
-  ========================= */
-
   function animate() {
-
       if (gameComplete) {
           return;
       }
 
+      const max = track.clientWidth - 10;
+      x += direction * 4;
 
-      const max =
-          track.clientWidth - 10;
-
-
-      /*
-          Change this number
-          for speed.
-
-          3 = slow
-          4 = normal
-          6 = fast
-      */
-
-      x +=
-          direction * 4;
-
-
-      if (
-          x >= max
-      ) {
-
+      if (x >= max) {
           x = max;
-
           direction = -1;
-
       }
 
-
-      if (
-          x <= 0
-      ) {
-
+      if (x <= 0) {
           x = 0;
-
           direction = 1;
-
       }
 
-
-      pulse.style.left =
-          x + "px";
-
-
-      requestAnimationFrame(
-          animate
-      );
+      pulse.style.left = x + "px";
+      requestAnimationFrame(animate);
   }
 
 
-
-  /* =========================
-     RANDOM TARGET POSITION
-  ========================= */
-
   function moveTargetZone() {
-
-      /*
-          Target width = 16%
-
-          Keep it between
-          5% and 79%
-
-          so it never goes
-          outside track.
-      */
-
       const minPosition = 5;
-
-      const maxPosition =
-          100 -
-          targetWidth -
-          5;
-
-
+      const maxPosition = 100 - targetWidth - 5;
       let newPosition;
 
-
       do {
+          newPosition = Math.floor(Math.random() * (maxPosition - minPosition + 1)) + minPosition;
+      } while (Math.abs(newPosition - targetLeft) < 15);
 
-          newPosition =
+      targetLeft = newPosition;
+      targetZone.style.left = targetLeft + "%";
+  }
 
-              Math.floor(
 
-                  Math.random() *(
-                        maxPosition -
-                        minPosition +
-                        1
-                    )
+  hitButton.addEventListener("click", function () {
+      if (gameComplete) {
+          return;
+      }
 
-                )
+      const trackWidth = track.clientWidth;
+      const pulseCenter = x + 5;
 
-                +
+      const zoneStart = trackWidth * (targetLeft / 100);
+      const zoneEnd = trackWidth * ((targetLeft + targetWidth) / 100);
 
-                minPosition;
+      if (pulseCenter >= zoneStart && pulseCenter <= zoneEnd) {
+          hits++;
+          hitsText.textContent = hits;
 
+          progressFill.style.width = (hits / TOTAL_HITS * 100) + "%";
 
-        } while (
+          if (hits >= TOTAL_HITS) {
+              gameComplete = true;
+              message.textContent = "✓ TASK COMPLETE";
+              message.className = "complete";
+              hitButton.disabled = true;
 
-            Math.abs(
-                newPosition -
-                targetLeft
-            )
-            <
-            15
+              // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
+              sessionStorage.setItem('pulse_timing_completed', 'true');
 
-        );
+              // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
+              completeTask();
+              return;
+          }
 
+          message.textContent = "✓ GOOD HIT! " + hits + " / " + TOTAL_HITS;
+          message.className = "good";
 
-        targetLeft =
-            newPosition;
+          setTimeout(function () {
+              moveTargetZone();
+              message.textContent = "";
+          }, 350);
 
+      } else {
+          message.textContent = "✕ MISS! Try again.";
+          message.className = "miss";
 
-        targetZone.style.left =
-            targetLeft + "%";
-    }
+          setTimeout(function () {
+              if (!gameComplete) {
+                  message.textContent = "";
+              }
+          }, 500);
+      }
+  });
 
 
+  function completeTask() {
+      setTimeout(() => {
+          if (window.parent && window.parent.closeTaskModal) {
+              window.parent.closeTaskModal();
+          }
+      }, 500);
+  }
 
-    /* =========================
-       HIT BUTTON
-    ========================= */
 
-    hitButton.addEventListener(
-        "click",
-        function () {
-
-            if (
-                gameComplete
-            ) {
-
-                return;
-            }
-
-
-            const trackWidth =
-                track.clientWidth;
-
-
-            /*
-                Pulse center
-            */
-
-            const pulseCenter =
-                x + 5;
-
-
-            /*
-                Green zone start/end
-            */
-
-            const zoneStart =
-
-                trackWidth *
-
-                (
-                    targetLeft /
-                    100
-                );
-
-
-            const zoneEnd =
-
-                trackWidth *
-
-                (
-                    (
-                        targetLeft +
-                        targetWidth
-                    )
-                    /
-                    100
-                );
-
-
-            /* =====================
-               CORRECT
-            ===================== */
-
-            if (
-
-                pulseCenter >=
-                zoneStart
-
-                &&
-
-                pulseCenter <=
-                zoneEnd
-
-            ) {
-
-                hits++;
-
-
-                hitsText.textContent =
-                    hits;
-
-
-                progressFill.style.width =
-
-                    (
-                        hits /
-                        TOTAL_HITS *
-                        100
-                    )
-
-                    +
-
-                    "%";
-
-
-                /* COMPLETE */
-
-                if (
-                    hits >=
-                    TOTAL_HITS
-                ) {
-
-                    gameComplete =
-                        true;
-
-
-                    message.textContent =
-                        "✓ TASK COMPLETE";
-
-
-                    message.className =
-                        "complete";
-
-
-                    hitButton.disabled =
-                        true;
-
-
-                    return;
-                }
-
-
-                /*
-                    Correct but not complete
-                */
-
-                message.textContent =
-
-                    "✓ GOOD HIT! "
-                    +
-                    hits
-                    +
-                    " / "
-                    +
-                    TOTAL_HITS;
-
-
-                message.className =
-                    "good";
-
-
-                /*
-                    IMPORTANT:
-                    Move green zone after
-                    each correct hit
-                */
-
-                setTimeout(
-                    function () {
-
-                        moveTargetZone();
-
-                        message.textContent =
-                            "";
-
-                    },
-                    350
-                );
-
-
-            }
-
-
-            /* =====================
-               MISS
-            ===================== */
-
-            else {
-
-                message.textContent =
-                    "✕ MISS! Try again.";
-
-
-                message.className =
-                    "miss";
-
-
-                setTimeout(
-                    function () {
-
-                        if (
-                            !gameComplete
-                        ) {
-
-                            message.textContent =
-                                "";
-
-                        }
-
-                    },
-                    500
-                );
-
-            }
-
-        }
-    );
-
-
-
-    /* =========================
-       START
-    ========================= */
-
-    animate();
+  animate();
 
 </script>
 

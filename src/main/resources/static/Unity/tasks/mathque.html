@@ -107,156 +107,107 @@
 
 <script>
 
-  const questionText =
-      document.getElementById("question");
+  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+  if (sessionStorage.getItem('math_lock_completed') === 'true') {
+      alert("This task is already completed in this session!");
+      if (window.parent && window.parent.closeTaskModal) {
+          window.parent.closeTaskModal();
+      }
+  }
 
-  const answerInput =
-      document.getElementById("answer");
-
-  const scoreText =
-      document.getElementById("score");
-
-  const message =
-      document.getElementById("message");
-
-  const lock =
-      document.getElementById("lock");
-
-  const checkButton =
-      document.getElementById("check");
+  const questionText = document.getElementById("question");
+  const answerInput = document.getElementById("answer");
+  const scoreText = document.getElementById("score");
+  const message = document.getElementById("message");
+  const lock = document.getElementById("lock");
+  const checkButton = document.getElementById("check");
 
   let correctAnswer = 0;
   let score = 0;
+  let isCompleted = false;
 
 
   function newQuestion(){
+      if(isCompleted) return;
 
-      const a =
-          Math.floor(Math.random()*10)+2;
-
-      const b =
-          Math.floor(Math.random()*10)+1;
-
-      const operators =
-          ["+","-","×"];
-
-      const operator =
-          operators[
-              Math.floor(
-                  Math.random()*operators.length
-              )
-          ];
-
+      const a = Math.floor(Math.random()*10)+2;
+      const b = Math.floor(Math.random()*10)+1;
+      const operators = ["+","-","×"];
+      const operator = operators[Math.floor(Math.random()*operators.length)];
 
       if(operator === "+"){
-
-          correctAnswer =
-              a+b;
-
+          correctAnswer = a + b;
       }else if(operator === "-"){
-
-          correctAnswer =
-              a-b;
-
+          correctAnswer = a - b;
       }else{
-
-          correctAnswer =
-              a*b;
+          correctAnswer = a * b;
       }
 
-
-      questionText.textContent =
-          a +
-          " " +
-          operator +
-          " " +
-          b +
-          " = ?";
-
-
-      answerInput.value =
-          "";
-
+      questionText.textContent = a + " " + operator + " " + b + " = ?";
+      answerInput.value = "";
       answerInput.focus();
   }
 
 
   function checkAnswer(){
+      if(isCompleted) return;
 
-      const answer =
-          Number(answerInput.value);
-
+      const answer = Number(answerInput.value);
 
       if(answer === correctAnswer){
-
           score++;
-
-          scoreText.textContent =
-              score;
-
+          scoreText.textContent = score;
 
           if(score >= 5){
+              isCompleted = true;
+              lock.textContent = "🔓";
+              message.textContent = "✓ LOCK OPEN — TASK COMPLETE";
+              message.style.color = "#65ffae";
 
-              lock.textContent =
-                  "🔓";
+              checkButton.disabled = true;
+              answerInput.disabled = true;
 
-              message.textContent =
-                  "✓ LOCK OPEN — TASK COMPLETE";
+              // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
+              sessionStorage.setItem('math_lock_completed', 'true');
 
-              message.style.color =
-                  "#65ffae";
-
-              checkButton.disabled =
-                  true;
-
-              answerInput.disabled =
-                  true;
-
+              // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
+              completeTask();
               return;
           }
 
+          message.textContent = "✓ Correct";
+          message.style.color = "#65ffae";
 
-          message.textContent =
-              "✓ Correct";
-
-          message.style.color =
-              "#65ffae";
-
-
-          setTimeout(
-              ()=>{
-                  message.textContent="";
+          setTimeout(()=>{
+              if(!isCompleted){
+                  message.textContent = "";
                   newQuestion();
-              },
-              500
-          );
+              }
+          }, 500);
 
       }else{
-
-          message.textContent =
-              "✕ Wrong answer";
-
-          message.style.color =
-              "#ff7272";
+          message.textContent = "✕ Wrong answer";
+          message.style.color = "#ff7272";
       }
   }
 
 
-  checkButton.addEventListener(
-      "click",
-      checkAnswer
-  );
-
-
-  answerInput.addEventListener(
-      "keydown",
-      e=>{
-
-          if(e.key === "Enter"){
-              checkAnswer();
+  function completeTask(){
+      setTimeout(() => {
+          if (window.parent && window.parent.closeTaskModal) {
+              window.parent.closeTaskModal();
           }
+      }, 500);
+  }
+
+
+  checkButton.addEventListener("click", checkAnswer);
+
+  answerInput.addEventListener("keydown", e => {
+      if(e.key === "Enter"){
+          checkAnswer();
       }
-  );
+  });
 
 
   newQuestion();

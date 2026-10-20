@@ -155,33 +155,27 @@
 
 <script>
 
-  const arena =
-      document.getElementById("arena");
+  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+  if (sessionStorage.getItem('gravity_switch_completed') === 'true') {
+      alert("This task is already completed in this session!");
+      if (window.parent && window.parent.closeTaskModal) {
+          window.parent.closeTaskModal();
+      }
+  }
 
-  const ball =
-      document.getElementById("ball");
-
-  const goal =
-      document.querySelector(".goal");
-
-  const walls =
-      document.querySelectorAll(".wall");
-
-  const message =
-      document.getElementById("message");
-
+  const arena = document.getElementById("arena");
+  const ball = document.getElementById("ball");
+  const goal = document.querySelector(".goal");
+  const walls = document.querySelectorAll(".wall");
+  const message = document.getElementById("message");
 
   let x = 40;
   let y = 40;
-
   let dx = 0;
   let dy = 0;
-
   let complete = false;
 
-
   function setGravity(direction) {
-
       if (complete) {
           return;
       }
@@ -189,32 +183,23 @@
       dx = 0;
       dy = 0;
 
-
       if (direction === "up") {
           dy = -3;
       }
-
       if (direction === "down") {
           dy = 3;
       }
-
       if (direction === "left") {
           dx = -3;
       }
-
       if (direction === "right") {
           dx = 3;
       }
   }
 
-
-  function intersects(a,b) {
-
-      const r1 =
-          a.getBoundingClientRect();
-
-      const r2 =
-          b.getBoundingClientRect();
+  function intersects(a, b) {
+      const r1 = a.getBoundingClientRect();
+      const r2 = b.getBoundingClientRect();
 
       return !(
           r1.right < r2.left ||
@@ -224,102 +209,64 @@
       );
   }
 
-
   function animate() {
-
       if (!complete) {
-
           const oldX = x;
           const oldY = y;
 
-
           x += dx;
-          y += dy;x = Math.max(
-            0,
-            Math.min(
-                arena.clientWidth - 45,
-                x
-            )
-        );
+          y += dy;
 
-        y = Math.max(
-            0,
-            Math.min(
-                arena.clientHeight - 45,
-                y
-            )
-        );
+          x = Math.max(0, Math.min(arena.clientWidth - 45, x));
+          y = Math.max(0, Math.min(arena.clientHeight - 45, y));
 
+          ball.style.left = x + "px";
+          ball.style.top = y + "px";
 
-        ball.style.left =
-            x + "px";
+          for (const wall of walls) {
+              if (intersects(ball, wall)) {
+                  x = oldX;
+                  y = oldY;
+                  dx = 0;
+                  dy = 0;
 
-        ball.style.top =
-            y + "px";
+                  ball.style.left = x + "px";
+                  ball.style.top = y + "px";
 
+                  message.textContent = "Blocked! Change gravity.";
+                  message.style.color = "#ffd56b";
+                  break;
+              }
+          }
 
-        for (
-            const wall of walls
-        ) {
+          if (intersects(ball, goal)) {
+              complete = true;
+              dx = 0;
+              dy = 0;
 
-            if (
-                intersects(
-                    ball,
-                    wall
-                )
-            ) {
+              message.textContent = "✓ TASK COMPLETE";
+              message.style.color = "#65ffae";
 
-                x = oldX;
-                y = oldY;
+              // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
+              sessionStorage.setItem('gravity_switch_completed', 'true');
 
-                dx = 0;
-                dy = 0;
+              // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
+              completeTask();
+          }
+      }
 
-                ball.style.left =
-                    x + "px";
+      requestAnimationFrame(animate);
+  }
 
-                ball.style.top =
-                    y + "px";
+  function completeTask() {
+      setTimeout(() => {
+          if (window.parent && window.parent.closeTaskModal) {
+              window.parent.closeTaskModal();
+          }
+      }, 500);
+  }
 
-                message.textContent =
-                    "Blocked! Change gravity.";
-
-                message.style.color =
-                    "#ffd56b";
-
-                break;
-            }
-        }
-
-
-        if (
-            intersects(
-                ball,
-                goal
-            )
-        ) {
-
-            complete = true;
-
-            dx = 0;
-            dy = 0;
-
-            message.textContent =
-                "✓ TASK COMPLETE";
-
-            message.style.color =
-                "#65ffae";
-        }
-    }
-
-
-    requestAnimationFrame(
-        animate
-    );
-}
-
-
-animate();
+  animate();
 
 </script>
 

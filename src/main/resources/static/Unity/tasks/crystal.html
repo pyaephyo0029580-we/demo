@@ -176,224 +176,110 @@
 
 <script>
 
-  const TOTAL_HITS = 5;
-
-  const arena =
-      document.getElementById("arena");
-
-  const hitsText =
-      document.getElementById("hits");
-
-  const missesText =
-      document.getElementById("misses");
-
-  const message =
-      document.getElementById("message");
-
-
-  let hits = 0;
-
-  let misses = 0;
-
-  let currentCrystal = null;
-
-  let crystalTimer = null;
-
-  let complete = false;
-
-
-  function random(min, max) {
-
-      return Math.floor(
-          Math.random() *
-          (max - min + 1)
-      ) + min;
+  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+  if (sessionStorage.getItem('crystal_tap_completed') === 'true') {
+      alert("This task is already completed in this session!");
+      if (window.parent && window.parent.closeTaskModal) {
+          window.parent.closeTaskModal();
+      }
   }
 
+  const TOTAL_HITS = 5;
+
+  const arena = document.getElementById("arena");
+  const hitsText = document.getElementById("hits");
+  const missesText = document.getElementById("misses");
+  const message = document.getElementById("message");
+
+  let hits = 0;
+  let misses = 0;
+  let currentCrystal = null;
+  let crystalTimer = null;
+  let complete = false;
+
+  function random(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
   function showCrystal() {
-
       if (complete) {
           return;
       }
 
-
       if (currentCrystal) {
-
           currentCrystal.remove();
-
           currentCrystal = null;
       }
 
+      const crystal = document.createElement("button");
+      crystal.type = "button";
+      crystal.className = "crystal";
 
-      const crystal =
-          document.createElement("button");
+      const symbols = ["💎", "🔷", "🔹", "🟣", "✨"];
+      crystal.textContent = symbols[random(0, symbols.length - 1)];
 
+      const maxX = arena.clientWidth - 80;
+      const maxY = arena.clientHeight - 80;
 
-      crystal.type =
-          "button";
+      crystal.style.left = random(0, maxX) + "px";
+      crystal.style.top = random(0, maxY) + "px";
 
+      crystal.addEventListener("click", function () {
+          clearTimeout(crystalTimer);
 
-      crystal.className =
-          "crystal";const symbols = [
-            "💎",
-            "🔷",
-            "🔹",
-            "🟣",
-            "✨"
-        ];
+          hits++;
+          hitsText.textContent = hits;
+          message.textContent = "✓ Good hit!";
+          message.className = "good";
 
+          crystal.remove();
+          currentCrystal = null;
 
-        crystal.textContent =
-            symbols[
-                random(
-                    0,
-                    symbols.length - 1
-                )
-            ];
+          if (hits >= TOTAL_HITS) {
+              complete = true;
+              message.textContent = "✓ TASK COMPLETE";
+              message.className = "complete";
 
+              // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
+              sessionStorage.setItem('crystal_tap_completed', 'true');
 
-        const maxX =
-            arena.clientWidth - 80;
+              // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
+              completeTask();
+              return;
+          }
 
-        const maxY =
-            arena.clientHeight - 80;
+          setTimeout(showCrystal, 300);
+      });
 
+      arena.appendChild(crystal);
+      currentCrystal = crystal;
 
-        crystal.style.left =
-            random(0, maxX) + "px";
+      crystalTimer = setTimeout(function () {
+          if (currentCrystal) {
+              currentCrystal.remove();
+              currentCrystal = null;
 
+              misses++;
+              missesText.textContent = misses;
+              message.textContent = "Missed!";
+              message.className = "bad";
 
-        crystal.style.top =
-            random(0, maxY) + "px";
+              setTimeout(showCrystal, 300);
+          }
+      }, 1200);
+  }
 
+  function completeTask() {
+      setTimeout(() => {
+          if (window.parent && window.parent.closeTaskModal) {
+              window.parent.closeTaskModal();
+          }
+      }, 500);
+  }
 
-        crystal.addEventListener(
-            "click",
-            function () {
-
-                clearTimeout(
-                    crystalTimer
-                );
-
-
-                hits++;
-
-
-                hitsText.textContent =
-                    hits;
-
-
-                message.textContent =
-                    "✓ Good hit!";
-
-
-                message.className =
-                    "good";
-
-
-                crystal.remove();
-
-
-                currentCrystal =
-                    null;
-
-
-                if (
-                    hits >= TOTAL_HITS
-                ) {
-
-                    complete =
-                        true;
-
-
-                    message.textContent =
-                        "✓ TASK COMPLETE";
-
-
-                    message.className =
-                        "complete";
-
-
-                    return;
-                }
-
-
-                setTimeout(
-                    showCrystal,
-                    300
-                );
-
-            }
-        );
-
-
-        arena.appendChild(
-            crystal
-        );
-
-
-        currentCrystal =
-            crystal;
-
-
-        crystalTimer =
-            setTimeout(
-                function () {
-
-                    if (
-                        currentCrystal
-                    ) {
-
-                        currentCrystal.remove();
-
-                        currentCrystal =
-                            null;
-
-
-                        misses++;
-
-
-                        missesText.textContent =
-                            misses;
-
-
-                        message.textContent =
-                            "Missed!";
-
-
-                        message.className =
-                            "bad";
-
-
-                        setTimeout(
-                            showCrystal,
-                            300
-                        );
-                    }
-
-                },
-                1200
-            );
-    }
-
-
-    showCrystal();
+  showCrystal();
 
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-

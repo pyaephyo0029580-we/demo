@@ -104,16 +104,14 @@
   }
 
   var buildUrl = "Build";
-  var loaderUrl = buildUrl + "/NewOne6.loader.js";
+  var loaderUrl = buildUrl + "/Real.loader.js"; // လိုအပ်ပါက Loader ဖိုင်နာမည်ကို ကိုက်ညီအောင် ပြင်ရန်
   var config = {
     arguments: [],
-    dataUrl: buildUrl + "/NewOne6.data",
-    frameworkUrl: buildUrl + "/NewOne6.framework.js",
-    codeUrl: buildUrl + "/NewOne6.wasm",
+    dataUrl: buildUrl + "/Real.data",
+    frameworkUrl: buildUrl + "/Real.framework.js",
+    codeUrl: buildUrl + "/Real.wasm",
     streamingAssetsUrl: "StreamingAssets",
-
     fullscreenElementID: "unity-fullscreen-container",
-
     companyName: "DefaultCompany",
     productName: "real map1",
     productVersion: "1.0",
@@ -133,7 +131,7 @@
   }
 
   // =====================================================
-  // 🟢 Unity မှ လှမ်းခေါ်သော Task များကို လက်ခံရန် Functions
+  // 🟢 Unity မှ လှမ်းခေါ်သော Task များနှင့် Game Flow Functions
   // =====================================================
   window.showTaskModal = function(taskName) {
     console.log("Showing task modal for:", taskName);
@@ -151,6 +149,19 @@
     iframe.src = "";
     overlay.style.display = "none";
   };
+
+  // 🟢 ၄ စက္ကန့်အကြာတွင် play.html သို့ ပြန်ခေါ်ရန် (Kill ပြီးချိန်သုံးရန်)
+  window.redirectToPlay = function() {
+    window.location.href = "play.html";
+  };
+
+  // 🟢 Game Win ပြီးသောအခါ 100 coins ပေးရန်
+  window.handleGameWin = function(winningTeam, winnersJson) {
+    console.log("Game Won by team: " + winningTeam, "Winners: " + winnersJson);
+    // လိုအပ်ပါက coin ပေးသည့် JavaScript logic ဆက်ရေးနိုင်ပါသည်
+    window.location.href = "play.html";
+  };
+
 
   var script = document.createElement("script");
   script.src = loaderUrl;
