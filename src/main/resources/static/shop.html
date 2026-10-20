@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Shop - My Online Game</title>
     <style>
+
         /* =========================================
            SHOP.CSS (Dark Plum & Neon Pink Theme)
         ========================================= */
@@ -273,7 +274,7 @@
     <div class="top-bar">
         <button class="back-btn" onclick="goBack()" title="Back to Homepage">✕</button>
         <button class="tab-btn active" onclick="switchCategory('hats')">Hats</button>
-        <button class="tab-btn" onclick="switchCategory('skins')">Skins</button>
+        <!-- ⭐ Skins Button ကို ဖျက်လိုက်ပါပြီ -->
         <div class="currency-display" id="coinDisplay">🪙 0</div>
     </div>
 
@@ -347,15 +348,15 @@
             const card = document.createElement('div');
             card.className = `item-card ${selectedItem.id === item.id ? 'selected' : ''}`;
 
-            // ⭐ ဒီနေရာမှာ Cache မဖမ်းအောင် ?t=... လေးထည့်ထားပါတယ်
-          card.innerHTML = `
-    <div class="item-preview-img">
-        <img src="${item.imagePath}?t=${new Date().getTime()}" alt="${item.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\\'font-size:35px;\\'>📦</span>'">
-    </div>
-    <div class="price-tag">
-        <span>🪙</span> ${item.price}
-    </div>
-`;
+            // ⭐ Cache မဖမ်းအောင် ?t=... လေးထည့်ထားပါတယ်
+            card.innerHTML = `
+                <div class="item-preview-img">
+                    <img src="${item.imagePath}?t=${new Date().getTime()}" alt="${item.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\\'font-size:35px;\\'>📦</span>'">
+                </div>
+                <div class="price-tag">
+                    <span>🪙</span> ${item.price}
+                </div>
+            `;
 
             card.onclick = () => {
                 selectedItem = item;
@@ -372,8 +373,8 @@
 
         const previewContainer = document.getElementById('previewContainer');
 
-        // ⭐ ဒီနေရာမှာလည်း Cache မဖမ်းအောင် ?t=... လေးထည့်ထားပါတယ်
-        previepreviewContainer.innerHTML = `<img id="previewImage" src="${selectedItem.imagePath}?t=${new Date().getTime()}" alt="${selectedItem.name}" onerror="...">`;
+        // ⭐ ဒီနေရာမှာ စာလုံးပေါင်း မှားနေတာ (previepreviewContainer) ကို ပြင်ပေးလိုက်ပါတယ်
+        previewContainer.innerHTML = `<img id="previewImage" src="${selectedItem.imagePath}?t=${new Date().getTime()}" alt="${selectedItem.name}" onerror="this.outerHTML='<span style=\\'font-size:60px;\\'>📦</span>'">`;
 
         document.getElementById('itemName').innerText = selectedItem.name;
         document.getElementById('itemPrice').innerText = `🪙 ${selectedItem.price}`;
@@ -426,6 +427,7 @@
 
     fetchUserCoins();
     fetchShopItems();
+
 </script>
 
 </body>

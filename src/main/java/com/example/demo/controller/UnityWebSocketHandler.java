@@ -1491,7 +1491,7 @@ public class UnityWebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
-        Map<String, Object> payload = new java.util.HashMap<>();
+        Map<String, Object> payload = new HashMap<>();
 
         payload.put("type", "PLAYER_MOVE");
         payload.put("roomCode", roomCode);

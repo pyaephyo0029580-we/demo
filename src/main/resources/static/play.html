@@ -8,8 +8,11 @@
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 
     <style>
+        /* ==========================================
+           BODY
+           ========================================== */
         body {
-            background-color: #0d1117;
+            background: radial-gradient(circle at center, #24141C, #140A0E);
             color: white;
             font-family: Arial, sans-serif;
             display: flex;
@@ -28,22 +31,36 @@
             align-items: center;
         }
 
+        /* ==========================================
+           BACK BUTTON
+           ========================================== */
         .back-btn {
             position: absolute;
             top: 30px;
             left: 30px;
-            background-color: #21262d;
-            color: #c9d1d9;
-            border: 1px solid #30363d;
+            background-color: #2E1A24;
+            color: #A88B98;
+            border: 1px solid #3A1F2A;
             border-radius: 6px;
             padding: 8px 16px;
             cursor: pointer;
             font-weight: bold;
+            transition: all 0.2s;
         }
 
+        .back-btn:hover {
+            background-color: #3A1F2A;
+            color: #ffffff;
+            border-color: #FF2A6D;
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.3);
+        }
+
+        /* ==========================================
+           CENTER BOX (SELECT GAME MODE)
+           ========================================== */
         .center-box {
-            background-color: #161b22;
-            border: 1px solid #30363d;
+            background-color: #1A0F14;
+            border: 1px solid #3A1F2A;
             border-radius: 12px;
             padding: 40px;
             display: flex;
@@ -51,13 +68,18 @@
             align-items: center;
             gap: 20px;
             width: 350px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 42, 109, 0.1);
         }
 
         h2 {
             margin: 0 0 10px 0;
+            color: #FF2A6D;
+            text-shadow: 0 0 15px rgba(255, 42, 109, 0.5);
         }
 
+        /* ==========================================
+           ACTION BUTTONS
+           ========================================== */
         .action-btn {
             width: 250px;
             height: 50px;
@@ -66,56 +88,92 @@
             font-weight: bold;
             cursor: pointer;
             border: none;
-        }
-
-        .btn-create {
-            background-color: #238636;
-            color: white;
-        }
-
-        .btn-join {
-            background-color: #1f6feb;
-            color: white;
+            transition: all 0.2s;
         }
 
         .action-btn:hover {
-            opacity: 0.9;
+            transform: translateY(-2px);
         }
 
+        .btn-create {
+            background: linear-gradient(135deg, #FF2A6D, #D92B55);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 42, 109, 0.4);
+        }
+
+        .btn-create:hover {
+            box-shadow: 0 6px 20px rgba(255, 42, 109, 0.6);
+        }
+
+        .btn-join {
+            background: linear-gradient(135deg, #31c78b, #28a745); /* Green gradient for Join */
+            color: white;
+            box-shadow: 0 4px 15px rgba(49, 199, 139, 0.4);
+        }
+
+        .btn-join:hover {
+            box-shadow: 0 6px 20px rgba(49, 199, 139, 0.6);
+        }
+
+        /* ==========================================
+           MODAL (JOIN ROOM)
+           ========================================== */
         .modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(20, 10, 14, 0.85);
             justify-content: center;
             align-items: center;
+            z-index: 1000;
         }
 
         .modal-box {
-            background: #161b22;
-            border: 1px solid #30363d;
+            background: #1A0F14;
+            border: 2px solid #FF2A6D;
             border-radius: 12px;
             padding: 30px;
             width: 320px;
             text-align: center;
+            box-shadow: 0 0 30px rgba(255, 42, 109, 0.3);
+            animation: modalPop 0.2s ease;
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .modal-box h3 {
             margin-top: 0;
+            color: #FF2A6D;
         }
 
+        /* ==========================================
+           INPUT
+           ========================================== */
         input {
             width: 90%;
             padding: 12px;
             margin: 15px 0;
             border-radius: 6px;
-            border: 1px solid #30363d;
-            background: #0d1117;
+            border: 1px solid #3A1F2A;
+            background: #2E1A24;
             color: white;
             text-align: center;
             font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
+        input:focus {
+            border-color: #FF2A6D;
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.3);
+        }
+
+        /* ==========================================
+           MODAL BUTTONS
+           ========================================== */
         .modal-btn {
             width: 120px;
             padding: 10px;
@@ -124,22 +182,38 @@
             cursor: pointer;
             font-weight: bold;
             margin: 5px;
+            transition: 0.2s;
         }
 
         .join-confirm {
-            background: #238636;
+            background: linear-gradient(135deg, #FF2A6D, #D92B55);
             color: white;
+            box-shadow: 0 4px 10px rgba(255, 42, 109, 0.3);
+        }
+
+        .join-confirm:hover {
+            box-shadow: 0 6px 15px rgba(255, 42, 109, 0.5);
         }
 
         .cancel-btn {
-            background: #30363d;
+            background: #3A1F2A;
+            color: #A88B98;
+            border: 1px solid #2E1A24;
+        }
+
+        .cancel-btn:hover {
+            background: #2E1A24;
             color: white;
         }
 
+        /* ==========================================
+           STATUS TEXT
+           ========================================== */
         #status {
             margin-top: 10px;
-            color: #ff7b72;
+            color: #FF2A6D;
             font-size: 14px;
+            font-weight: bold;
         }
     </style>
 </head>

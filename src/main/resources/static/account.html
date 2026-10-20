@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <title>My Account - Among Us Style</title>
     <style>
+        /* =========================================
+           ACCOUNT.CSS (Dark Plum & Neon Pink Theme)
+        ========================================= */
         body {
-            background-color: #0d1117;
+            background: radial-gradient(circle at center, #24141C, #140A0E); /* Dark Plum */
             color: white;
             font-family: Arial, sans-serif;
             margin: 0;
@@ -19,7 +22,7 @@
         .account-container {
             width: 100vw;
             height: 100vh;
-            background-color: #161b22;
+            background-color: #1A0F14;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -30,14 +33,14 @@
             display: flex;
             align-items: center;
             padding: 15px 25px;
-            background-color: #21262d;
-            border-bottom: 2px solid #30363d;
+            background-color: #24141C;
+            border-bottom: 2px solid #3A1F2A;
         }
 
         .back-btn {
-            background: #30363d;
-            color: white;
-            border: none;
+            background: #2E1A24;
+            color: #A88B98;
+            border: 1px solid #3A1F2A;
             padding: 8px 16px;
             border-radius: 6px;
             font-size: 14px;
@@ -45,7 +48,12 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .back-btn:hover { background-color: #484f58; }
+        .back-btn:hover {
+            background: #FF2A6D;
+            color: white;
+            border-color: #FF2A6D;
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.4);
+        }
 
         /* Main Content Layout */
         .account-content {
@@ -59,15 +67,15 @@
 
         /* Left Profile Card */
         .profile-card {
-            background-color: #21262d;
-            border: 2px solid #30363d;
+            background-color: #1A0F14;
+            border: 2px solid #3A1F2A;
             border-radius: 16px;
             width: 320px;
             padding: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 42, 109, 0.1);
         }
 
         .avatar-container {
@@ -79,14 +87,14 @@
         .avatar-box {
             width: 120px;
             height: 120px;
-            background-color: #161b22;
-            border: 3px solid #58a6ff;
+            background-color: #2E1A24;
+            border: 3px solid #FF2A6D; /* Neon Pink */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            box-shadow: 0 0 15px rgba(88, 166, 255, 0.3);
+            box-shadow: 0 0 15px rgba(255, 42, 109, 0.3);
         }
 
         .avatar-box img {
@@ -99,7 +107,7 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            background-color: #238636;
+            background-color: #FF2A6D;
             color: white;
             border-radius: 50%;
             width: 32px;
@@ -108,7 +116,8 @@
             align-items: center;
             justify-content: center;
             font-size: 14px;
-            border: 2px solid #21262d;
+            border: 2px solid #1A0F14;
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.5);
         }
 
         .username-title {
@@ -116,37 +125,30 @@
             font-weight: bold;
             margin-bottom: 5px;
             color: #ffffff;
-        }
-
-        .user-status {
-            font-size: 13px;
-            color: #3fb950;
-            background-color: rgba(63, 185, 80, 0.1);
-            padding: 4px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(63, 185, 80, 0.3);
+            text-shadow: 0 0 10px rgba(255, 42, 109, 0.3);
         }
 
         /* Right Details Panel */
         .details-panel {
-            background-color: #21262d;
-            border: 2px solid #30363d;
+            background-color: #1A0F14;
+            border: 2px solid #3A1F2A;
             border-radius: 16px;
             width: 450px;
             padding: 30px;
             display: flex;
             flex-direction: column;
             gap: 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 42, 109, 0.1);
         }
 
         .section-title {
             font-size: 18px;
             font-weight: bold;
-            color: #8b949e;
-            border-bottom: 1px solid #30363d;
+            color: #FF2A6D;
+            border-bottom: 1px solid #3A1F2A;
             padding-bottom: 10px;
             text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255, 42, 109, 0.2);
         }
 
         .info-group {
@@ -157,17 +159,17 @@
 
         .info-label {
             font-size: 13px;
-            color: #8b949e;
+            color: #A88B98;
         }
 
         .info-value {
             font-size: 16px;
             font-weight: bold;
-            color: #e6edf3;
-            background-color: #161b22;
+            color: #ffffff;
+            background-color: #2E1A24;
             padding: 12px 14px;
             border-radius: 8px;
-            border: 1px solid #30363d;
+            border: 1px solid #3A1F2A;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -176,29 +178,32 @@
         }
 
         .info-value:hover {
-            border-color: #58a6ff;
-            background-color: #1f242c;
+            border-color: #FF2A6D;
+            background-color: #3A1F2A;
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.2);
         }
 
         .editable-hint {
             font-size: 12px;
-            color: #58a6ff;
+            color: #FF8E9E;
             font-weight: normal;
         }
 
         .coin-badge {
-            color: #e3b341;
+            color: #FFD700; /* Gold */
             cursor: default;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
         }
         .coin-badge:hover {
-            border-color: #30363d;
-            background-color: #161b22;
+            border-color: #3A1F2A;
+            background-color: #2E1A24;
+            box-shadow: none;
         }
 
         /* Inline Edit Input Style */
         .inline-input {
-            background-color: #0d1117;
-            border: 1px solid #58a6ff;
+            background-color: #140A0E;
+            border: 1px solid #FF2A6D;
             color: white;
             font-size: 16px;
             font-weight: bold;
@@ -206,18 +211,23 @@
             border-radius: 6px;
             outline: none;
             width: 60%;
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.2);
         }
 
         .save-btn {
-            background-color: #238636;
+            background: linear-gradient(135deg, #FF2A6D, #D92B55);
             color: white;
             border: none;
             padding: 6px 12px;
             border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
+            transition: 0.2s;
         }
-        .save-btn:hover { background-color: #2ea043; }
+        .save-btn:hover {
+            box-shadow: 0 0 15px rgba(255, 42, 109, 0.5);
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -241,7 +251,6 @@
             <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="changeAvatar(event)">
 
             <div class="username-title" id="profileName">Loading...</div>
-            <div class="user-status" id="userStatusIndicator">● Online</div>
         </div>
 
         <!-- Right Detailed Information -->
@@ -323,15 +332,6 @@
             document.getElementById('accEmail').innerText = email;
             document.getElementById('accFriend').innerText = friendCode;
             document.getElementById('accCoins').innerText = `🪙 ${coins}`;
-
-            const statusEl = document.getElementById('userStatusIndicator');
-            if (data.isOnline) {
-                statusEl.textContent = "● Online";
-                statusEl.style.color = "#3fb950";
-            } else {
-                statusEl.textContent = "○ Offline";
-                statusEl.style.color = "#8b949e";
-            }
 
             if (data.profileImage) {
                 document.getElementById('avatarBox').innerHTML = `<img src="${data.profileImage}" alt="Avatar">`;
