@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signal Tower</title>
+
+  <style>
+    body{
+        margin:0;
+        min-height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        background:#061126;
+        font-family:Arial;
+        color:white;
+    }
+    .game{
+        width:600px;
+        padding:30px;
+        max-width:94%;
+        text-align:center;
+        background:#0a204d;
+        border:2px solid #41d8ff;
+        border-radius:24px;
+    }
+    .tower{
+        font-size:100px;
+        margin:25px;
+    }
+    input{
+        width:100%;
+    }
+    #signal{
+        font-size:30px;
+        color:#6aeaff;
+        margin-top:20px;
+    }
+    .bar{
+        height:14px;
+        background:#263c68;
+        border-radius:20px;
+        overflow:hidden;
+    }
+    #fill{
+        height:100%;
+        width:0%;
+        background:#65ffae;
+    }
+    #message{
+        margin-top:20px;
+        font-size:22px;
+        font-weight:bold;
+    }
+  </style>
+</head>
+
+<body>
+<div class="game">
+
+  <h1>📡 Signal Tower</h1>
+  <p>Adjust the antenna until signal reaches 100%.</p>
+
+  <div class="tower">📡</div>
+
+  <input type="range" id="angle" min="0" max="100" value="20">
+
+  <div id="signal">Signal: 0%</div>
+
+  <div class="bar">
+    <div id="fill"></div>
+  </div>
+
+  <div id="message"></div>
+
+</div>
+
+<script>
+
+  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+  if (sessionStorage.getItem('signal_tower_completed') === 'true') {
+      alert("This task is already completed in this session!");
+      if (window.parent && window.parent.closeTaskModal) {
+          window.parent.closeTaskModal();
+      }
+  }
+
+  const target = 73;
+
+  const slider = document.getElementById("angle");
+  const signal = document.getElementById("signal");
+  const fill = document.getElementById("fill");
+  const message = document.getElementById("message");
+
+  let isCompleted = false;
+
+  slider.oninput = function(){
+      if(isCompleted) return;
+
+      const value = Number(slider.value);
+      const difference = Math.abs(target - value);
+
+      let percent = Math.max(0, 100 - difference * 4);
+      percent = Math.round(percent);
+
+      signal.textContent = "Signal: " + percent + "%";
+      fill.style.width = percent + "%";
+
+      if(percent >= 98){
+          isCompleted = true;
+          message.textContent = "✓ TASK COMPLETE";
+          message.style.color = "#64ffae";
+          slider.disabled = true;
+
+          // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
+          sessionStorage.setItem('signal_tower_completed', 'true');
+
+          // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
+          completeTask();
+      }else{
+          message.textContent = "Keep tuning...";
+          message.style.color = "#ffd56b";
+      }
+  };
+
+
+  function completeTask(){
+      setTimeout(() => {
+          if (window.parent && window.parent.closeTaskModal) {
+              window.parent.closeTaskModal();
+          }
+      }, 500);
+  }
+
+
+  slider.dispatchEvent(
+      new Event("input")
+  );
+
+</script>
+</body>
+</html>

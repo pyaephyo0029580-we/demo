@@ -1,4 +1,4 @@
-<!DOCTYPE >
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -32,23 +32,15 @@
            ========================================== */
 
         body {
-
-            background-color: #0d1117;
-
+            /* ⭐ Dark Plum Gradient Background */
+            background: radial-gradient(circle at center, #24141C, #140A0E);
             color: #ffffff;
-
             font-family: Arial, sans-serif;
-
             margin: 0;
-
             height: 100vh;
-
             display: flex;
-
             justify-content: center;
-
             align-items: center;
-
         }
 
 
@@ -57,19 +49,12 @@
            ========================================== */
 
         .container {
-
             width: 1000px;
-
             min-height: 650px;
-
             position: relative;
-
             display: flex;
-
             justify-content: center;
-
             align-items: center;
-
         }
 
 
@@ -78,24 +63,15 @@
            ========================================== */
 
         .lobby-box {
-
             width: 600px;
-
             min-height: 500px;
-
-            background-color: #161b22;
-
-            border: 1px solid #30363d;
-
+            background-color: #1A0F14; /* Dark Plum */
+            border: 2px solid #3A1F2A;
             border-radius: 14px;
-
-            padding: 35px;
-
+            padding: 30px;
             box-sizing: border-box;
-
-            box-shadow:
-                0 8px 24px rgba(0,0,0,0.6);
-
+            /* ⭐ Pink Glow Shadow */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 42, 109, 0.1);
         }
 
 
@@ -104,17 +80,13 @@
            ========================================== */
 
         .title {
-
             text-align: center;
-
             margin-top: 0;
-
-            margin-bottom: 25px;
-
-            color: #f0f6fc;
-
-            font-size: 28px;
-
+            margin-bottom: 20px;
+            /* ⭐ Neon Pink */
+            color: #FF2A6D;
+            font-size: 26px;
+            text-shadow: 0 0 15px rgba(255, 42, 109, 0.5);
         }
 
 
@@ -123,45 +95,29 @@
            ========================================== */
 
         .room-section {
-
             text-align: center;
-
-            margin-bottom: 30px;
-
+            margin-bottom: 20px;
         }
 
 
         .room-label {
-
-            color: #8b949e;
-
+            color: #A88B98;
             font-size: 13px;
-
-            margin-bottom: 8px;
-
+            margin-bottom: 6px;
         }
 
 
         .room-code {
-
             display: inline-block;
-
-            background-color: #0d1117;
-
-            border: 1px solid #30363d;
-
+            background-color: #2E1A24;
+            border: 1px solid #FF2A6D;
             border-radius: 8px;
-
-            padding: 12px 25px;
-
-            color: #58a6ff;
-
-            font-size: 28px;
-
+            padding: 10px 20px;
+            color: #FF2A6D;
+            font-size: 24px;
             font-weight: bold;
-
             letter-spacing: 4px;
-
+            box-shadow: 0 0 15px rgba(255, 42, 109, 0.2);
         }
 
 
@@ -170,32 +126,22 @@
            ========================================== */
 
         .players-title {
-
-            color: #f0f6fc;
-
-            font-size: 18px;
-
+            color: #ffffff;
+            font-size: 16px;
             font-weight: bold;
-
-            margin-bottom: 12px;
-
+            margin-bottom: 8px;
         }
 
 
         .players-list {
-
-            background-color: #0d1117;
-
-            border: 1px solid #30363d;
-
+            background-color: #2E1A24;
+            border: 1px solid #3A1F2A;
             border-radius: 8px;
-
-            min-height: 180px;
-
-            padding: 10px;
-
+            min-height: 130px;
+            max-height: 130px;
+            overflow-y: auto;
+            padding: 8px;
             box-sizing: border-box;
-
         }
 
 
@@ -204,50 +150,47 @@
            ========================================== */
 
         .player {
-
             display: flex;
-
             align-items: center;
-
             justify-content: space-between;
-
-            background-color: #161b22;
-
-            border: 1px solid #30363d;
-
+            background-color: #1A0F14;
+            border: 1px solid #3A1F2A;
             border-radius: 7px;
-
-            padding: 12px 15px;
-
-            margin-bottom: 8px;
-
+            padding: 10px 12px;
+            margin-bottom: 6px;
         }
 
 
         .player:last-child {
-
             margin-bottom: 0;
+        }
 
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-color-indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
         }
 
 
         .player-name {
-
-            font-size: 15px;
-
+            font-size: 14px;
             color: #ffffff;
-
         }
 
 
         .host {
-
-            color: #f2cc60;
-
-            font-size: 13px;
-
+            color: #FFD700; /* Gold for Host */
+            font-size: 12px;
             font-weight: bold;
-
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
         }
 
 
@@ -256,13 +199,50 @@
            ========================================== */
 
         .empty-message {
-
             text-align: center;
+            color: #A88B98;
+            padding: 35px 10px;
+            font-size: 14px;
+        }
 
-            color: #8b949e;
 
-            padding: 50px 10px;
+        /* ==========================================
+           LOBBY COLOR PICKER
+           ========================================== */
 
+        .color-picker-section {
+            margin-top: 15px;
+        }
+
+        .color-grid {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            background-color: #2E1A24;
+            border: 1px solid #3A1F2A;
+            border-radius: 8px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .color-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+            transform: none !important;
         }
 
 
@@ -271,76 +251,59 @@
            ========================================== */
 
         .buttons {
-
             display: flex;
-
             justify-content: center;
-
-            gap: 15px;
-
-            margin-top: 30px;
-
+            gap: 12px;
+            margin-top: 20px;
         }
 
 
         .btn {
-
-            width: 180px;
-
-            height: 48px;
-
+            width: 170px;
+            height: 44px;
             border: none;
-
             border-radius: 8px;
-
             color: white;
-
-            font-size: 15px;
-
+            font-size: 14px;
             font-weight: bold;
-
             cursor: pointer;
-
             transition: 0.2s;
-
         }
 
 
         .btn:hover {
-
             opacity: 0.9;
-
             transform: translateY(-1px);
-
         }
 
 
         .btn-start {
+            /* ⭐ Neon Pink Gradient */
+            background: linear-gradient(135deg, #FF2A6D, #D92B55);
+            box-shadow: 0 4px 15px rgba(255, 42, 109, 0.4);
+        }
 
-            background-color: #238636;
-
+        .btn-start:hover {
+            box-shadow: 0 6px 20px rgba(255, 42, 109, 0.6);
         }
 
 
         .btn-start:disabled {
-
-            background-color: #30363d;
-
-            color: #8b949e;
-
+            background: #3A1F2A;
+            color: #A88B98;
             cursor: not-allowed;
-
             transform: none;
-
             opacity: 0.7;
-
+            box-shadow: none;
         }
 
 
         .btn-leave {
+            background: #d95569; /* Reddish leave button */
+        }
 
-            background-color: #da3633;
-
+        .btn-leave:hover {
+            background: #c82333;
         }
 
 
@@ -349,17 +312,11 @@
            ========================================== */
 
         .status {
-
             text-align: center;
-
-            color: #8b949e;
-
+            color: #A88B98;
             font-size: 13px;
-
             min-height: 18px;
-
-            margin-top: 18px;
-
+            margin-top: 15px;
         }
 
 
@@ -437,6 +394,21 @@
 
 
         <!-- ======================================
+             CHARACTER COLOR CUSTOMIZATION
+             ====================================== -->
+
+        <div class="color-picker-section">
+            <div class="players-title">
+                CHOOSE COLOR
+            </div>
+
+            <div id="lobbyColorPicker" class="color-grid">
+                <!-- JavaScript ဖြင့် အရောင်ခလုတ်များ ဝင်လာမည် -->
+            </div>
+        </div>
+
+
+        <!-- ======================================
              BUTTONS
              ====================================== -->
 
@@ -505,6 +477,26 @@
         sessionStorage.getItem("host");
 
 
+    // ရယူနိုင်သော အရောင်စာရင်းများ
+    const LOBBY_COLORS = [
+        ["Red", "#C51111"],
+        ["Blue", "#132ED1"],
+        ["Green", "#117F2D"],
+        ["Pink", "#ED54BA"],
+        ["Orange", "#EF7D0D"],
+        ["Yellow", "#F5F557"],
+        ["Black", "#3F474E"],
+        ["White", "#D6E0F0"],
+        ["Purple", "#6B2FBB"],
+        ["Brown", "#71491E"],
+        ["Cyan", "#38FEDC"],
+        ["Lime", "#50EF39"]
+    ];
+
+    let selectedColorHex = sessionStorage.getItem("selectedColor") || "#C51111";
+    let takenColors = []; // အခြားသူများ ရွေးထားပြီးသော အရောင်များစာရင်း
+
+
     // =====================================================
     // PAGE LOAD
     // =====================================================
@@ -513,67 +505,77 @@
         "load",
         function() {
 
-            console.log(
-                "Username:",
-                username
-            );
-
-
-            console.log(
-                "Room Code:",
-                roomCode
-            );
-
-
-            console.log(
-                "Host:",
-                host
-            );
-
-
-            // ---------------------------------------------
-            // Check Room Information
-            // ---------------------------------------------
+            console.log("Username:", username);
+            console.log("Room Code:", roomCode);
+            console.log("Host:", host);
 
             if (!roomCode || !username) {
-
-                alert(
-                    "Room information is missing."
-                );
-
-                window.location.href =
-                    "play.html";
-
+                alert("Room information is missing.");
+                window.location.href = "play.html";
                 return;
-
             }
 
+            document.getElementById("roomCode").textContent = roomCode;
 
-            // ---------------------------------------------
-            // Display Room Code
-            // ---------------------------------------------
-
-            document.getElementById(
-                "roomCode"
-            ).textContent =
-                roomCode;
-
-
-            // ---------------------------------------------
-            // Check Host
-            // ---------------------------------------------
-
+            renderLobbyColors();
             updateStartButton();
-
-
-            // ---------------------------------------------
-            // Connect
-            // ---------------------------------------------
-
             connectToLobby();
 
         }
     );
+
+
+    // =====================================================
+    // RENDER LOBBY COLORS
+    // =====================================================
+
+    function renderLobbyColors() {
+        const container = document.getElementById("lobbyColorPicker");
+        if (!container) return;
+
+        let html = "";
+        LOBBY_COLORS.forEach(([name, hex]) => {
+            const isTaken = takenColors.includes(hex.toUpperCase()) && hex.toUpperCase() !== selectedColorHex.toUpperCase();
+            const isSelected = hex.toUpperCase() === selectedColorHex.toUpperCase()
+                ? "border: 2px solid #ffffff; transform: scale(1.1); box-shadow: 0 0 8px rgba(255,255,255,0.8);"
+                : "border: 1px solid transparent;";
+
+            const disabledClass = isTaken ? "disabled" : "";
+
+            html += `
+                <div class="color-btn ${disabledClass}"
+                     onclick="pickLobbyColor('${name}', '${hex}')"
+                     style="background-color: ${hex}; ${isSelected}"
+                     title="${name} ${isTaken ? '(Taken)' : ''}">
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+
+    // =====================================================
+    // PICK LOBBY COLOR
+    // =====================================================
+
+    function pickLobbyColor(name, hex) {
+        selectedColorHex = hex;
+        sessionStorage.setItem("selectedColor", hex);
+        renderLobbyColors();
+
+        if (stompClient && stompClient.connected) {
+            stompClient.send(
+                "/app/update-customization",
+                {},
+                JSON.stringify({
+                    roomCode: roomCode,
+                    username: username,
+                    color: hex
+                })
+            );
+            console.log("Sent color update:", name, hex);
+        }
+    }
 
 
     // =====================================================
@@ -582,227 +584,98 @@
 
     function connectToLobby() {
 
+        setStatus("Connecting to lobby...");
 
-        setStatus(
-            "Connecting to lobby..."
-        );
-
-
-        // ---------------------------------------------
-        // SockJS
-        // ---------------------------------------------
-
-        const socket =
-            new SockJS("/game-websocket");
-
-
-        // ---------------------------------------------
-        // STOMP
-        // ---------------------------------------------
-
-        stompClient =
-            Stomp.over(socket);
-
-
+        const socket = new SockJS("/game-websocket");
+        stompClient = Stomp.over(socket);
         stompClient.debug = null;
 
-
-        // ---------------------------------------------
-        // Connect
-        // ---------------------------------------------
-
         stompClient.connect(
-
             {},
-
             function(frame) {
-
-                console.log(
-                    "Lobby connected:",
-                    frame
-                );
-
-
-                setStatus(
-                    "Waiting for players..."
-                );
-
-
-                // ======================================
-                // Subscribe Room Players
-                // ======================================
+                console.log("Lobby connected:", frame);
+                setStatus("Waiting for players...");
 
                 stompClient.subscribe(
-
                     "/topic/room/" + roomCode,
-
                     function(message) {
-
                         try {
-
-                            const data =
-                                JSON.parse(
-                                    message.body
-                                );
-
-
-                            console.log(
-                                "Room update:",
-                                data
-                            );
-
-
-                            updateLobby(
-                                data
-                            );
-
+                            const data = JSON.parse(message.body);
+                            console.log("Room update:", data);
+                            updateLobby(data);
                         }
                         catch(error) {
-
-                            console.error(
-                                "Room data error:",
-                                error
-                            );
-
+                            console.error("Room data error:", error);
                         }
-
                     }
-
                 );
-
-
-                // ======================================
-                // Subscribe Game Start
-                // ======================================
 
                 stompClient.subscribe(
-
-                    "/topic/room/" +
-                    roomCode +
-                    "/game-start",
-
+                    "/topic/room/" + roomCode + "/game-start",
                     function(message) {
-
                         try {
-
-                            const data =
-                                JSON.parse(
-                                    message.body
-                                );
-
-
-                            console.log(
-                                "GAME START:",
-                                data
-                            );
-
-
-                            handleGameStart(
-                                data
-                            );
-
+                            const data = JSON.parse(message.body);
+                            console.log("GAME START:", data);
+                            handleGameStart(data);
                         }
                         catch(error) {
-
-                            console.error(
-                                "Game start error:",
-                                error
-                            );
-
+                            console.error("Game start error:", error);
                         }
-
                     }
-
                 );
 
+                setTimeout(() => {
+                    pickLobbyColor("Selected", selectedColorHex);
+                }, 500);
             },
-
-
             function(error) {
-
-                console.error(
-                    "Lobby WebSocket error:",
-                    error
-                );
-
-
-                setStatus(
-                    "Cannot connect to server."
-                );
-
+                console.error("Lobby WebSocket error:", error);
+                setStatus("Cannot connect to server.");
             }
-
         );
 
     }
 
 
     // =====================================================
-    // UPDATE LOBBY
+    // UPDATE LOBBY (Auto-select First Available Color added)
     // =====================================================
 
     function updateLobby(data) {
 
-
-        // ---------------------------------------------
-        // Update Room Code
-        // ---------------------------------------------
-
         if (data.roomCode) {
-
-            roomCode =
-                data.roomCode;
-
-            document.getElementById(
-                "roomCode"
-            ).textContent =
-                roomCode;
-
+            roomCode = data.roomCode;
+            document.getElementById("roomCode").textContent = roomCode;
         }
-
-
-        // ---------------------------------------------
-        // Update Host
-        // ---------------------------------------------
 
         if (data.host) {
-
-            host =
-                data.host;
-
-            sessionStorage.setItem(
-                "host",
-                host
-            );
-
+            host = data.host;
+            sessionStorage.setItem("host", host);
         }
 
+        const players = data.players || [];
 
-        // ---------------------------------------------
-        // Update Players
-        // ---------------------------------------------
+        // ၁။ အခြားသူများ ရွေးထားသော အရောင်များကို စုဆောင်းခြင်း
+        takenColors = [];
+        players.forEach(p => {
+            if (p.username !== username && p.color) {
+                takenColors.push(p.color.toUpperCase());
+            }
+        });
 
-        const players =
-            data.players || [];
+        // ၂။ မိမိ ရွေးထားသော အရောင်သည် အခြားသူ ရွေးပြီးသား ဖြစ်နေပါက အဆင်သင့်ရှိသော အရောင်သစ်ကို အလိုအလျောက် ရွေးပေးခြင်း
+        if (takenColors.includes(selectedColorHex.toUpperCase())) {
+            const availableColor = LOBBY_COLORS.find(([_, hex]) => !takenColors.includes(hex.toUpperCase()));
+            if (availableColor) {
+                pickLobbyColor(availableColor[0], availableColor[1]);
+            }
+        }
 
-
-        displayPlayers(
-            players
-        );
-
-
-        // ---------------------------------------------
-        // Update Start Button
-        // ---------------------------------------------
-
+        displayPlayers(players);
+        renderLobbyColors();
         updateStartButton();
 
-
-        setStatus(
-            players.length +
-            " player(s) in lobby."
-        );
-
+        setStatus(players.length + " player(s) in lobby.");
     }
 
 
@@ -812,101 +685,45 @@
 
     function displayPlayers(players) {
 
-
-        const playersList =
-            document.getElementById(
-                "playersList"
-            );
-
-
+        const playersList = document.getElementById("playersList");
         playersList.innerHTML = "";
 
-
         if (players.length === 0) {
-
-            playersList.innerHTML =
-                `
-                <div class="empty-message">
-                    Waiting for players...
-                </div>
-                `;
-
+            playersList.innerHTML = `<div class="empty-message">Waiting for players...</div>`;
             return;
-
         }
 
-
         players.forEach(
-            function(playerName) {
+            function(player) {
+                const playerName = typeof player === 'object' ? player.username : player;
+                const playerColor = typeof player === 'object' && player.color ? player.color : '#8b949e';
 
+                const playerDiv = document.createElement("div");
+                playerDiv.className = "player";
 
-                const playerDiv =
-                    document.createElement(
-                        "div"
-                    );
+                const infoDiv = document.createElement("div");
+                infoDiv.className = "player-info";
 
+                const colorIndicator = document.createElement("span");
+                colorIndicator.className = "player-color-indicator";
+                colorIndicator.style.backgroundColor = playerColor;
 
-                playerDiv.className =
-                    "player";
+                const nameDiv = document.createElement("div");
+                nameDiv.className = "player-name";
+                nameDiv.textContent = playerName;
 
+                infoDiv.appendChild(colorIndicator);
+                infoDiv.appendChild(nameDiv);
 
-                // -----------------------------------------
-                // Player Name
-                // -----------------------------------------
-
-                const nameDiv =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                nameDiv.className =
-                    "player-name";
-
-
-                nameDiv.textContent =
-                    playerName;
-
-
-                // -----------------------------------------
-                // Host Label
-                // -----------------------------------------
-
-                const hostDiv =
-                    document.createElement(
-                        "div"
-                    );
-
-
+                const hostDiv = document.createElement("div");
                 if (playerName === host) {
-
-                    hostDiv.className =
-                        "host";
-
-                    hostDiv.textContent =
-                        "👑 HOST";
-
+                    hostDiv.className = "host";
+                    hostDiv.textContent = "👑 HOST";
                 }
 
-
-                // -----------------------------------------
-                // Add
-                // -----------------------------------------
-
-                playerDiv.appendChild(
-                    nameDiv
-                );
-
-
-                playerDiv.appendChild(
-                    hostDiv
-                );
-
-
-                playersList.appendChild(
-                    playerDiv
-                );
-
+                playerDiv.appendChild(infoDiv);
+                playerDiv.appendChild(hostDiv);
+                playersList.appendChild(playerDiv);
             }
         );
 
@@ -918,37 +735,14 @@
     // =====================================================
 
     function updateStartButton() {
-
-
-        const startButton =
-            document.getElementById(
-                "startButton"
-            );
-
-
-        /*
-         * Only Host can start.
-         */
-
+        const startButton = document.getElementById("startButton");
         if (username === host) {
-
-            startButton.disabled =
-                false;
-
-            startButton.textContent =
-                "START GAME";
-
+            startButton.disabled = false;
+            startButton.textContent = "START GAME";
+        } else {
+            startButton.disabled = true;
+            startButton.textContent = "WAITING FOR HOST";
         }
-        else {
-
-            startButton.disabled =
-                true;
-
-            startButton.textContent =
-                "WAITING FOR HOST";
-
-        }
-
     }
 
 
@@ -957,100 +751,51 @@
     // =====================================================
 
     function startGame() {
-
-
-        // ---------------------------------------------
-        // Check Host
-        // ---------------------------------------------
-
         if (username !== host) {
-
-            alert(
-                "Only the host can start the game."
-            );
-
+            alert("Only the host can start the game.");
             return;
-
         }
-
-
-        // ---------------------------------------------
-        // Check Connection
-        // ---------------------------------------------
 
         if (!stompClient) {
-
-            alert(
-                "Not connected to server."
-            );
-
+            alert("Not connected to server.");
             return;
-
         }
 
-
-        setStatus(
-            "Starting game..."
-        );
-
-
-        // ---------------------------------------------
-        // Send Start Game
-        // ---------------------------------------------
+        setStatus("Starting game...");
 
         stompClient.send(
-
             "/app/start-game",
-
             {},
-
             JSON.stringify({
-
-                username:
-                    username,
-
-                roomCode:
-                    roomCode
-
+                username: username,
+                roomCode: roomCode
             })
-
         );
-
     }
 
 
     // =====================================================
-// GAME START EVENT
-// =====================================================
+    // GAME START EVENT
+    // =====================================================
 
- function handleGameStart(data) {
+    function handleGameStart(data) {
+        console.log("Game started:", data);
+        setStatus("Opening Unity Game...");
 
-    console.log("Game started:", data);
+        if (window.gameLaunchStarted) return;
+        window.gameLaunchStarted = true;
 
-    setStatus("Opening Unity Game...");
+        const unityUrl = new URL("/unity/index.html", window.location.origin);
+        const userColor = sessionStorage.getItem("selectedColor") || "#C51111";
 
-    // Prevent duplicate launch
-    if (window.gameLaunchStarted) {
-        return;
+        unityUrl.searchParams.set("room", roomCode);
+        unityUrl.searchParams.set("roomCode", roomCode);
+        unityUrl.searchParams.set("user", username);
+        unityUrl.searchParams.set("username", username);
+        unityUrl.searchParams.set("color", userColor);
+
+        window.location.href = unityUrl.href;
     }
-
-    window.gameLaunchStarted = true;
-
-    // Use the current Spring Boot server address
-    const unityUrl = new URL(
-        "/unity/index.html",
-        window.location.origin
-    );
-
-    // Pass room information to Unity
-    unityUrl.searchParams.set("roomCode", roomCode);
-    unityUrl.searchParams.set("username", username);
-
-    console.log("Opening Unity:", unityUrl.href);
-
-    // Open Unity in the current browser tab
-    window.location.href = unityUrl.href;
-}
 
 
     // =====================================================
@@ -1058,41 +803,18 @@
     // =====================================================
 
     function leaveLobby() {
-
-
         if (stompClient) {
-
-            stompClient.disconnect(
-                function() {
-
-                    console.log(
-                        "Disconnected from lobby."
-                    );
-
-                }
-            );
-
+            stompClient.disconnect(function() {
+                console.log("Disconnected from lobby.");
+            });
         }
 
+        sessionStorage.removeItem("roomCode");
+        sessionStorage.removeItem("host");
+        sessionStorage.removeItem("username");
+        sessionStorage.removeItem("selectedColor");
 
-        sessionStorage.removeItem(
-            "roomCode"
-        );
-
-
-        sessionStorage.removeItem(
-            "host"
-        );
-
-
-        sessionStorage.removeItem(
-            "username"
-        );
-
-
-        window.location.href =
-            "play.html";
-
+        window.location.href = "play.html";
     }
 
 
@@ -1101,14 +823,8 @@
     // =====================================================
 
     function setStatus(message) {
-
-        document.getElementById(
-            "status"
-        ).textContent =
-            message;
-
+        document.getElementById("status").textContent = message;
     }
-
 
 </script>
 
@@ -1116,4 +832,3 @@
 </body>
 
 </html>
-

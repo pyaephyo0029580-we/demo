@@ -7,3 +7,11 @@ INSERT IGNORE INTO shop_items (name, category, image_path, price, is_default) VA
 ('Hat 5', 'HAT', 'Image/Hat5.png', 500, 0),
 ('Hat 6', 'HAT', 'Image/hat6.png', 600, 0),
 ('Lufi Hat', 'HAT', 'Image/Lufi.png', 1000, 0);
+INSERT IGNORE INTO shop_items (name, category, image_path, price, is_default) VALUES
+
+('Hat 8', 'HAT', 'Image/hat-8.png', 400, 0),
+('Hat 9', 'HAT', 'Image/hat-9.png', 300, 0),
+('Hat 10', 'HAT', 'Image/hat-10.png', 500, 0),
+('Hat 11', 'HAT', 'Image/hat-11.png', 500, 0),
+('Hat 12', 'HAT', 'Image/hat-12.png', 600, 0),
+('Hat 13', 'HAT', 'Image/hat-13.png', 400, 0);

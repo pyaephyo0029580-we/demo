@@ -70,6 +70,11 @@ public class RoomController {
 
         broadcastRoomPlayers(roomCode);
     }
+
+    // =========================================================
+    // 2. JOIN ROOM
+    // =========================================================
+
     @MessageMapping("/join-room")
     public void joinRoom(
             StompHeaderAccessor accessor,
@@ -77,28 +82,45 @@ public class RoomController {
 
         String username = payload.get("username");
         String roomCode = payload.get("roomCode");
-        String preferredColor = payload.get("color"); // Inventory ထဲက ရွေးထားသော အရောင်
 
-        // ... (Validation တွေ စစ်ပြီးရင်) ...
-
-        GameRoom room = rooms.get(roomCode);
-
-        // Inventory က ရွေးထားတဲ့အရောင်နဲ့ Room ထဲ ထည့်မည် (Unique ဖြစ်စေရန် Server က စစ်ပေးမည်)
-        boolean added = room.addPlayer(username, preferredColor);
-
-        if (!added) {
-            sendRoomError(username, "NAME_ALREADY_USED", "Username already exists in this room");
+        if (username == null || username.trim().isEmpty()
+                || roomCode == null || roomCode.trim().isEmpty()) {
             return;
         }
 
-        // Response ထဲမှာ Server က သတ်မှတ်ပေးလိုက်တဲ့ တကယ့် Unique Color ကို ပြန်ပို့ပေးပါ
-        GameRoom.PlayerInfo playerInfo = room.getPlayers().get(username);
+        username = username.trim();
+        roomCode = roomCode.trim().toUpperCase();
+
+        GameRoom room = rooms.get(roomCode);
+
+        if (room == null) {
+            sendRoomError(username, "ROOM_NOT_FOUND",
+                    "Room not found");
+            return;
+        }
+
+        if (room.isGameStarted()) {
+            sendRoomError(username, "GAME_ALREADY_STARTED",
+                    "Game has already started");
+            return;
+        }
+
+        boolean added = room.addPlayer(username);
+
+        if (!added) {
+            sendRoomError(username, "NAME_ALREADY_USED",
+                    "Username already exists in this room");
+            return;
+        }
+
+        System.out.println(
+                username + " joined room " + roomCode
+        );
 
         Map<String, Object> response = new HashMap<>();
         response.put("type", "ROOM_JOINED");
         response.put("roomCode", roomCode);
         response.put("host", room.getHost());
-        response.put("assignedColor", playerInfo.getColor()); // Player ရသွားတဲ့ Unique အရောင်
 
         messagingTemplate.convertAndSend(
                 "/topic/room-joined/" + username,
@@ -107,6 +129,7 @@ public class RoomController {
 
         broadcastRoomPlayers(roomCode);
     }
+
     private void sendRoomError(
             String username,
             String type,
@@ -149,8 +172,8 @@ public class RoomController {
     }
 
     // =========================================================
-// 4. START GAME (Modified for Roles & Colors)
-// =========================================================
+    // 4. START GAME
+    // =========================================================
 
     @MessageMapping("/start-game")
     public void startGame(
@@ -160,8 +183,8 @@ public class RoomController {
         String username = payload.get("username");
         String roomCode = payload.get("roomCode");
 
-        if (username == null || username.trim().isEmpty() ||
-                roomCode == null || roomCode.trim().isEmpty()) {
+        if (username == null || username.trim().isEmpty()
+                || roomCode == null || roomCode.trim().isEmpty()) {
             return;
         }
 
@@ -187,30 +210,15 @@ public class RoomController {
 
         room.setGameStarted(true);
 
-        // 1. Killer Role ကို Random ရွေးချယ်ပေးမည်
-        room.assignRolesRandomly();
+        System.out.println("GAME STARTED: " + roomCode);
 
-        System.out.println("GAME STARTED & ROLES ASSIGNED: " + roomCode);
-
-        // 2. Player တစ်ယောက်ချင်းစီဆီကို သူတို့ရဲ့ Role နဲ့ Color အချက်အလက် ပို့ပေးခြင်း (Secret Role Notice အတွက်)
-        for (GameRoom.PlayerInfo player : room.getPlayers().values()) {
-            Map<String, Object> playerSpecificResponse = new HashMap<>();
-            playerSpecificResponse.put("type", "GAME_START");
-            playerSpecificResponse.put("roomCode", roomCode);
-            playerSpecificResponse.put("username", player.getUsername());
-            playerSpecificResponse.put("color", player.getColor());
-            playerSpecificResponse.put("role", player.getRole()); // "killer" သို့မဟုတ် "crewmate" (ကိုယ့်ဖုန်းမှာပဲ ပေါ်ရန်)
-
-            // ကစားသမား တစ်ဦးချင်းစီရဲ့ သီးသန့် topic သို့ ပို့ပေးမည်
-            messagingTemplate.convertAndSend(
-                    "/topic/game-start/" + player.getUsername(),
-                    playerSpecificResponse
-            );
-        }
-
-        // 3. အားလုံးအတွက် Scene ပြောင်းရန် Broadcast ပို့ခြင်း
+        // Lobby ထဲရှိ STOMP clients များထံ ပို့ခြင်း
         Map<String, Object> response = new HashMap<>();
-        response.put("type", "SCENE_CHANGE");
+        response.put("type", "GAME_START");
+        response.put("roomCode", roomCode);
+
+        // SampleScene သည် Unity Build Settings ထဲတွင်
+        // ထည့်ထားသော Scene အမည်ဖြစ်ရမည်။
         response.put("scene", "SampleScene");
 
         messagingTemplate.convertAndSend(
@@ -221,6 +229,7 @@ public class RoomController {
         // Unity native WebSocket clients များထံ ပို့ခြင်း
         unityWebSocketHandler.broadcastGameStart(roomCode);
     }
+
     // =========================================================
     // 5. PLAYER MOVEMENT (STOMP)
     // =========================================================
