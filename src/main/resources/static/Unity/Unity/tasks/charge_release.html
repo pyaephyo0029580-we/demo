@@ -111,18 +111,17 @@
 
 <script>
 
-  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
-  if (sessionStorage.getItem('charge_release_completed') === 'true') {
-      alert("This task is already completed in this session!");
-      if (window.parent && window.parent.closeTaskModal) {
-          window.parent.closeTaskModal();
-      }
-  }
+  const bar =
+      document.getElementById("chargeBar");
 
-  const bar = document.getElementById("chargeBar");
-  const button = document.getElementById("holdButton");
-  const scoreText = document.getElementById("score");
-  const message = document.getElementById("message");
+  const button =
+      document.getElementById("holdButton");
+
+  const scoreText =
+      document.getElementById("score");
+
+  const message =
+      document.getElementById("message");
 
   let charge = 0;
   let charging = false;
@@ -132,71 +131,104 @@
 
 
   function startCharging(){
+
       if(complete) return;
+
       charging = true;
+
       clearInterval(interval);
+
       interval = setInterval(()=>{
+
           if(!charging) return;
+
           charge += 1.2;
+
           if(charge >= 100){
               charge = 100;
               stopCharging();
           }
-          bar.style.width = charge + "%";
+
+          bar.style.width =
+              charge + "%";
+
       },16);
   }
 
 
   function stopCharging(){
+
       if(!charging) return;
+
       charging = false;
+
       clearInterval(interval);
 
       if(charge >= 65 && charge <= 80){
+
           success++;
-          scoreText.textContent = success;
-          message.textContent = "✓ Perfect release!";
-          message.style.color = "#65ffae";
+
+          scoreText.textContent =
+              success;
+
+          message.textContent =
+              "✓ Perfect release!";
+
+          message.style.color =
+              "#65ffae";
 
           if(success >= 5){
+
               complete = true;
-              message.textContent = "✓ TASK COMPLETE";
+
+              message.textContent =
+                  "✓ TASK COMPLETE";
+
               button.disabled = true;
 
-              // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
-              sessionStorage.setItem('charge_release_completed', 'true');
-
-              // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
-              completeTask();
               return;
           }
+
       }else{
-          message.textContent = "✕ Missed the zone";
-          message.style.color = "#ff7272";
+
+          message.textContent =
+              "✕ Missed the zone";
+
+          message.style.color =
+              "#ff7272";
       }
 
       setTimeout(()=>{
+
           if(!complete){
+
               charge = 0;
-              bar.style.width = "0%";
-              message.textContent = "";
+
+              bar.style.width =
+                  "0%";
+
+              message.textContent =
+                  "";
           }
+
       },500);
   }
 
 
-  function completeTask() {
-      setTimeout(() => {
-          if (window.parent && window.parent.closeTaskModal) {
-              window.parent.closeTaskModal();
-          }
-      }, 500);
-  }
+  button.addEventListener(
+      "mousedown",
+      startCharging
+  );
 
+  button.addEventListener(
+      "mouseup",
+      stopCharging
+  );
 
-  button.addEventListener("mousedown", startCharging);
-  button.addEventListener("mouseup", stopCharging);
-  button.addEventListener("mouseleave", stopCharging);
+  button.addEventListener(
+      "mouseleave",
+      stopCharging
+  );
 
   button.addEventListener(
       "touchstart",

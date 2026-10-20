@@ -32,23 +32,15 @@
            ========================================== */
 
         body {
-
-            background-color: #0d1117;
-
+            /* ⭐ Dark Plum Gradient Background */
+            background: radial-gradient(circle at center, #24141C, #140A0E);
             color: #ffffff;
-
             font-family: Arial, sans-serif;
-
             margin: 0;
-
             height: 100vh;
-
             display: flex;
-
             justify-content: center;
-
             align-items: center;
-
         }
 
 
@@ -57,19 +49,12 @@
            ========================================== */
 
         .container {
-
             width: 1000px;
-
             min-height: 650px;
-
             position: relative;
-
             display: flex;
-
             justify-content: center;
-
             align-items: center;
-
         }
 
 
@@ -78,24 +63,15 @@
            ========================================== */
 
         .lobby-box {
-
             width: 600px;
-
             min-height: 500px;
-
-            background-color: #161b22;
-
-            border: 1px solid #30363d;
-
+            background-color: #1A0F14; /* Dark Plum */
+            border: 2px solid #3A1F2A;
             border-radius: 14px;
-
             padding: 30px;
-
             box-sizing: border-box;
-
-            box-shadow:
-                0 8px 24px rgba(0,0,0,0.6);
-
+            /* ⭐ Pink Glow Shadow */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 42, 109, 0.1);
         }
 
 
@@ -104,17 +80,13 @@
            ========================================== */
 
         .title {
-
             text-align: center;
-
             margin-top: 0;
-
             margin-bottom: 20px;
-
-            color: #f0f6fc;
-
+            /* ⭐ Neon Pink */
+            color: #FF2A6D;
             font-size: 26px;
-
+            text-shadow: 0 0 15px rgba(255, 42, 109, 0.5);
         }
 
 
@@ -123,45 +95,29 @@
            ========================================== */
 
         .room-section {
-
             text-align: center;
-
             margin-bottom: 20px;
-
         }
 
 
         .room-label {
-
-            color: #8b949e;
-
+            color: #A88B98;
             font-size: 13px;
-
             margin-bottom: 6px;
-
         }
 
 
         .room-code {
-
             display: inline-block;
-
-            background-color: #0d1117;
-
-            border: 1px solid #30363d;
-
+            background-color: #2E1A24;
+            border: 1px solid #FF2A6D;
             border-radius: 8px;
-
             padding: 10px 20px;
-
-            color: #58a6ff;
-
+            color: #FF2A6D;
             font-size: 24px;
-
             font-weight: bold;
-
             letter-spacing: 4px;
-
+            box-shadow: 0 0 15px rgba(255, 42, 109, 0.2);
         }
 
 
@@ -170,35 +126,22 @@
            ========================================== */
 
         .players-title {
-
-            color: #f0f6fc;
-
+            color: #ffffff;
             font-size: 16px;
-
             font-weight: bold;
-
             margin-bottom: 8px;
-
         }
 
 
         .players-list {
-
-            background-color: #0d1117;
-
-            border: 1px solid #30363d;
-
+            background-color: #2E1A24;
+            border: 1px solid #3A1F2A;
             border-radius: 8px;
-
             min-height: 130px;
-
             max-height: 130px;
             overflow-y: auto;
-
             padding: 8px;
-
             box-sizing: border-box;
-
         }
 
 
@@ -207,30 +150,19 @@
            ========================================== */
 
         .player {
-
             display: flex;
-
             align-items: center;
-
             justify-content: space-between;
-
-            background-color: #161b22;
-
-            border: 1px solid #30363d;
-
+            background-color: #1A0F14;
+            border: 1px solid #3A1F2A;
             border-radius: 7px;
-
             padding: 10px 12px;
-
             margin-bottom: 6px;
-
         }
 
 
         .player:last-child {
-
             margin-bottom: 0;
-
         }
 
         .player-info {
@@ -244,26 +176,21 @@
             height: 14px;
             border-radius: 50%;
             display: inline-block;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
         }
 
 
         .player-name {
-
             font-size: 14px;
-
             color: #ffffff;
-
         }
 
 
         .host {
-
-            color: #f2cc60;
-
+            color: #FFD700; /* Gold for Host */
             font-size: 12px;
-
             font-weight: bold;
-
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
         }
 
 
@@ -272,15 +199,10 @@
            ========================================== */
 
         .empty-message {
-
             text-align: center;
-
-            color: #8b949e;
-
+            color: #A88B98;
             padding: 35px 10px;
-
             font-size: 14px;
-
         }
 
 
@@ -297,8 +219,8 @@
             gap: 6px;
             flex-wrap: wrap;
             justify-content: center;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
+            background-color: #2E1A24;
+            border: 1px solid #3A1F2A;
             border-radius: 8px;
             padding: 10px;
             box-sizing: border-box;
@@ -329,76 +251,59 @@
            ========================================== */
 
         .buttons {
-
             display: flex;
-
             justify-content: center;
-
             gap: 12px;
-
             margin-top: 20px;
-
         }
 
 
         .btn {
-
             width: 170px;
-
             height: 44px;
-
             border: none;
-
             border-radius: 8px;
-
             color: white;
-
             font-size: 14px;
-
             font-weight: bold;
-
             cursor: pointer;
-
             transition: 0.2s;
-
         }
 
 
         .btn:hover {
-
             opacity: 0.9;
-
             transform: translateY(-1px);
-
         }
 
 
         .btn-start {
+            /* ⭐ Neon Pink Gradient */
+            background: linear-gradient(135deg, #FF2A6D, #D92B55);
+            box-shadow: 0 4px 15px rgba(255, 42, 109, 0.4);
+        }
 
-            background-color: #238636;
-
+        .btn-start:hover {
+            box-shadow: 0 6px 20px rgba(255, 42, 109, 0.6);
         }
 
 
         .btn-start:disabled {
-
-            background-color: #30363d;
-
-            color: #8b949e;
-
+            background: #3A1F2A;
+            color: #A88B98;
             cursor: not-allowed;
-
             transform: none;
-
             opacity: 0.7;
-
+            box-shadow: none;
         }
 
 
         .btn-leave {
+            background: #d95569; /* Reddish leave button */
+        }
 
-            background-color: #da3633;
-
+        .btn-leave:hover {
+            background: #c82333;
         }
 
 
@@ -407,17 +312,11 @@
            ========================================== */
 
         .status {
-
             text-align: center;
-
-            color: #8b949e;
-
+            color: #A88B98;
             font-size: 13px;
-
             min-height: 18px;
-
             margin-top: 15px;
-
         }
 
 

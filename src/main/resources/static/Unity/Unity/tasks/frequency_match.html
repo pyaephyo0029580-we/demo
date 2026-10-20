@@ -122,115 +122,205 @@
 
 <script>
 
-    // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
-    if (sessionStorage.getItem('frequency_match_completed') === 'true') {
-        alert("This task is already completed in this session!");
-        if (window.parent && window.parent.closeTaskModal) {
-            window.parent.closeTaskModal();
-        }
-    }
+    const slider =
+        document.getElementById("frequency");
 
-    const slider = document.getElementById("frequency");
-    const valueText = document.getElementById("value");
-    const percentText = document.getElementById("percent");
-    const fill = document.getElementById("fill");
-    const message = document.getElementById("message");
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+    const valueText =
+        document.getElementById("value");
+
+    const percentText =
+        document.getElementById("percent");
+
+    const fill =
+        document.getElementById("fill");
+
+    const message =
+        document.getElementById("message");
+
+    const canvas =
+        document.getElementById("canvas");
+
+    const ctx =
+        canvas.getContext("2d");
 
     const targetFrequency = 73;
-    let isCompleted = false;
+
 
     function resizeCanvas() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
     }
 
+
     function drawWave(userFrequency) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const center = canvas.height / 2;
 
-        /* TARGET WAVE */
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        const center =
+            canvas.height / 2;
+
+
+        /*
+            TARGET WAVE
+        */
+
         ctx.beginPath();
-        ctx.strokeStyle = "#65ffae";
-        ctx.lineWidth = 3;
 
-        for (let x = 0; x < canvas.width; x++) {
-            const y = center + Math.sin(x * targetFrequency * 0.0015) * 35;
+        ctx.strokeStyle =
+            "#65ffae";
+
+        ctx.lineWidth =
+            3;
+
+        for (
+            let x = 0;
+            x < canvas.width;
+            x++
+        ) {
+
+            const y =
+                center
+                +
+                Math.sin(
+                    x *
+                    targetFrequency *
+                    0.0015
+                )
+                *
+                35;
+
             if (x === 0) {
                 ctx.moveTo(x, y);
             } else {
                 ctx.lineTo(x, y);
             }
         }
+
         ctx.stroke();
 
-        /* PLAYER WAVE */
-        ctx.beginPath();
-        ctx.strokeStyle = "#5adfff";
-        ctx.lineWidth = 3;
 
-        for (let x = 0; x < canvas.width; x++) {
-            const y = center + Math.sin(x * userFrequency * 0.0015) * 35;
+        /*
+            PLAYER WAVE
+        */
+
+        ctx.beginPath();
+
+        ctx.strokeStyle =
+            "#5adfff";
+
+        ctx.lineWidth =
+            3;
+
+        for (
+            let x = 0;
+            x < canvas.width;
+            x++
+        ) {
+
+            const y =
+                center
+                +
+                Math.sin(
+                    x *
+                    userFrequency *
+                    0.0015
+                )
+                *
+                35;
+
             if (x === 0) {
                 ctx.moveTo(x, y);
             } else {
                 ctx.lineTo(x, y);
             }
         }
+
         ctx.stroke();
     }
+
 
     function update() {
-        if (isCompleted) return;
 
-        const value = Number(slider.value);
-        valueText.textContent = value;
+        const value =
+            Number(slider.value);valueText.textContent =
+        value;
 
-        const difference = Math.abs(targetFrequency - value);
-        let percent = 100 - difference * 2;
-        percent = Math.max(0, Math.min(100, percent));
-        percent = Math.round(percent);
+    const difference =
+        Math.abs(
+            targetFrequency -
+            value
+        );
 
-        percentText.textContent = "Match: " + percent + "%";
-        fill.style.width = percent + "%";
+    let percent =
+        100 -
+        difference * 2;
 
-        drawWave(value);
+    percent =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                percent
+            )
+        );
 
-        if (percent >= 98) {
-            isCompleted = true;
-            message.textContent = "✓ TASK COMPLETE";
-            message.style.color = "#65ffae";
-            slider.disabled = true;
+    percent =
+        Math.round(percent);
 
-            // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
-            sessionStorage.setItem('frequency_match_completed', 'true');
+    percentText.textContent =
+        "Match: " +
+        percent +
+        "%";
 
-            // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
-            completeTask();
-        } else {
-            message.textContent = "Keep tuning...";
-            message.style.color = "#ffd56b";
-        }
+    fill.style.width =
+        percent +
+        "%";
+
+    drawWave(value);
+
+
+    if (percent >= 98) {
+
+        message.textContent =
+            "✓ TASK COMPLETE";
+
+        message.style.color =
+            "#65ffae";
+
+    } else {
+
+        message.textContent =
+            "Keep tuning...";
+
+        message.style.color =
+            "#ffd56b";
     }
+}
 
-    function completeTask() {
-        setTimeout(() => {
-            if (window.parent && window.parent.closeTaskModal) {
-                window.parent.closeTaskModal();
-            }
-        }, 500);
-    }
 
-    window.addEventListener("resize", function () {
+window.addEventListener(
+    "resize",
+    function () {
+
         resizeCanvas();
         update();
-    });
+    }
+);
 
-    slider.addEventListener("input", update);
 
-    resizeCanvas();
-    update();
+slider.addEventListener(
+    "input",
+    update
+);
+
+
+resizeCanvas();
+update();
 
 </script>
 

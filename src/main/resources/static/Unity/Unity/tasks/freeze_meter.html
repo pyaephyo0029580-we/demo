@@ -97,14 +97,6 @@
 
 <script>
 
-  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
-  if (sessionStorage.getItem('freeze_meter_completed') === 'true') {
-      alert("This task is already completed in this session!");
-      if (window.parent && window.parent.closeTaskModal) {
-          window.parent.closeTaskModal();
-      }
-  }
-
   let temp = 20;
   let safeTime = 0;
   let complete = false;
@@ -114,9 +106,7 @@
   const message = document.getElementById("message");
 
   function update(){
-      if (complete) return;
-
-      temp = Math.max(0, Math.min(100, temp));
+      temp = Math.max(0,Math.min(100,temp));
 
       needle.style.left = temp + "%";
       value.textContent = temp;
@@ -124,32 +114,20 @@
       if(temp >= 42 && temp <= 58){
           safeTime++;
 
-          message.textContent = "Stable: " + safeTime + " / 3";
-          message.style.color = "#63ffad";
+          message.textContent =
+              "Stable: " + safeTime + " / 3";
+
+          message.style.color="#63ffad";
 
           if(safeTime >= 3){
               complete = true;
-              message.textContent = "✓ TASK COMPLETE";
-
-              // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
-              sessionStorage.setItem('freeze_meter_completed', 'true');
-
-              // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
-              completeTask();
+              message.textContent="✓ TASK COMPLETE";
           }
       }else{
           safeTime = 0;
-          message.textContent = "Adjust temperature";
-          message.style.color = "#ffd464";
+          message.textContent="Adjust temperature";
+          message.style.color="#ffd464";
       }
-  }
-
-  function completeTask() {
-      setTimeout(() => {
-          if (window.parent && window.parent.closeTaskModal) {
-              window.parent.closeTaskModal();
-          }
-      }, 500);
   }
 
   document.getElementById("cool").onclick = ()=>{
@@ -168,10 +146,10 @@
 
   setInterval(()=>{
       if(!complete){
-          temp += Math.random() > 0.5 ? 2 : -2;
+          temp += Math.random()>0.5 ? 2 : -2;
           update();
       }
-  }, 1000);
+  },1000);
 
   update();
 
