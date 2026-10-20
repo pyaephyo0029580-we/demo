@@ -221,35 +221,36 @@
         margin-top: 18px;
 
         border: none;
-        border-radius: 10px;background:
-                    linear-gradient(
-                            90deg,
-                            #18cfff,
-                            #6372ff
-                    );
+        border-radius: 10px;
+        background:
+                linear-gradient(
+                        90deg,
+                        #18cfff,
+                        #6372ff
+                );
 
-            color: white;
+        color: white;
 
-            font-size: 16px;
-            font-weight: bold;
+        font-size: 16px;
+        font-weight: bold;
 
-            cursor: pointer;
+        cursor: pointer;
+    }
+
+    @media (max-width: 500px) {
+
+        .game {
+            padding: 20px;
         }
 
-        @media (max-width: 500px) {
-
-            .game {
-                padding: 20px;
-            }
-
-            #grid {
-                gap: 5px;
-            }
-
-            .stats {
-                font-size: 13px;
-            }
+        #grid {
+            gap: 5px;
         }
+
+        .stats {
+            font-size: 13px;
+        }
+    }
 
   </style>
 </head>
@@ -323,610 +324,216 @@
 
 <script>
 
+  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+  if (sessionStorage.getItem('color_difference_completed') === 'true') {
+      alert("This task is already completed in this session!");
+      if (window.parent && window.parent.closeTaskModal) {
+          window.parent.closeTaskModal();
+      }
+  }
+
   const TOTAL_TASKS = 5;
 
-  const grid =
-      document.getElementById("grid");
-
-  const progressCount =
-      document.getElementById("progressCount");
-
-  const scoreText =
-      document.getElementById("score");
-
-  const timerText =
-      document.getElementById("timer");
-
-  const message =
-      document.getElementById("message");
-
-  const progressFill =
-      document.getElementById("progressFill");
-
-  const restartButton =
-      document.getElementById("restart");
-
+  const grid = document.getElementById("grid");
+  const progressCount = document.getElementById("progressCount");
+  const scoreText = document.getElementById("score");
+  const timerText = document.getElementById("timer");
+  const message = document.getElementById("message");
+  const progressFill = document.getElementById("progressFill");
+  const restartButton = document.getElementById("restart");
 
   let completedTasks = 0;
-
   let score = 0;
-
   let seconds = 60;
-
   let correctIndex = 0;
-
   let gameRunning = true;
-
   let timerInterval;
-
-
-  /* =========================
-     RANDOM
-  ========================= */
+  let isCompleted = false;
 
   function random(min, max) {
-
-      return Math.floor(
-          Math.random() *
-          (max - min + 1)
-      ) + min;
+      return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-
-
-  /* =========================
-     FORMAT TIME
-  ========================= */
 
   function formatTime(totalSeconds) {
-
-      const minutes =
-          Math.floor(totalSeconds / 60);
-
-      const remainingSeconds =
-          totalSeconds % 60;
-
-      return (
-          String(minutes).padStart(2, "0")
-          +
-          ":"
-          +
-          String(remainingSeconds).padStart(2, "0")
-      );
+      const minutes = Math.floor(totalSeconds / 60);
+      const remainingSeconds = totalSeconds % 60;
+      return String(minutes).padStart(2, "0") + ":" + String(remainingSeconds).padStart(2, "0");
   }
 
-
-  /* =========================
-     CREATE ROUND
-  ========================= */
-
   function createRound() {
-
-      if (
-          completedTasks >=
-          TOTAL_TASKS
-      ) {
-
-          completeTask();
+      if (isCompleted || completedTasks >= TOTAL_TASKS) {
           return;
       }
 
       gameRunning = true;
-
       message.textContent = "";
       message.className = "";
-
       grid.innerHTML = "";
 
-
-      /* 5 x 5 GRID */
-
       const size = 5;
+      const total = size * size;
+      correctIndex = random(0, total - 1);
 
-      const total =
-          size * size;
+      const baseR = random(100, 210);
+      const baseG = random(90, 200);
+      const baseB = random(90, 200);
 
-
-      correctIndex =
-          random(
-              0,
-              total - 1
-          );
-
-
-      const baseR =
-          random(100, 210);
-
-      const baseG =
-          random(90, 200);
-
-      const baseB =
-          random(90, 200);
-
-
-      /*
-          Each completed task makes it
-          a little harder.
-      */
-
-      let difference =
-          28 -
-          (completedTasks * 4);
-
-
-      if (
-          difference < 10
-      ) {
-
+      let difference = 28 - (completedTasks * 4);
+      if (difference < 10) {
           difference = 10;
       }
 
-
-      for (
-          let i = 0;
-          i < total;
-          i++
-      ) {const tile =
-                document.createElement(
-                    "button"
-                );
-
-
-            tile.type =
-                "button";
-
-
-            tile.className =
-                "tile";
-
-
-            let r =
-                baseR;
-
-            let g =
-                baseG;
-
-            let b =
-                baseB;
-
-
-            if (
-                i === correctIndex
-            ) {
-
-                r =
-                    Math.min(
-                        255,
-                        baseR + difference
-                    );
-
-                g =
-                    Math.min(
-                        255,
-                        baseG + difference
-                    );
-
-                b =
-                    Math.min(
-                        255,
-                        baseB + difference
-                    );
-            }
-
-
-            tile.style.backgroundColor =
-
-                "rgb(" +
-                r +
-                "," +
-                g +
-                "," +
-                b +
-                ")";
-
-
-            tile.dataset.index =
-                i;
-
-
-            tile.addEventListener(
-                "click",
-                function () {
-
-                    checkTile(
-                        Number(
-                            tile.dataset.index
-                        ),
-                        tile
-                    );
-
-                }
-            );
-
-
-            grid.appendChild(
-                tile
-            );
-        }
-    }
-
-
-    /* =========================
-       CHECK TILE
-    ========================= */
-
-    function checkTile(
-        index,
-        tile
-    ) {
-
-        if (
-            !gameRunning
-        ) {
-
-            return;
-        }
-
-
-        /* CORRECT */
-
-        if (
-            index ===
-            correctIndex
-        ) {
-
-            gameRunning = false;
-
-
-            completedTasks++;
-
-
-            score += 100;
-
-
-            scoreText.textContent =
-                score;
-
-
-            progressCount.textContent =
-
-                completedTasks
-                +
-                " / "
-                +
-                TOTAL_TASKS;
-
-
-            const progressPercentage =
-
-                (
-                    completedTasks /
-                    TOTAL_TASKS
-                )
-                *
-                100;
-
-
-            progressFill.style.width =
-
-                progressPercentage
-                +
-                "%";
-
-
-            tile.style.outline =
-                "3px solid #65ffad";
-
-
-            tile.style.boxShadow =
-                "0 0 25px #65ffad";
-
-
-            message.textContent =
-
-                "✓ CORRECT! "
-                +
-                completedTasks
-                +
-                " / "
-                +
-                TOTAL_TASKS;
-
-
-            message.className =
-                "correct";
-
-
-            if (
-                completedTasks >=
-                TOTAL_TASKS
-            ) {
-
-                setTimeout(
-                    completeTask,
-                    500
-                );
-
-            } else {
-
-                setTimeout(
-                    createRound,
-                    550
-                );
-            }
-
-        }
-
-
-        /* WRONG */
-
-        else {
-
-            score =
-                Math.max(
-                    0,
-                    score - 20
-                );
-
-
-            scoreText.textContent =
-                score;
-
-
-            message.textContent =
-                "✕ Wrong square — try again!";
-
-
-            message.className =
-                "wrong";
-
-
-            tile.animate(
-
-                [
-                    {
-                        transform:
-                            "translateX(0)"
-                    },
-
-                    {
-                        transform:
-                            "translateX(-6px)"
-                    },
-
-                    {
-                        transform:
-                            "translateX(6px)"
-                    },{
-                        transform:
-                            "translateX(0)"
-                    }
-                ],
-
-                {
-                    duration:
-                        250
-                }
-
-            );
-        }
-    }
-
-
-    /* =========================
-       1 MINUTE TIMER
-    ========================= */
-
-    function startTimer() {
-
-        clearInterval(
-            timerInterval
-        );
-
-
-        timerText.textContent =
-            formatTime(seconds);
-
-
-        timerInterval =
-            setInterval(
-                function () {
-
-                    seconds--;
-
-
-                    timerText.textContent =
-                        formatTime(
-                            seconds
-                        );
-
-
-                    if (
-                        seconds <= 0
-                    ) {
-
-                        timeUp();
-                    }
-
-                },
-                1000
-            );
-    }
-
-
-    /* =========================
-       TASK COMPLETE
-    ========================= */
-
-    function completeTask() {
-
-        clearInterval(
-            timerInterval
-        );
-
-
-        gameRunning =
-            false;
-
-
-        disableTiles();
-
-
-        message.innerHTML =
-
-            "✓ TASK COMPLETE<br>"
-            +
-            "Score: "
-            +
-            score;
-
-
-        message.className =
-            "complete";
-
-
-        progressFill.style.width =
-            "100%";
-
-
-        restartButton.style.display =
-            "block";
-    }
-
-
-    /* =========================
-       TIME UP
-    ========================= */
-
-    function timeUp() {
-
-        clearInterval(
-            timerInterval
-        );
-
-
-        seconds = 0;
-
-
-        timerText.textContent =
-            "00:00";
-
-
-        gameRunning =
-            false;
-
-
-        disableTiles();
-
-
-        message.innerHTML =
-
-            "TIME UP!<br>"
-            +
-            "Completed: "
-            +
-            completedTasks
-            +
-            " / "
-            +
-            TOTAL_TASKS;
-
-
-        message.className =
-            "wrong";
-
-
-        restartButton.style.display =
-            "block";
-    }
-
-
-    /* =========================
-       DISABLE GRID
-    ========================= */
-
-    function disableTiles() {
-
-        const tiles =
-            document.querySelectorAll(
-                ".tile"
-            );
-
-
-        tiles.forEach(
-            function (tile) {
-
-                tile.disabled =
-                    true;
-
-            }
-        );
-    }
-
-
-    /* =========================
-       RESTART
-    ========================= */
-
-    restartButton.addEventListener(
-        "click",
-        function () {
-
-            completedTasks =
-                0;
-
-
-            score =
-                0;
-
-
-            seconds =
-                60;
-
-
-            gameRunning =
-                true;
-
-
-            scoreText.textContent =
-                "0";
-
-
-            progressCount.textContent =
-                "0 / 5";
-
-
-            timerText.textContent =
-                "01:00";
-
-
-            progressFill.style.width =
-                "0%";
-
-
-            message.textContent =
-                "";
-
-
-            restartButton.style.display =
-                "none";
-
-
-            createRound();
-
-
-            startTimer();
-
-        }
-    );
-
-
-    /* =========================
-       START GAME
-    ========================= */
-
-    createRound();
-
-    startTimer();
+      for (let i = 0; i < total; i++) {
+          const tile = document.createElement("button");
+          tile.type = "button";
+          tile.className = "tile";
+
+          let r = baseR;
+          let g = baseG;
+          let b = baseB;
+
+          if (i === correctIndex) {
+              r = Math.min(255, baseR + difference);
+              g = Math.min(255, baseG + difference);
+              b = Math.min(255, baseB + difference);
+          }
+
+          tile.style.backgroundColor = "rgb(" + r + "," + g + "," + b + ")";
+          tile.dataset.index = i;
+
+          tile.addEventListener("click", function () {
+              checkTile(Number(tile.dataset.index), tile);
+          });
+
+          grid.appendChild(tile);
+      }
+  }
+
+  function checkTile(index, tile) {
+      if (!gameRunning || isCompleted) {
+          return;
+      }
+
+      if (index === correctIndex) {
+          gameRunning = false;
+          completedTasks++;
+          score += 100;
+
+          scoreText.textContent = score;
+          progressCount.textContent = completedTasks + " / " + TOTAL_TASKS;
+
+          const progressPercentage = (completedTasks / TOTAL_TASKS) * 100;
+          progressFill.style.width = progressPercentage + "%";
+
+          tile.style.outline = "3px solid #65ffad";
+          tile.style.boxShadow = "0 0 25px #65ffad";
+
+          message.textContent = "✓ CORRECT! " + completedTasks + " / " + TOTAL_TASKS;
+          message.className = "correct";
+
+          if (completedTasks >= TOTAL_TASKS) {
+              isCompleted = true;
+              setTimeout(completeTask, 500);
+          } else {
+              setTimeout(createRound, 550);
+          }
+      } else {
+          score = Math.max(0, score - 20);
+          scoreText.textContent = score;
+
+          message.textContent = "✕ Wrong square — try again!";
+          message.className = "wrong";
+
+          tile.animate([
+              { transform: "translateX(0)" },
+              { transform: "translateX(-6px)" },
+              { transform: "translateX(6px)" },
+              { transform: "translateX(0)" }
+          ], {
+              duration: 250
+          });
+      }
+  }
+
+  function startTimer() {
+      clearInterval(timerInterval);
+      timerText.textContent = formatTime(seconds);
+
+      timerInterval = setInterval(function () {
+          if (isCompleted) return;
+          seconds--;
+          timerText.textContent = formatTime(seconds);
+
+          if (seconds <= 0) {
+              timeUp();
+          }
+      }, 1000);
+  }
+
+  function completeTask() {
+      clearInterval(timerInterval);
+      gameRunning = false;
+      disableTiles();
+
+      message.innerHTML = "✓ TASK COMPLETE<br>Score: " + score;
+      message.className = "complete";
+      progressFill.style.width = "100%";
+      restartButton.style.display = "block";
+
+      // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
+      sessionStorage.setItem('color_difference_completed', 'true');
+
+      // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTaskApi သို့ ပို့ခြင်း
+      completeTaskApi();
+  }
+
+  function completeTaskApi() {
+      setTimeout(() => {
+          if (window.parent && window.parent.closeTaskModal) {
+              window.parent.closeTaskModal();
+          }
+      }, 500);
+  }
+
+  function timeUp() {
+      clearInterval(timerInterval);
+      seconds = 0;
+      timerText.textContent = "00:00";
+      gameRunning = false;
+      disableTiles();
+
+      message.innerHTML = "TIME UP!<br>Completed: " + completedTasks + " / " + TOTAL_TASKS;
+      message.className = "wrong";
+      restartButton.style.display = "block";
+  }
+
+  function disableTiles() {
+      const tiles = document.querySelectorAll(".tile");
+      tiles.forEach(function (tile) {
+          tile.disabled = true;
+      });
+  }
+
+  restartButton.addEventListener("click", function () {
+      completedTasks = 0;
+      score = 0;
+      seconds = 60;
+      gameRunning = true;
+      isCompleted = false;
+
+      scoreText.textContent = "0";
+      progressCount.textContent = "0 / 5";
+      timerText.textContent = "01:00";
+      progressFill.style.width = "0%";
+      message.textContent = "";
+      restartButton.style.display = "none";
+
+      createRound();
+      startTimer();
+  });
+
+  createRound();
+  startTimer();
 
 </script>
 

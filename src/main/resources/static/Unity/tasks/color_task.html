@@ -2,225 +2,225 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-  <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0"
-  >
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
 
-  <title>Color Mixing</title>
+    <title>Color Mixing</title>
 
-  <style>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-    * {
-        box-sizing: border-box;
-    }
+        body {
+            margin: 0;
 
-    body {
-        margin: 0;
+            min-height: 100vh;
 
-        min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
+            font-family: Arial, sans-serif;
 
-        font-family: Arial, sans-serif;
+            color: white;
 
-        color: white;
+            background:
+                    linear-gradient(
+                            135deg,
+                            #050818,
+                            #182057
+                    );
+        }
 
-        background:
-                linear-gradient(
-                        135deg,
-                        #050818,
-                        #182057
-                );
-    }
+        .task {
+            width: 680px;
+            max-width: 95%;
 
-    .task {
-        width: 680px;
-        max-width: 95%;
+            padding: 30px;
 
-        padding: 30px;
+            border-radius: 25px;
 
-        border-radius: 25px;
+            border: 2px solid #32caff;
 
-        border: 2px solid #32caff;
+            background:
+                    rgba(8, 24, 64, 0.95);
 
-        background:
-                rgba(8, 24, 64, 0.95);
+            box-shadow:
+                    0 0 30px
+                    rgba(50, 202, 255, 0.25);
+        }
 
-        box-shadow:
-                0 0 30px
-                rgba(50, 202, 255, 0.25);
-    }
+        h1 {
+            margin-top: 0;
+        }
 
-    h1 {
-        margin-top: 0;
-    }
+        .content {
+            display: flex;
 
-    .content {
-        display: flex;
+            gap: 35px;
 
-        gap: 35px;
+            align-items: center;
+        }
 
-        align-items: center;
-    }
+        .ghost {
+            width: 150px;
 
-    .ghost {
-        width: 150px;
+            filter:
+                    drop-shadow(
+                            0 0 15px
+                            rgba(60, 210, 255, 0.5)
+                    );
+        }
 
-        filter:
-                drop-shadow(
-                        0 0 15px
-                        rgba(60, 210, 255, 0.5)
-                );
-    }
+        .mix-panel {
+            flex: 1;
+        }
 
-    .mix-panel {
-        flex: 1;
-    }
+        /* TARGET */
 
-    /* TARGET */
+        .target {
+            display: flex;
+            align-items: center;
 
-    .target {
-        display: flex;
-        align-items: center;
+            gap: 18px;
 
-        gap: 18px;
+            margin-bottom: 25px;
 
-        margin-bottom: 25px;
+            font-size: 18px;
+            font-weight: bold;
+        }
 
-        font-size: 18px;
-        font-weight: bold;
-    }
+        .color-box {
+            width: 80px;
+            height: 80px;
 
-    .color-box {
-        width: 80px;
-        height: 80px;
+            border-radius: 50%;
 
-        border-radius: 50%;
+            border: 3px solid white;
+        }
 
-        border: 3px solid white;
-    }
+        #targetColor {
+            background:
+                    rgb(180, 70, 210);
+        }
 
-    #targetColor {
-        background:
-                rgb(180, 70, 210);
-    }
+        /* MIXED COLOR */
 
-    /* MIXED COLOR */
+        #mixedColor {
+            width: 135px;
+            height: 135px;
 
-    #mixedColor {
-        width: 135px;
-        height: 135px;
+            margin:
+                    15px auto
+                    8px auto;
 
-        margin:
-                15px auto
-                8px auto;
+            border-radius: 50%;
 
-        border-radius: 50%;
+            border:
+                    3px solid
+                    #5bd7ff;
 
-        border:
-                3px solid
-                #5bd7ff;
+            background:
+                    rgb(100, 100, 100);
 
-        background:
-                rgb(100, 100, 100);
+            box-shadow:
+                    0 0 25px
+                    rgba(70, 200, 255, 0.45);
 
-        box-shadow:
-                0 0 25px
-                rgba(70, 200, 255, 0.45);
+            transition:
+                    background 0.15s;
+        }
 
-        transition:
-                background 0.15s;
-    }
+        /* MATCH PERCENT */
 
-    /* MATCH PERCENT */
+        .match-box {
+            text-align: center;
 
-    .match-box {
-        text-align: center;
+            margin-bottom: 25px;
+        }
 
-        margin-bottom: 25px;
-    }
+        #matchPercent {
+            font-size: 25px;
+            font-weight: bold;
 
-    #matchPercent {
-        font-size: 25px;
-        font-weight: bold;
+            color: #ffcf5e;
 
-        color: #ffcf5e;
+            text-shadow:
+                    0 0 12px
+                    rgba(255, 207, 94, 0.3);
+        }
 
-        text-shadow:
-                0 0 12px
-                rgba(255, 207, 94, 0.3);
-    }
+        .percent-bar {
+            width: 100%;
+            height: 12px;
 
-    .percent-bar {
-        width: 100%;
-        height: 12px;
+            margin-top: 10px;
 
-        margin-top: 10px;
+            border-radius: 20px;
 
-        border-radius: 20px;
+            background:
+                    rgba(255,255,255,0.15);
 
-        background:
-                rgba(255,255,255,0.15);
+            overflow: hidden;
+        }
 
-        overflow: hidden;
-    }
+        #percentFill {
+            width: 0%;
+            height: 100%;
 
-    #percentFill {
-        width: 0%;
-        height: 100%;
+            border-radius: 20px;
 
-        border-radius: 20px;
+            background:
+                    linear-gradient(
+                            90deg,
+                            #19c6ff,
+                            #63ffae
+                    );
 
-        background:
-                linear-gradient(
-                        90deg,
-                        #19c6ff,
-                        #63ffae
-                );
+            transition:
+                    width 0.2s;
+        }
 
-        transition:
-                width 0.2s;
-    }
+        /* SLIDERS */
 
-    /* SLIDERS */
+        .slider {
+            margin:
+                    17px 0;
 
-    .slider {
-        margin:
-                17px 0;
+            font-size: 17px;
+            font-weight: bold;
+        }
 
-        font-size: 17px;
-        font-weight: bold;
-    }
+        .slider-row {
+            display: flex;
+            justify-content: space-between;
 
-    .slider-row {
-        display: flex;
-        justify-content: space-between;
+            margin-bottom: 5px;
+        }
 
-        margin-bottom: 5px;
-    }
+        .value {
+            color: #75e4ff;
+        }
 
-    .value {
-        color: #75e4ff;
-    }
+        .slider input {
+            width: 100%;
 
-    .slider input {
-        width: 100%;
+            cursor: pointer;
+        }
 
-        cursor: pointer;
-    }
+        /* BUTTON */
 
-    /* BUTTON */
+        #mixButton {
+            width: 100%;
+            height: 50px;
 
-    #mixButton {
-        width: 100%;
-        height: 50px;
-
-        border: none;border-radius: 11px;
+            border: none;
+            border-radius: 11px;
 
             margin-top: 16px;
 
@@ -269,7 +269,7 @@
 
         }
 
-  </style>
+    </style>
 
 </head>
 
@@ -277,171 +277,177 @@
 
 <div class="task">
 
-  <h1>
-    🎨 Color Mixing
-  </h1>
+    <h1>
+        🎨 Color Mixing
+    </h1>
 
-  <p>
-    Mix the colors to match the target.
-  </p>
+    <p>
+        Mix the colors to match the target.
+    </p>
 
-  <div class="content">
+    <div class="content">
 
-    <img
-            src="/Image/ghost.png"
-            class="ghost"
-            alt="Ghost"
-    >
+        <img
+                src="/Image/ghost.png"
+                class="ghost"
+                alt="Ghost"
+        >
 
-    <div class="mix-panel">
+        <div class="mix-panel">
 
-      <!-- TARGET COLOR -->
+            <!-- TARGET COLOR -->
 
-      <div class="target">
+            <div class="target">
 
                 <span>
                     Target:
                 </span>
 
-        <div
-                id="targetColor"
-                class="color-box"
-        ></div>
+                <div
+                        id="targetColor"
+                        class="color-box"
+                ></div>
 
-      </div>
-
-
-      <!-- PLAYER MIXED COLOR -->
-
-      <div id="mixedColor"></div>
+            </div>
 
 
-      <!-- MATCH PERCENTAGE -->
+            <!-- PLAYER MIXED COLOR -->
 
-      <div class="match-box">
-
-        <div id="matchPercent">
-          Match: 0%
-        </div>
-
-        <div class="percent-bar">
-
-          <div id="percentFill"></div>
-
-        </div>
-
-      </div>
+            <div id="mixedColor"></div>
 
 
-      <!-- RED -->
+            <!-- MATCH PERCENTAGE -->
 
-      <div class="slider">
+            <div class="match-box">
 
-        <div class="slider-row">
+                <div id="matchPercent">
+                    Match: 0%
+                </div>
+
+                <div class="percent-bar">
+
+                    <div id="percentFill"></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RED -->
+
+            <div class="slider">
+
+                <div class="slider-row">
 
                     <span>
                         Red
                     </span>
 
-          <span
-                  class="value"
-                  id="redValue"
-          >
+                    <span
+                            class="value"
+                            id="redValue"
+                    >
                         100
                     </span>
 
-        </div>
+                </div>
 
-        <input
-                type="range"
-                id="red"
-                min="0"
-                max="255"
-                value="100"
-        >
+                <input
+                        type="range"
+                        id="red"
+                        min="0"
+                        max="255"
+                        value="100"
+                >
 
-      </div>
+            </div>
 
 
-      <!-- GREEN -->
+            <!-- GREEN -->
 
-      <div class="slider">
+            <div class="slider">
 
-        <div class="slider-row">
+                <div class="slider-row">
 
                     <span>
                         Green
                     </span>
 
-          <span
-                  class="value"
-                  id="greenValue"
-          >
+                    <span
+                            class="value"
+                            id="greenValue"
+                    >
                         100
                     </span>
 
-        </div>
+                </div>
 
-        <input
-                type="range"
-                id="green"
-                min="0"
-                max="255"
-                value="100"
-        >
+                <input
+                        type="range"
+                        id="green"
+                        min="0"
+                        max="255"
+                        value="100"
+                >
 
-      </div>
+            </div>
 
 
-      <!-- BLUE -->
+            <!-- BLUE -->
 
-      <div class="slider">
+            <div class="slider">
 
-        <div class="slider-row">
+                <div class="slider-row">
 
                     <span>
                         Blue
                     </span>
 
-          <span
-                  class="value"
-                  id="blueValue"
-          >
+                    <span
+                            class="value"
+                            id="blueValue"
+                    >
                         100
                     </span>
 
+                </div>
+
+                <input
+                        type="range"
+                        id="blue"
+                        min="0"
+                        max="255"
+                        value="100"
+                >
+
+            </div>
+
+
+            <button
+                    id="mixButton"
+                    onclick="checkColor()"
+            >
+                MIX
+            </button>
+
         </div>
-
-        <input
-                type="range"
-                id="blue"
-                min="0"
-                max="255"
-                value="100"
-        >
-
-      </div>
-
-
-      <button
-              id="mixButton"
-              onclick="checkColor()"
-      >
-        MIX
-      </button>
 
     </div>
 
-  </div>
-
-  <div id="result"></div>
+    <div id="result"></div>
 
 </div>
 
 
-<script>/* ==============================
-       TARGET COLOR
-    ============================== */
+<script>
+
+    // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+    if (sessionStorage.getItem('color_mixing_completed') === 'true') {
+        alert("This task is already completed in this session!");
+        if (window.parent && window.parent.closeTaskModal) {
+            window.parent.closeTaskModal();
+        }
+    }
 
     const target = {
         r: 180,
@@ -449,275 +455,95 @@
         b: 210
     };
 
+    const red = document.getElementById("red");
+    const green = document.getElementById("green");
+    const blue = document.getElementById("blue");
 
-    /* ==============================
-       ELEMENTS
-    ============================== */
+    const redValue = document.getElementById("redValue");
+    const greenValue = document.getElementById("greenValue");
+    const blueValue = document.getElementById("blueValue");
 
-    const red =
-        document.getElementById(
-            "red"
-        );
+    const mixed = document.getElementById("mixedColor");
+    const matchPercent = document.getElementById("matchPercent");
+    const percentFill = document.getElementById("percentFill");
+    const result = document.getElementById("result");
 
-    const green =
-        document.getElementById(
-            "green"
-        );
-
-    const blue =
-        document.getElementById(
-            "blue"
-        );
-
-
-    const redValue =
-        document.getElementById(
-            "redValue"
-        );
-
-    const greenValue =
-        document.getElementById(
-            "greenValue"
-        );
-
-    const blueValue =
-        document.getElementById(
-            "blueValue"
-        );
-
-
-    const mixed =
-        document.getElementById(
-            "mixedColor"
-        );
-
-
-    const matchPercent =
-        document.getElementById(
-            "matchPercent"
-        );
-
-
-    const percentFill =
-        document.getElementById(
-            "percentFill"
-        );
-
-
-    const result =
-        document.getElementById(
-            "result"
-        );
-
-
-    /* ==============================
-       CALCULATE MATCH %
-    ============================== */
+    let isCompleted = false;
 
     function calculateMatch() {
+        const r = Number(red.value);
+        const g = Number(green.value);
+        const b = Number(blue.value);
 
-        const r =
-            Number(red.value);
+        const difference = Math.abs(r - target.r) + Math.abs(g - target.g) + Math.abs(b - target.b);
+        let percentage = 100 - (difference / 765 * 100);
+        percentage = Math.max(0, Math.min(100, percentage));
 
-        const g =
-            Number(green.value);
-
-        const b =
-            Number(blue.value);
-
-
-        const difference =
-
-            Math.abs(
-                r - target.r
-            )
-
-            +
-
-            Math.abs(
-                g - target.g
-            )
-
-            +
-
-            Math.abs(
-                b - target.b
-            );
-
-
-        /*
-           Maximum RGB difference:
-           255 + 255 + 255 = 765
-        */
-
-        let percentage =
-
-            100 -
-            (
-                difference /
-                765 *
-                100
-            );
-
-
-        percentage =
-            Math.max(
-                0,
-                Math.min(
-                    100,
-                    percentage
-                )
-            );
-
-
-        return Math.round(
-            percentage
-        );
+        return Math.round(percentage);
     }
-
-
-    /* ==============================
-       UPDATE COLOR LIVE
-    ============================== */
 
     function updateColor() {
+        if (isCompleted) return;
 
-        const r =
-            Number(red.value);
+        const r = Number(red.value);
+        const g = Number(green.value);
+        const b = Number(blue.value);
 
-        const g =
-            Number(green.value);
+        mixed.style.background = "rgb(" + r + "," + g + "," + b + ")";
 
-        const b =
-            Number(blue.value);
+        redValue.textContent = r;
+        greenValue.textContent = g;
+        blueValue.textContent = b;
 
+        const percentage = calculateMatch();
 
-        mixed.style.background =
+        matchPercent.textContent = "Match: " + percentage + "%";
+        percentFill.style.width = percentage + "%";
 
-            "rgb(" +
-            r +
-            "," +
-            g +
-            "," +
-            b +
-            ")";
-
-
-        redValue.textContent =
-            r;
-
-        greenValue.textContent =
-            g;
-
-        blueValue.textContent =
-            b;
-
-
-        const percentage =
-            calculateMatch();
-
-
-        matchPercent.textContent =
-
-            "Match: " +
-            percentage +
-            "%";
-
-
-        percentFill.style.width =
-
-            percentage +
-            "%";
-
-
-        /* COLOR OF % */
-
-        if (
-            percentage >= 95
-        ) {
-
-            matchPercent.style.color =
-                "#65ffad";
-
-        } else if (
-            percentage >= 80
-        ) {
-
-            matchPercent.style.color =
-                "#ffe264";
-
+        if (percentage >= 95) {
+            matchPercent.style.color = "#65ffad";
+        } else if (percentage >= 80) {
+            matchPercent.style.color = "#ffe264";
         } else {
-
-            matchPercent.style.color =
-                "#ff9274";
-
+            matchPercent.style.color = "#ff9274";
         }
 
-
-        result.textContent =
-            "";
+        result.textContent = "";
     }
 
-
-    /* ==============================
-       SLIDER EVENTS
-    ============================== */
-
-    red.addEventListener(
-        "input",
-        updateColor
-    );
-
-
-    green.addEventListener(
-        "input",
-        updateColor
-    );
-
-
-    blue.addEventListener(
-        "input",
-        updateColor
-    );
-
-
-    /* ==============================
-       MIX BUTTON
-    ============================== */
+    red.addEventListener("input", updateColor);
+    green.addEventListener("input", updateColor);
+    blue.addEventListener("input", updateColor);
 
     function checkColor() {
+        if (isCompleted) return;
 
-        const percentage =
-            calculateMatch();
+        const percentage = calculateMatch();
 
+        if (percentage >= 95) {
+            isCompleted = true;
+            result.textContent = "✓ TASK COMPLETE — " + percentage + "% MATCH";
+            result.style.color = "#64ffae";
+            document.getElementById("mixButton").disabled = true;
 
-        if (
-            percentage >= 95
-        ) {result.textContent =
-                "✓ TASK COMPLETE — " +
-                percentage +
-                "% MATCH";
+            // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
+            sessionStorage.setItem('color_mixing_completed', 'true');
 
-
-            result.style.color =
-                "#64ffae";
-
+            // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
+            completeTask();
         } else {
-
-            result.textContent =
-
-                percentage +
-                "% MATCH — Keep mixing!";
-
-
-            result.style.color =
-                "#ffcf5e";
+            result.textContent = percentage + "% MATCH — Keep mixing!";
+            result.style.color = "#ffcf5e";
         }
-
     }
 
-
-    /* FIRST UPDATE */
+    function completeTask() {
+        setTimeout(() => {
+            if (window.parent && window.parent.closeTaskModal) {
+                window.parent.closeTaskModal();
+            }
+        }, 500);
+    }
 
     updateColor();
 

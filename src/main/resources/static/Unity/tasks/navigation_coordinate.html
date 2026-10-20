@@ -124,41 +124,20 @@
   </div>
 
   <div class="map">
-
     <div id="targetPoint"></div>
-
     <div id="playerPoint"></div>
-
   </div>
 
   <div class="control">
-
     X:
     <span id="xValue">0</span>
-
-    <input
-            type="range"
-            id="xSlider"
-            min="0"
-            max="100"
-            value="0"
-    >
-
+    <input type="range" id="xSlider" min="0" max="100" value="0">
   </div>
 
   <div class="control">
-
     Y:
     <span id="yValue">0</span>
-
-    <input
-            type="range"
-            id="ySlider"
-            min="0"
-            max="100"
-            value="0"
-    >
-
+    <input type="range" id="ySlider" min="0" max="100" value="0">
   </div>
 
   <button id="lockButton">
@@ -171,61 +150,25 @@
 
 <script>
 
-  const targetPoint =
-      document.getElementById(
-          "targetPoint"
-      );
+  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+  if (sessionStorage.getItem('navigation_coordinate_completed') === 'true') {
+      alert("This task is already completed in this session!");
+      if (window.parent && window.parent.closeTaskModal) {
+          window.parent.closeTaskModal();
+      }
+  }
 
-  const playerPoint =
-      document.getElementById(
-          "playerPoint"
-      );
-
-  const xSlider =
-      document.getElementById(
-          "xSlider"
-      );
-
-  const ySlider =
-      document.getElementById(
-          "ySlider"
-      );
-
-  const xValue =
-      document.getElementById(
-          "xValue"
-      );
-
-  const yValue =
-      document.getElementById(
-          "yValue"
-      );
-
-  const targetXText =
-      document.getElementById(
-          "targetX"
-      );
-
-  const targetYText =
-      document.getElementById(
-          "targetY"
-      );
-
-  const roundText =
-      document.getElementById(
-          "round"
-      );
-
-  const message =
-      document.getElementById(
-          "message"
-      );
-
-  const lockButton =
-      document.getElementById(
-          "lockButton"
-      );
-
+  const targetPoint = document.getElementById("targetPoint");
+  const playerPoint = document.getElementById("playerPoint");
+  const xSlider = document.getElementById("xSlider");
+  const ySlider = document.getElementById("ySlider");
+  const xValue = document.getElementById("xValue");
+  const yValue = document.getElementById("yValue");
+  const targetXText = document.getElementById("targetX");
+  const targetYText = document.getElementById("targetY");
+  const roundText = document.getElementById("round");
+  const message = document.getElementById("message");
+  const lockButton = document.getElementById("lockButton");
 
   let targetX = 50;
   let targetY = 50;
@@ -234,134 +177,86 @@
 
 
   function randomTarget(){
+      if(complete) return;
 
-      targetX =
-          Math.floor(
-              Math.random()*71
-          ) + 15;
+      targetX = Math.floor(Math.random()*71) + 15;
+      targetY = Math.floor(Math.random()*71) + 15;
 
-      targetY =
-          Math.floor(
-              Math.random()*71
-          ) + 15;
+      targetXText.textContent = targetX;
+      targetYText.textContent = targetY;
 
-      targetXText.textContent =
-          targetX;
-
-      targetYText.textContent =
-          targetY;
-
-      targetPoint.style.left =
-          targetX + "%";
-
-      targetPoint.style.top =
-          (100-targetY) + "%";
+      targetPoint.style.left = targetX + "%";
+      targetPoint.style.top = (100 - targetY) + "%";
 
       xSlider.value = 0;
       ySlider.value = 0;
 
       updatePlayer();
-
       message.textContent = "";
   }
 
 
   function updatePlayer(){
+      const x = Number(xSlider.value);
+      const y = Number(ySlider.value);
 
-      const x =
-          Number(xSlider.value);
+      xValue.textContent = x;
+      yValue.textContent = y;
 
-      const y =
-          Number(ySlider.value);
-
-      xValue.textContent =
-          x;
-
-      yValue.textContent =
-          y;
-
-      playerPoint.style.left =
-          x + "%";
-
-      playerPoint.style.top =
-          (100-y) + "%";
-  }xSlider.addEventListener(
-    "input",
-    updatePlayer
-);
-
-ySlider.addEventListener(
-    "input",
-    updatePlayer
-);
+      playerPoint.style.left = x + "%";
+      playerPoint.style.top = (100 - y) + "%";
+  }
 
 
-lockButton.addEventListener(
-    "click",
-    ()=>{
-
-        if(complete) return;
-
-        const x =
-            Number(xSlider.value);
-
-        const y =
-            Number(ySlider.value);
-
-        const difference =
-            Math.abs(x-targetX)
-            +
-            Math.abs(y-targetY);
+  xSlider.addEventListener("input", updatePlayer);
+  ySlider.addEventListener("input", updatePlayer);
 
 
-        if(difference <= 3){
+  lockButton.addEventListener("click", ()=>{
+      if(complete) return;
 
-            if(round >= 3){
+      const x = Number(xSlider.value);
+      const y = Number(ySlider.value);
+      const difference = Math.abs(x - targetX) + Math.abs(y - targetY);
 
-                complete = true;
+      if(difference <= 3){
+          if(round >= 3){
+              complete = true;
+              message.textContent = "✓ NAVIGATION LOCKED — TASK COMPLETE";
+              message.style.color = "#65ffae";
+              lockButton.disabled = true;
 
-                message.textContent =
-                    "✓ NAVIGATION LOCKED — TASK COMPLETE";
+              // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
+              sessionStorage.setItem('navigation_coordinate_completed', 'true');
 
-                message.style.color =
-                    "#65ffae";
+              // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
+              completeTask();
+              return;
+          }
 
-                lockButton.disabled =
-                    true;
+          message.textContent = "✓ Coordinate locked!";
+          message.style.color = "#65ffae";
+          round++;
+          roundText.textContent = round;
 
-                return;
-            }
-
-
-            message.textContent =
-                "✓ Coordinate locked!";
-
-            message.style.color =
-                "#65ffae";
-
-            round++;
-
-            roundText.textContent =
-                round;
-
-            setTimeout(
-                randomTarget,
-                700
-            );
-
-        }else{
-
-            message.textContent =
-                "✕ Wrong coordinate — keep adjusting.";
-
-            message.style.color =
-                "#ff7272";
-        }
-    }
-);
+          setTimeout(randomTarget, 700);
+      }else{
+          message.textContent = "✕ Wrong coordinate — keep adjusting.";
+          message.style.color = "#ff7272";
+      }
+  });
 
 
-randomTarget();
+  function completeTask(){
+      setTimeout(() => {
+          if (window.parent && window.parent.closeTaskModal) {
+              window.parent.closeTaskModal();
+          }
+      }, 500);
+  }
+
+
+  randomTarget();
 
 </script>
 

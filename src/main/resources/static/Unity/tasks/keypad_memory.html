@@ -123,154 +123,109 @@
 
 <script>
 
-    const screen =
-        document.getElementById("screen");
+    // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+    if (sessionStorage.getItem('keypad_memory_completed') === 'true') {
+        alert("This task is already completed in this session!");
+        if (window.parent && window.parent.closeTaskModal) {
+            window.parent.closeTaskModal();
+        }
+    }
 
-    const roundText =
-        document.getElementById("round");
-
-    const message =
-        document.getElementById("message");
-
-    const numberButtons =
-        document.querySelectorAll("[data-number]");
+    const screen = document.getElementById("screen");
+    const roundText = document.getElementById("round");
+    const message = document.getElementById("message");
+    const numberButtons = document.querySelectorAll("[data-number]");
 
     let round = 1;
-
     let sequence = "";
-
     let entered = "";
-
     let acceptingInput = false;
 
 
     function generateSequence(){
-
         sequence = "";
+        const length = 3 + round;
 
-        const length =
-            3 + round;
-
-        for(let i=0;i<length;i++){
-
-            sequence +=
-                Math.floor(Math.random()*10);
+        for(let i=0; i<length; i++){
+            sequence += Math.floor(Math.random()*10);
         }
 
         entered = "";
-
         acceptingInput = false;
 
-        screen.textContent =
-            sequence;
-
-        message.textContent =
-            "Remember this number...";
-
-        message.style.color =
-            "#ffd66a";
-
+        screen.textContent = sequence;
+        message.textContent = "Remember this number...";
+        message.style.color = "#ffd66a";
 
         setTimeout(()=>{
-
-            screen.textContent =
-                "••••";
-
-            message.textContent =
-                "Enter the number.";
-
+            screen.textContent = "••••";
+            message.textContent = "Enter the number.";
             acceptingInput = true;
-
-        },2000);
+        }, 2000);
     }
 
 
     numberButtons.forEach(button=>{
-
         button.addEventListener("click",()=>{
-
             if(!acceptingInput) return;
-
-            entered +=
-                button.dataset.number;
-
-            screen.textContent =
-                entered;
+            entered += button.dataset.number;
+            screen.textContent = entered;
         });
-
     });
 
 
-    document.getElementById("clear")
-    .addEventListener("click",()=>{
-
+    document.getElementById("clear").addEventListener("click",()=>{
         if(!acceptingInput) return;
-
         entered = "";
-
-        screen.textContent =
-            "••••";
+        screen.textContent = "••••";
     });
 
 
-    document.getElementById("enter")
-    .addEventListener("click",()=>{
-
+    document.getElementById("enter").addEventListener("click",()=>{
         if(!acceptingInput) return;
 
         if(entered === sequence){
-
             acceptingInput = false;
 
             if(round >= 3){
+                screen.textContent = "✓";
+                message.textContent = "✓ TASK COMPLETE";
+                message.style.color = "#65ffae";
 
-                screen.textContent =
-                    "✓";
+                // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
+                sessionStorage.setItem('keypad_memory_completed', 'true');
 
-                message.textContent =
-                    "✓ TASK COMPLETE";
-
-                message.style.color =
-                    "#65ffae";
-
+                // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
+                completeTask();
                 return;
             }
 
-            message.textContent =
-                "✓ Correct!";
-
-            message.style.color =
-                "#65ffae";
+            message.textContent = "✓ Correct!";
+            message.style.color = "#65ffae";
 
             round++;
+            roundText.textContent = round;
 
-            roundText.textContent =
-                round;setTimeout(
-            generateSequence,
-            900
-        );
+            setTimeout(generateSequence, 900);
+        }else{
+            entered = "";
+            screen.textContent = "••••";
+            message.textContent = "✕ Wrong — try again.";
+            message.style.color = "#ff7272";
+        }
+    });
 
-    }else{
 
-        entered = "";
-
-        screen.textContent =
-            "••••";
-
-        message.textContent =
-            "✕ Wrong — try again.";
-
-        message.style.color =
-            "#ff7272";
+    function completeTask(){
+        setTimeout(() => {
+            if (window.parent && window.parent.closeTaskModal) {
+                window.parent.closeTaskModal();
+            }
+        }, 500);
     }
 
-});
 
-
-setTimeout(
-    generateSequence,
-    700
-);
+    setTimeout(generateSequence, 700);
 
 </script>
 

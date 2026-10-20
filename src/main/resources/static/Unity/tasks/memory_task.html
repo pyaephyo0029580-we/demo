@@ -139,11 +139,7 @@
   </div>
 
   <div class="game-area">
-
-
-
     <div class="cards" id="cards"></div>
-
   </div>
 
   <div id="result"></div>
@@ -152,6 +148,14 @@
 
 
 <script>
+
+  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+  if (sessionStorage.getItem('memory_cards_completed') === 'true') {
+      alert("This task is already completed in this session!");
+      if (window.parent && window.parent.closeTaskModal) {
+          window.parent.closeTaskModal();
+      }
+  }
 
   const symbols = [
       "⭐", "⭐",
@@ -166,157 +170,97 @@
   let secondCard = null;
   let lock = false;
   let matched = 0;
+  let isCompleted = false;
 
-  const cardsElement =
-      document.getElementById("cards");
-
-  const result =
-      document.getElementById("result");
+  const cardsElement = document.getElementById("cards");
+  const result = document.getElementById("result");
 
 
   function shuffle(array) {
-
-      for (
-          let i = array.length - 1;
-          i > 0;
-          i--
-      ) {
-
-          const j =
-              Math.floor(
-                  Math.random() *
-                  (i + 1)
-              );
-
-          [array[i], array[j]] =
-              [array[j], array[i]];
+      for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
       }
-
       return array;
   }
 
 
   function createCards() {
-
       shuffle(symbols);
 
-      symbols.forEach(
-          function (symbol) {
+      symbols.forEach(function (symbol) {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.dataset.symbol = symbol;
+          card.innerHTML = '<span class="face">' + symbol + '</span>';
 
-              const card =
-                  document.createElement("div");card.className =
-                    "card";
+          card.addEventListener("click", function () {
+              flipCard(card);
+          });
 
-                card.dataset.symbol =
-                    symbol;
-
-                card.innerHTML =
-                    '<span class="face">' +
-                    symbol +
-                    '</span>';
-
-                card.addEventListener(
-                    "click",
-                    function () {
-
-                        flipCard(card);
-
-                    }
-                );
-
-                cardsElement.appendChild(
-                    card
-                );
-            }
-        );
-    }
+          cardsElement.appendChild(card);
+      });
+  }
 
 
-    function flipCard(card) {
+  function flipCard(card) {
+      if (isCompleted || lock || card === firstCard || card.classList.contains("matched")) {
+          return;
+      }
 
-        if (
-            lock ||
-            card === firstCard ||
-            card.classList.contains("matched")
-        ) {
-            return;
-        }
+      card.classList.add("open");
 
+      if (!firstCard) {
+          firstCard = card;
+          return;
+      }
 
-        card.classList.add("open");
+      secondCard = card;
+      lock = true;
 
+      if (firstCard.dataset.symbol === secondCard.dataset.symbol) {
+          firstCard.classList.add("matched");
+          secondCard.classList.add("matched");
+          matched += 2;
+          resetTurn();
 
-        if (!firstCard) {
+          if (matched === symbols.length) {
+              isCompleted = true;
+              result.textContent = "✓ TASK COMPLETE";
 
-            firstCard = card;
+              // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
+              sessionStorage.setItem('memory_cards_completed', 'true');
 
-            return;
-        }
-
-
-        secondCard = card;
-
-        lock = true;
-
-
-        if (
-            firstCard.dataset.symbol ===
-            secondCard.dataset.symbol
-        ) {
-
-            firstCard.classList.add(
-                "matched"
-            );
-
-            secondCard.classList.add(
-                "matched"
-            );
-
-            matched += 2;
-
-            resetTurn();
+              // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
+              completeTask();
+          }
+      } else {
+          setTimeout(function () {
+              firstCard.classList.remove("open");
+              secondCard.classList.remove("open");
+              resetTurn();
+          }, 700);
+      }
+  }
 
 
-            if (
-                matched ===
-                symbols.length
-            ) {
-
-                result.textContent =
-                    "✓ TASK COMPLETE";
-            }
-
-        } else {
-
-            setTimeout(
-                function () {
-
-                    firstCard.classList.remove(
-                        "open"
-                    );
-
-                    secondCard.classList.remove(
-                        "open"
-                    );
-
-                    resetTurn();
-
-                },
-                700
-            );
-        }
-    }
+  function resetTurn() {
+      firstCard = null;
+      secondCard = null;
+      lock = false;
+  }
 
 
-    function resetTurn() {
+  function completeTask() {
+      setTimeout(() => {
+          if (window.parent && window.parent.closeTaskModal) {
+              window.parent.closeTaskModal();
+          }
+      }, 500);
+  }
 
-        firstCard = null;
-        secondCard = null;
-        lock = false;
-    }
 
-
-    createCards();
+  createCards();
 
 </script>
 

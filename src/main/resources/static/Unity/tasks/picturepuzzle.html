@@ -101,14 +101,17 @@
 
 <script>
 
-  const board =
-      document.getElementById("board");
+  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+  if (sessionStorage.getItem('picture_puzzle_completed') === 'true') {
+      alert("This task is already completed in this session!");
+      if (window.parent && window.parent.closeTaskModal) {
+          window.parent.closeTaskModal();
+      }
+  }
 
-  const message =
-      document.getElementById("message");
-
-  const shuffleButton =
-      document.getElementById("shuffle");
+  const board = document.getElementById("board");
+  const message = document.getElementById("message");
+  const shuffleButton = document.getElementById("shuffle");
 
   let tiles = [
       1,2,3,
@@ -116,33 +119,22 @@
       7,8,0
   ];
 
+  let isCompleted = false;
+
 
   function draw(){
-
       board.innerHTML = "";
 
       tiles.forEach((value,index)=>{
-
-          const tile =
-              document.createElement("button");
-
-          tile.className =
-              "tile";
+          const tile = document.createElement("button");
+          tile.className = "tile";
 
           if(value === 0){
-
               tile.classList.add("empty");
               tile.disabled = true;
-
           }else{
-
-              tile.textContent =
-                  value;
-
-              tile.addEventListener(
-                  "click",
-                  ()=>moveTile(index)
-              );
+              tile.textContent = value;
+              tile.addEventListener("click", ()=>moveTile(index));
           }
 
           board.appendChild(tile);
@@ -151,44 +143,21 @@
 
 
   function moveTile(index){
+      if(isCompleted) return;
 
-      const emptyIndex =
-          tiles.indexOf(0);
+      const emptyIndex = tiles.indexOf(0);
+      const row = Math.floor(index/3);
+      const col = index%3;
+      const emptyRow = Math.floor(emptyIndex/3);
+      const emptyCol = emptyIndex%3;
 
-      const row =
-          Math.floor(index/3);
-
-      const col =
-          index%3;
-
-      const emptyRow =
-          Math.floor(emptyIndex/3);
-
-      const emptyCol =
-          emptyIndex%3;
-
-
-      const adjacent =
-          Math.abs(row-emptyRow)
-          +
-          Math.abs(col-emptyCol)
-          ===
-          1;
-
+      const adjacent = Math.abs(row-emptyRow) + Math.abs(col-emptyCol) === 1;
 
       if(!adjacent){
           return;
       }
 
-
-      [
-          tiles[index],
-          tiles[emptyIndex]
-      ] = [
-          tiles[emptyIndex],
-          tiles[index]
-      ];
-
+      [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
 
       draw();
       checkWin();
@@ -196,51 +165,23 @@
 
 
   function shuffle(){
+      isCompleted = false;
 
-      for(let i=0;i<150;i++){
-
-          const emptyIndex =
-              tiles.indexOf(0);
-
-          const row =
-              Math.floor(emptyIndex/3);
-
-          const col =
-              emptyIndex%3;
-
+      for(let i=0; i<150; i++){
+          const emptyIndex = tiles.indexOf(0);
+          const row = Math.floor(emptyIndex/3);
+          const col = emptyIndex%3;
           const possible = [];
 
+          if(row>0) possible.push(emptyIndex-3);
+          if(row<2) possible.push(emptyIndex+3);
+          if(col>0) possible.push(emptyIndex-1);
+          if(col<2) possible.push(emptyIndex+1);
 
-          if(row>0)
-              possible.push(emptyIndex-3);
+          const moveIndex = possible[Math.floor(Math.random()*possible.length)];
 
-          if(row<2)
-              possible.push(emptyIndex+3);
-
-          if(col>0)
-              possible.push(emptyIndex-1);
-
-          if(col<2)
-              possible.push(emptyIndex+1);
-
-
-          const moveIndex =
-              possible[
-                  Math.floor(
-                      Math.random()*possible.length
-                  )
-              ];
-
-
-          [
-              tiles[emptyIndex],
-              tiles[moveIndex]
-          ] = [
-              tiles[moveIndex],
-              tiles[emptyIndex]
-          ];
+          [tiles[emptyIndex], tiles[moveIndex]] = [tiles[moveIndex], tiles[emptyIndex]];
       }
-
 
       message.textContent = "";
       draw();
@@ -248,32 +189,37 @@
 
 
   function checkWin(){
+      if(isCompleted) return;
 
-      const solved =
-          [1,2,3,4,5,6,7,8,0];
-
-      const correct =
-          tiles.every(
-              (value,index)=>
-                  value === solved[index]
-          );
-
+      const solved = [1,2,3,4,5,6,7,8,0];
+      const correct = tiles.every((value,index) => value === solved[index]);
 
       if(correct){
+          isCompleted = true;
+          message.textContent = "✓ TASK COMPLETE";
+          message.style.color = "#65ffae";
 
-          message.textContent =
-              "✓ TASK COMPLETE";
+          // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
+          sessionStorage.setItem('picture_puzzle_completed', 'true');
 
-          message.style.color =
-              "#65ffae";
+          // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
+          completeTask();
       }
-  }shuffleButton.addEventListener(
-    "click",
-    shuffle
-);
+  }
 
 
-shuffle();
+  function completeTask(){
+      setTimeout(() => {
+          if (window.parent && window.parent.closeTaskModal) {
+              window.parent.closeTaskModal();
+          }
+      }, 500);
+  }
+
+
+  shuffleButton.addEventListener("click", shuffle);
+
+  shuffle();
 
 </script>
 

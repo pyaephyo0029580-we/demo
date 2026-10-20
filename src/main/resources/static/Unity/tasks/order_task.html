@@ -208,258 +208,154 @@
 
 <script>
 
-  const correctOrder =
-      [
-          "📘",
-          "🧪",
-          "💎",
-          "🔑"
-      ];
+  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+  if (sessionStorage.getItem('order_task_completed') === 'true') {
+      alert("This task is already completed in this session!");
+      if (window.parent && window.parent.closeTaskModal) {
+          window.parent.closeTaskModal();
+      }
+  }
 
+  const correctOrder = [
+      "📘",
+      "🧪",
+      "💎",
+      "🔑"
+  ];
 
-  let items =
-      [
-          "🔑",
-          "💎",
-          "📘",
-          "🧪"
-      ];
-
+  let items = [
+      "🔑",
+      "💎",
+      "📘",
+      "🧪"
+  ];
 
   const selectedOrder = [];
+  let isCompleted = false;
 
-
-  const itemsContainer =
-      document.getElementById(
-          "items"
-      );
-
-
-  const slotsContainer =
-      document.getElementById(
-          "slots"
-      );
-
-
-  const result =
-      document.getElementById(
-          "result"
-      );
-
+  const itemsContainer = document.getElementById("items");
+  const slotsContainer = document.getElementById("slots");
+  const result = document.getElementById("result");
 
 
   function drawItems() {
-
-      itemsContainer.innerHTML =
-          "";
-
-
-      items.forEach(
-          function (
-              symbol,
-              index
-          ) {
-
-              const element =
-                  document.createElement(
-                      "div"
-                  );
-
-
-              element.className =
-                  "item";
-
-
-              element.textContent =
-                  symbol;element.addEventListener(
-                    "click",
-                    function () {
-
-                        chooseItem(
-                            symbol,
-                            index
-                        );
-
-                    }
-                );
-
-
-                itemsContainer
-                    .appendChild(
-                        element
-                    );
-
-            }
-        );
-
-    }
-
-
-
-    function drawSlots() {
-
-        slotsContainer.innerHTML =
-            "";
-
-
-        for (
-            let i = 0;
-            i < 4;
-            i++
-        ) {
-
-
-            const slot =
-                document.createElement(
-                    "div"
-                );
-
-
-            slot.className =
-                "slot";
-
-
-            slot.textContent =
-                selectedOrder[i]
-                ||
-                (i + 1);
-
-
-            slotsContainer.appendChild(
-                slot
-            );
-
-        }
-
-    }
-
-
-
-    function chooseItem(
-        symbol,
-        index
-    ) {
-
-
-        if (
-            selectedOrder.length >= 4
-        ) {
-
-            return;
-
-        }
-
-
-        selectedOrder.push(
-            symbol
-        );
-
-
-        items.splice(
-            index,
-            1
-        );
-
-
-        drawItems();
-
-        drawSlots();
-
-
-
-        if (
-            selectedOrder.length === 4
-        ) {
-
-            checkAnswer();
-
-        }
-
-    }
-
-
-
-    function checkAnswer() {
-
-
-        const correct =
-
-            selectedOrder.every(
-
-                function (
-                    value,
-                    index
-                ) {
-
-                    return (
-
-                        value ===
-                        correctOrder[index]
-
-                    );
-
-                }
-
-            );
-
-
-
-        if (
-            correct
-        ) {
-
-            result.textContent =
-                "✓ TASK COMPLETE";
-
-        } else {
-
-            result.textContent =
-                "Wrong order. Try again.";
-
-            result.style.color =
-                "#ff7c7c";
-
-
-            setTimeout(
-                function () {
-
-                    selectedOrder.length =
-                        0;
-
-
-                    items = [
-                        "🔑",
-                        "💎",
-                        "📘",
-                        "🧪"
-                    ];
-
-
-                    result.textContent =
-                        "";
-
-
-                    result.style.color =
-                        "#62ffab";
-
-
-                    drawItems();
-
-                    drawSlots();
-
-                },
-                1300
-            );
-
-        }
-
-    }
-
-
-
-    drawItems();
-
-    drawSlots();
+      itemsContainer.innerHTML = "";
+
+      items.forEach(function (symbol, index) {
+          const element = document.createElement("div");
+          element.className = "item";
+          element.textContent = symbol;
+
+          element.addEventListener("click", function () {
+              if (isCompleted) return;
+              chooseItem(symbol, index);
+          });
+
+          itemsContainer.appendChild(element);
+      });
+  }
+
+
+  function drawSlots() {
+      slotsContainer.innerHTML = "";
+
+      for (let i = 0; i < 4; i++) {
+          const slot = document.createElement("div");
+          slot.className = "slot";
+          slot.textContent = selectedOrder[i] || (i + 1);
+
+          slotsContainer.appendChild(slot);
+      }
+  }
+
+
+  function chooseItem(symbol, index) {
+      if (isCompleted || selectedOrder.length >= 4) {
+          return;
+      }
+
+      selectedOrder.push(symbol);
+      items.splice(index, 1);
+
+      drawItems();
+      drawSlots();
+
+      if (selectedOrder.length === 4) {
+          checkAnswer();
+      }
+  }
+
+
+  function checkAnswer() {
+      const correct = selectedOrder.every(function (value, index) {
+          return value === correctOrder[index];
+      });
+
+      if (correct) {
+          isCompleted = true;
+          result.textContent = "✓ TASK COMPLETE";
+
+          // 🛑 ၂။ Task ပြီးဆုံးပါက sessionStorage ထဲတွင် မှတ်တမ်းတင်ခြင်း
+          sessionStorage.setItem('order_task_completed', 'true');
+
+          // Task ပြီးဆုံးပါက Coins ပေါင်းရန် API ကို လှမ်းခေါ်ခြင်း[cite: 14]
+          completeTask();
+      } else {
+          result.textContent = "Wrong order. Try again.";
+          result.style.color = "#ff7c7c";
+
+          setTimeout(function () {
+              if (isCompleted) return;
+
+              selectedOrder.length = 0;
+              items = [
+                  "🔑",
+                  "💎",
+                  "📘",
+                  "🧪"
+              ];
+
+              result.textContent = "";
+              result.style.color = "#62ffab";
+
+              drawItems();
+              drawSlots();
+          }, 1300);
+      }
+  }
+
+
+  function completeTask() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get('username') || localStorage.getItem('username') || "Player";
+
+      fetch('/api/complete-task', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username: username, taskName: "order_task" })
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              alert("20 coins received!");
+
+              setTimeout(() => {
+                  if (window.parent && window.parent.closeTaskModal) {
+                      window.parent.closeTaskModal();
+                  }
+              }, 500);
+          } else {
+              console.log(data.message);
+          }
+      })
+      .catch(error => console.error('Error:', error));
+  }
+
+
+  drawItems();
+  drawSlots();
 
 </script>
 

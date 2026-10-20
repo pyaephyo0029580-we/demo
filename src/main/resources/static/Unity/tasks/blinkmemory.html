@@ -94,140 +94,98 @@
 
 <script>
 
-  const grid =
-      document.getElementById("grid");
+  // 🛑 ၁။ ပေ့ချ်စဖွင့်ချင်းတွင် ဤ Task ပြီးမြောက်ပြီးသားဖြစ်မဖြစ် စစ်ဆေးခြင်း
+  if (sessionStorage.getItem('blink_memory_completed') === 'true') {
+      alert("This task is already completed in this session!");
+      if (window.parent && window.parent.closeTaskModal) {
+          window.parent.closeTaskModal();
+      }
+  }
 
-  const startButton =
-      document.getElementById("start");
-
-  const message =
-      document.getElementById("message");
+  const grid = document.getElementById("grid");
+  const startButton = document.getElementById("start");
+  const message = document.getElementById("message");
 
   const tiles = [];
-
   let sequence = [];
   let userIndex = 0;
+  let isCompleted = false;
 
   for (let i = 0; i < 9; i++) {
-
-      const tile =
-          document.createElement("button");
-
-      tile.className =
-          "tile";
-
-      tile.dataset.index =
-          i;
-
-      tile.addEventListener(
-          "click",
-          function () {
-
-              handleUserClick(i);
-          }
-      );
-
+      const tile = document.createElement("button");
+      tile.className = "tile";
+      tile.dataset.index = i;
+      tile.addEventListener("click", function () {
+          handleUserClick(i);
+      });
       grid.appendChild(tile);
-
       tiles.push(tile);
   }
 
   function createSequence() {
-
       sequence = [];
-
       for (let i = 0; i < 4; i++) {
-
-          sequence.push(
-              Math.floor(
-                  Math.random() * 9
-              )
-          );
+          sequence.push(Math.floor(Math.random() * 9));
       }
   }
 
   async function playSequence() {
-
       userIndex = 0;
-
-      for (
-          const index of sequence
-      ) {
-
-          tiles[index]
-              .classList.add("active");
-
+      isCompleted = false;
+      for (const index of sequence) {
+          tiles[index].classList.add("active");
           await wait(550);
-
-          tiles[index]
-              .classList.remove("active");
-
+          tiles[index].classList.remove("active");
           await wait(200);
       }
   }
 
   function wait(ms) {
-
-      return new Promise(
-          resolve =>
-              setTimeout(resolve, ms)
-      );
+      return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   function handleUserClick(index) {
+      if (isCompleted) return;
 
-      if (
-          index !==
-          sequence[userIndex]
-      ) {
-
-          message.textContent =
-              "Wrong! Try again.";
-
-          message.style.color =
-              "#ff7c7c";
-
+      if (index !== sequence[userIndex]) {
+          message.textContent = "Wrong! Try again.";
+          message.style.color = "#ff7c7c";
           return;
       }
 
-      tiles[index]
-          .classList.add("correct");
-
-      setTimeout(
-          function () {
-
-              tiles[index]
-                  .classList.remove(
-                      "correct"
-                  );
-          },
-          250
-      );
+      tiles[index].classList.add("correct");
+      setTimeout(function () {
+          tiles[index].classList.remove("correct");
+      }, 250);
 
       userIndex++;
 
-      if (
-          userIndex ===
-          sequence.length
-      ) {
+      if (userIndex === sequence.length) {
+          isCompleted = true;
+          message.textContent = "✓ TASK COMPLETE";
+          message.style.color = "#64ffae";
 
-          message.textContent =
-              "✓ TASK COMPLETE";message.style.color =
-                "#64ffae";
-        }
-    }
+          // 🛑 ၂။ Task ပြီးဆုံးပါက Session ထဲတွင် မှတ်တမ်းတင်ခြင်း
+          sessionStorage.setItem('blink_memory_completed', 'true');
 
-    startButton.addEventListener(
-        "click",
-        async function () {
+          // 🛑 ၃။ 20 coins API ခေါ်ခြင်းကို ဖယ်ရှားပြီး Modal ကို ပိတ်ရန် completeTask သို့ ပို့ခြင်း
+          completeTask();
+      }
+  }
 
-            message.textContent = "";
+  function completeTask() {
+      setTimeout(() => {
+          if (window.parent && window.parent.closeTaskModal) {
+              window.parent.closeTaskModal();
+          }
+      }, 500);
+  }
 
-            createSequence();
-
-            await playSequence();
-        }
-    );
+  startButton.addEventListener("click", async function () {
+      message.textContent = "";
+      createSequence();
+      await playSequence();
+  });
 
 </script>
 
