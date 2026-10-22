@@ -1832,23 +1832,12 @@
 
 
 
-        /* USERNAME */
+        /* USERNAME - Allow any name length and spaces */
 
-        if (
-            username.length < 3
-        ) {
-
-
-            showError(
-
-                "Username must be at least 3 characters."
-
-            );
-
-
-            return;
-
-        }
+if (!username.trim()) {
+    showError("Please enter a username.");
+    return;
+}
 
 
 
