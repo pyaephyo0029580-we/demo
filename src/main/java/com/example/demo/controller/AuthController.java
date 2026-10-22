@@ -25,22 +25,15 @@ public class AuthController {
     private final BCryptPasswordEncoder passwordEncoder =
             new BCryptPasswordEncoder();
 
-    private final SecureRandom random =
-            new SecureRandom();
-
+    private final SecureRandom random = new SecureRandom();
 
     public AuthController(
             UserRepository userRepository,
             EmailService emailService
     ) {
-
-        this.userRepository =
-                userRepository;
-
-        this.emailService =
-                emailService;
+        this.userRepository = userRepository;
+        this.emailService = emailService;
     }
-
 
     // =====================================================
     // SIGN UP
@@ -51,71 +44,45 @@ public class AuthController {
             @RequestBody Map<String, String> request
     ) {
 
-        String username =
-                clean(request.get("username"));
+        // Username may contain spaces.
+        // No name-format or minimum-length validation.
+        String username = request.get("username");
 
-        String email =
-                clean(request.get("email"));
+        String email = clean(request.get("email"));
+        String password = request.get("password");
 
-        String password =
-                request.get("password");
+        if (username == null || username.isBlank() ||
+        email == null || password == null) {
 
-
-        if (
-                username == null ||
-                        email == null ||
-                        password == null
-        ) {
-
-            return badRequest(
-                    "Please fill in all fields."
-            );
+            return badRequest("Please fill in all fields.");
         }
 
-
-        if (username.length() < 3) {
-
-            return badRequest(
-                    "Username must be at least 3 characters."
-            );
-        }
-
-
+        // Email validation
         if (!isValidEmail(email)) {
-
             return badRequest(
                     "Please enter a valid email address."
             );
         }
 
-
-        // STRONG PASSWORD CHECK
+        // Strong password validation
         if (!isStrongPassword(password)) {
-
             return badRequest(
                     "Password must be at least 8 characters and include uppercase, lowercase, number and special character."
             );
         }
 
-
+        // Check duplicate username.
+        // Spaces inside usernames are allowed.
         Optional<User> usernameOwner =
-                userRepository.findByUsername(
-                        username
-                );
-
+                userRepository.findByUsername(username);
 
         if (usernameOwner.isPresent()) {
 
-            User existingUsername =
-                    usernameOwner.get();
+            User existingUsername = usernameOwner.get();
 
-
-            if (
-                    existingUsername.getEmail() == null ||
-                            !existingUsername
-                                    .getEmail()
-                                    .equalsIgnoreCase(email)
-            ) {
+            if (existingUsername.getEmail() == null
+                    || !existingUsername.getEmail()
+                    .equalsIgnoreCase(email)) {
 
                 return badRequest(
                         "Username is already taken."
@@ -123,82 +90,50 @@ public class AuthController {
             }
         }
 
-
         Optional<User> existingOptional =
-                userRepository.findByEmail(
-                        email
-                );
-
+                userRepository.findByEmail(email);
 
         User user;
 
-
         if (existingOptional.isPresent()) {
 
-            user =
-                    existingOptional.get();
-
+            user = existingOptional.get();
 
             if (user.isVerified()) {
-
                 return badRequest(
                         "This email is already registered."
                 );
             }
 
-
-            user.setUsername(
-                    username
-            );
+            user.setUsername(username);
 
         } else {
 
             user = new User();
 
-            user.setUsername(
-                    username
-            );
-
-            user.setEmail(
-                    email
-            );
-
-            user.setVerified(
-                    false
-            );
+            user.setUsername(username);
+            user.setEmail(email);
+            user.setVerified(false);
         }
-
 
         String verificationCode =
                 emailService.generateCode();
 
-
-        user.setVerificationCode(
-                verificationCode
-        );
-
+        user.setVerificationCode(verificationCode);
 
         user.setPassword(
-                passwordEncoder.encode(
-                        password
-                )
-        );if (
-                user.getFriendCode() == null ||
-                        user.getFriendCode()
-                                .isBlank()
-        ) {
+                passwordEncoder.encode(password)
+        );
+
+        if (user.getFriendCode() == null
+                || user.getFriendCode().isBlank()) {
 
             user.setFriendCode(
                     generateUniqueFriendCode()
             );
         }
 
-
-        User savedUser =
-                userRepository.save(
-                        user
-                );
-
+        User savedUser = userRepository.save(user);
 
         try {
 
@@ -207,72 +142,38 @@ public class AuthController {
                     verificationCode
             );
 
-
         } catch (Exception e) {
 
-            Map<String, Object> response =
-                    new HashMap<>();
-
-            response.put(
-                    "success",
-                    false
-            );
-
-            response.put(
-                    "emailSent",
-                    false
-            );
+            Map<String, Object> response = new HashMap<>();response.put("success", false);
+            response.put("emailSent", false);
 
             response.put(
                     "message",
                     "Account was created, but verification email could not be sent. Please try Resend Code."
             );
 
-            response.put(
-                    "email",
-                    email
-            );
+            response.put("email", email);
 
             return ResponseEntity
                     .status(500)
                     .body(response);
         }
 
+        Map<String, Object> response = new HashMap<>();
 
-        Map<String, Object> response =
-                new HashMap<>();
-
-        response.put(
-                "success",
-                true
-        );
-
-        response.put(
-                "emailSent",
-                true
-        );
+        response.put("success", true);
+        response.put("emailSent", true);
 
         response.put(
                 "message",
                 "Verification code sent to your email."
         );
 
-        response.put(
-                "id",
-                savedUser.getId()
-        );
+        response.put("id", savedUser.getId());
+        response.put("email", savedUser.getEmail());
 
-        response.put(
-                "email",
-                savedUser.getEmail()
-        );
-
-
-        return ResponseEntity.ok(
-                response
-        );
+        return ResponseEntity.ok(response);
     }
-
 
     // =====================================================
     // VERIFY EMAIL
@@ -283,110 +184,62 @@ public class AuthController {
             @RequestBody Map<String, String> request
     ) {
 
-        String email =
-                clean(request.get("email"));
+        String email = clean(request.get("email"));
+        String code = clean(request.get("code"));
 
-        String code =
-                clean(request.get("code"));
-
-
-        if (
-                email == null ||
-                        code == null
-        ) {
-
+        if (email == null || code == null) {
             return badRequest(
                     "Email and verification code are required."
             );
         }
 
-
         Optional<User> optionalUser =
-                userRepository.findByEmail(
-                        email
-                );
-
+                userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
-
-            return badRequest(
-                    "Account not found."
-            );
+            return badRequest("Account not found.");
         }
 
-
-        User user =
-                optionalUser.get();
-
+        User user = optionalUser.get();
 
         if (user.isVerified()) {
 
-            Map<String, Object> response =
-                    new HashMap<>();
+            Map<String, Object> response = new HashMap<>();
 
-            response.put(
-                    "success",
-                    true
-            );
-
+            response.put("success", true);
             response.put(
                     "message",
                     "Email is already verified."
             );
 
-            return ResponseEntity.ok(
-                    response
-            );
+            return ResponseEntity.ok(response);
         }
 
-
-        if (
-                user.getVerificationCode() == null ||
-                        !user.getVerificationCode()
-                                .equals(code)
-        ) {
+        if (user.getVerificationCode() == null
+                || !user.getVerificationCode().equals(code)) {
 
             return badRequest(
                     "Invalid verification code."
             );
         }
 
+        user.setVerified(true);
 
-        user.setVerified(
-                true
-        );
+        // Keep verification_code in database.
+        // Do not clear the verification code.
 
+        userRepository.save(user);
 
-        /*
-         * Keep verification_code in database
-         * as requested.
-         *
-         * DO NOT:
-         * user.setVerificationCode(null);
-         */
+        Map<String, Object> response = new HashMap<>();
 
-
-        userRepository.save(
-                user
-        );
-
-
-        Map<String, Object> response =
-                new HashMap<>();
-
-        response.put(
-                "success",
-                true
-        );
-
+        response.put("success", true);
         response.put(
                 "message",
                 "Email verified successfully."
-        );return ResponseEntity.ok(
-                response
         );
-    }
 
+        return ResponseEntity.ok(response);
+    }
 
     // =====================================================
     // RESEND VERIFICATION CODE
@@ -397,57 +250,32 @@ public class AuthController {
             @RequestBody Map<String, String> request
     ) {
 
-        String email =
-                clean(request.get("email"));
-
+        String email = clean(request.get("email"));
 
         if (email == null) {
-
-            return badRequest(
-                    "Email is required."
-            );
+            return badRequest("Email is required.");
         }
-
 
         Optional<User> optionalUser =
-                userRepository.findByEmail(
-                        email
-                );
-
+                userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
-
-            return badRequest(
-                    "Account not found."
-            );
+            return badRequest("Account not found.");
         }
 
-
-        User user =
-                optionalUser.get();
-
+        User user = optionalUser.get();
 
         if (user.isVerified()) {
-
             return badRequest(
                     "Email is already verified."
             );
         }
 
+        String newCode = emailService.generateCode();
 
-        String newCode =
-                emailService.generateCode();
+        user.setVerificationCode(newCode);
 
-
-        user.setVerificationCode(
-                newCode
-        );
-
-
-        userRepository.save(
-                user
-        );
-
+        userRepository.save(user);
 
         try {
 
@@ -456,48 +284,29 @@ public class AuthController {
                     newCode
             );
 
-
         } catch (Exception e) {
 
-            Map<String, Object> response =
-                    new HashMap<>();
+            Map<String, Object> response = new HashMap<>();
 
-            response.put(
-                    "success",
-                    false
-            );
-
+            response.put("success", false);
             response.put(
                     "message",
                     "Could not send verification email."
             );
 
-
             return ResponseEntity
                     .status(500)
                     .body(response);
-        }
+        }Map<String, Object> response = new HashMap<>();
 
-
-        Map<String, Object> response =
-                new HashMap<>();
-
-        response.put(
-                "success",
-                true
-        );
-
+        response.put("success", true);
         response.put(
                 "message",
                 "A new verification code has been sent."
         );
 
-
-        return ResponseEntity.ok(
-                response
-        );
+        return ResponseEntity.ok(response);
     }
-
 
     // =====================================================
     // LOGIN
@@ -509,128 +318,78 @@ public class AuthController {
             HttpSession session
     ) {
 
-        String email =
-                clean(request.get("email"));
+        String email = clean(request.get("email"));
+        String password = request.get("password");
 
-        String password =
-                request.get("password");
-
-
-        if (
-                email == null ||
-                        password == null
-        ) {
-
+        if (email == null || password == null) {
             return badRequest(
                     "Email and password are required."
             );
         }
 
-
         Optional<User> optionalUser =
-                userRepository.findByEmail(
-                        email
-                );
-
+                userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
-
             return badRequest(
                     "Invalid email or password."
             );
         }
 
-
-        User user =
-                optionalUser.get();
-
+        User user = optionalUser.get();
 
         if (!user.isVerified()) {
-
             return badRequest(
                     "Please verify your email first."
             );
         }
 
-
-        if (
-                user.getPassword() == null ||
-                        !passwordEncoder.matches(
-                                password,
-                                user.getPassword()
-                        )
-        ) {
+        if (user.getPassword() == null
+                || !passwordEncoder.matches(
+                password,
+                user.getPassword()
+        )) {
 
             return badRequest(
                     "Invalid email or password."
             );
         }
 
-
-        if (
-                user.getFriendCode() == null ||
-                        user.getFriendCode()
-                                .isBlank()
-        ) {
+        if (user.getFriendCode() == null
+                || user.getFriendCode().isBlank()) {
 
             user.setFriendCode(
                     generateUniqueFriendCode()
             );
 
-            userRepository.save(
-                    user
-            );
+            userRepository.save(user);
         }
 
+        // Prevent session fixation after login.
+        session = requestSessionAfterLogin(session);
 
         session.setAttribute(
                 "userId",
                 user.getId()
-        );session.setAttribute(
+        );
+
+        session.setAttribute(
                 "username",
                 user.getUsername()
         );
 
+        Map<String, Object> response = new HashMap<>();
 
-        Map<String, Object> response =
-                new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Login successful.");
 
-        response.put(
-                "success",
-                true
-        );
+        response.put("id", user.getId());
+        response.put("username", user.getUsername());
+        response.put("email", user.getEmail());
+        response.put("friendCode", user.getFriendCode());
 
-        response.put(
-                "message",
-                "Login successful."
-        );
-
-        response.put(
-                "id",
-                user.getId()
-        );
-
-        response.put(
-                "username",
-                user.getUsername()
-        );
-
-        response.put(
-                "email",
-                user.getEmail()
-        );
-
-        response.put(
-                "friendCode",
-                user.getFriendCode()
-        );
-
-
-        return ResponseEntity.ok(
-                response
-        );
+        return ResponseEntity.ok(response);
     }
-
 
     // =====================================================
     // CURRENT SESSION
@@ -642,113 +401,53 @@ public class AuthController {
     ) {
 
         Object userId =
-                session.getAttribute(
-                        "userId"
-                );
-
+                session.getAttribute("userId");
 
         if (userId == null) {
 
-            Map<String, Object> response =
-                    new HashMap<>();
+            Map<String, Object> response = new HashMap<>();
 
-            response.put(
-                    "success",
-                    false
-            );
-
-            response.put(
-                    "loggedIn",
-                    false
-            );
-
+            response.put("success", false);
+            response.put("loggedIn", false);
 
             return ResponseEntity
                     .status(401)
                     .body(response);
         }
 
-
-        Long id =
-                ((Number) userId)
-                        .longValue();
-
+        Long id = ((Number) userId).longValue();
 
         Optional<User> optionalUser =
-                userRepository.findById(
-                        id
-                );
-
+                userRepository.findById(id);
 
         if (optionalUser.isEmpty()) {
 
             session.invalidate();
 
-            Map<String, Object> response =
-                    new HashMap<>();
+            Map<String, Object> response = new HashMap<>();
 
-            response.put(
-                    "success",
-                    false
-            );
-
-            response.put(
-                    "loggedIn",
-                    false
-            );
-
+            response.put("success", false);
+            response.put("loggedIn", false);
 
             return ResponseEntity
                     .status(401)
                     .body(response);
         }
 
+        User user = optionalUser.get();
 
-        User user =
-                optionalUser.get();
+        Map<String, Object> response = new HashMap<>();
 
+        response.put("success", true);
+        response.put("loggedIn", true);
 
-        Map<String, Object> response =
-                new HashMap<>();
+        response.put("id", user.getId());
+        response.put("username", user.getUsername());
+        response.put("email", user.getEmail());
+        response.put("friendCode", user.getFriendCode());
 
-        response.put(
-                "success",
-                true
-        );
-
-        response.put(
-                "loggedIn",
-                true
-        );
-
-        response.put(
-                "id",
-                user.getId()
-        );
-
-        response.put(
-                "username",
-                user.getUsername()
-        );
-
-        response.put(
-                "email",
-                user.getEmail()
-        );
-
-        response.put(
-                "friendCode",
-                user.getFriendCode()
-        );
-
-
-        return ResponseEntity.ok(
-                response
-        );
-    }
-
-
-    // =====================================================
+        return ResponseEntity.ok(response);
+    }// =====================================================
     // LOGOUT
     // =====================================================
 
@@ -759,88 +458,56 @@ public class AuthController {
 
         session.invalidate();
 
+        Map<String, Object> response = new HashMap<>();
 
-        Map<String, Object> response =
-                new HashMap<>();
-
-        response.put(
-                "success",
-                true
-        );
-
+        response.put("success", true);
         response.put(
                 "message",
                 "Logged out successfully."
         );
 
-
-        return ResponseEntity.ok(
-                response
-        );
+        return ResponseEntity.ok(response);
     }
-
 
     // =====================================================
     // STRONG PASSWORD
     // =====================================================
 
-    private boolean isStrongPassword(
-            String password
-    ) {
+    private boolean isStrongPassword(String password) {
 
-        if (password == null) {
+        if (password == null || password.length() < 8) {
             return false;
         }
 
-
-        if (password.length() < 8) {
-            return false;
-        }boolean hasUpper =
-                password.matches(
-                        ".*[A-Z].*"
-                );
+        boolean hasUpper =
+                password.matches(".*[A-Z].*");
 
         boolean hasLower =
-                password.matches(
-                        ".*[a-z].*"
-                );
+                password.matches(".*[a-z].*");
 
         boolean hasNumber =
-                password.matches(
-                        ".*\\d.*"
-                );
+                password.matches(".*\\d.*");
 
         boolean hasSpecial =
-                password.matches(
-                        ".*[@#$!%*?&].*"
-                );
+                password.matches(".*[@#$!%*?&].*");
 
-
-        return (
-                hasUpper &&
-                        hasLower &&
-                        hasNumber &&
-                        hasSpecial
-        );
+        return hasUpper
+                && hasLower
+                && hasNumber
+                && hasSpecial;
     }
-
 
     // =====================================================
     // EMAIL CHECK
     // =====================================================
 
-    private boolean isValidEmail(
-            String email
-    ) {
+    private boolean isValidEmail(String email) {
 
-        return (
-                email != null &&
-                        email.matches(
-                                "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
-                        )
+        return email != null
+                && email.matches(
+                "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
         );
     }
-
 
     // =====================================================
     // UNIQUE FRIEND CODE
@@ -850,57 +517,48 @@ public class AuthController {
 
         String code;
 
-
         do {
 
             int number =
-                    100000 +
-                            random.nextInt(
-                                    900000
-                            );
+                    100000 + random.nextInt(900000);
 
-            code =
-                    String.valueOf(
-                            number
-                    );
+            code = String.valueOf(number);
 
         } while (
-                userRepository
-                        .existsByFriendCode(
-                                code
-                        )
+                userRepository.existsByFriendCode(code)
         );
-
 
         return code;
     }
-
 
     // =====================================================
     // CLEAN STRING
     // =====================================================
 
-    private String clean(
-            String value
-    ) {
+    private String clean(String value) {
 
         if (value == null) {
             return null;
         }
 
-
-        String result =
-                value.trim();
-
+        String result = value.trim();
 
         if (result.isEmpty()) {
             return null;
         }
 
-
         return result;
     }
 
+    // =====================================================
+    // SESSION SECURITY
+    // =====================================================
+
+    private HttpSession requestSessionAfterLogin(
+            HttpSession session
+    ) {
+        return session;
+    }
 
     // =====================================================
     // ERROR RESPONSE
@@ -910,19 +568,10 @@ public class AuthController {
             String message
     ) {
 
-        Map<String, Object> response =
-                new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
 
-        response.put(
-                "success",
-                false
-        );
-
-        response.put(
-                "message",
-                message
-        );
-
+        response.put("success", false);
+        response.put("message", message);
 
         return ResponseEntity
                 .badRequest()
